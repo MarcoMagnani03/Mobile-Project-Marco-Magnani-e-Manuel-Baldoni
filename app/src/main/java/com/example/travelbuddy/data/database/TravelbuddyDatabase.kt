@@ -22,7 +22,7 @@ import androidx.room.RoomDatabase
 abstract class TravelDiaryDatabase : RoomDatabase() {
     abstract fun tripsDAO(): TripsDAO
     abstract fun usersDAO(): UsersDAO
-    abstract fun friendsDAO(): FriendsDAO
+    abstract fun friendshipsDAO(): FriendshipDAO
     abstract fun activitiesDAO(): ActivitiesDAO
     abstract fun activitiesTypesDAO(): ActivitiesTypesDAO
     abstract fun notificationsDAO(): NotificationsDAO
