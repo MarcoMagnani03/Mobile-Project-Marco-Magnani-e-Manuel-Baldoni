@@ -1,6 +1,5 @@
 package com.example.travelbuddy.data.database
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
@@ -141,7 +140,7 @@ data class ActivityType(
 )
 
 @Entity
-data class Activity(
+data class TripActivity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
 

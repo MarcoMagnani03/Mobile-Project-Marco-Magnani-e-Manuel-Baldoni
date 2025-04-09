@@ -32,21 +32,21 @@ interface NotificationsTypesDAO {
 }
 
 @Dao
-interface ActivitiesDAO {
+interface TripActivitiesDAO {
     @Upsert
-    suspend fun upsert(activity: Activity)
+    suspend fun upsert(tripActivity: TripActivity)
 
     @Delete
-    suspend fun delete(item: Activity)
+    suspend fun delete(item: TripActivity)
 }
 
 @Dao
-interface ActivitiesTypesDAO {
+interface ActivityTypesDAO {
     @Upsert
-    suspend fun upsert(activity: Activity)
+    suspend fun upsert(activityType: ActivityType)
 
     @Delete
-    suspend fun delete(item: Activity)
+    suspend fun delete(item: ActivityType)
 }
 
 @Dao
@@ -86,7 +86,7 @@ interface GroupsDAO {
 }
 
 @Dao
-interface FriendshipDAO {
+interface FriendshipsDAO {
     @Upsert
     suspend fun upsert(friendship: Friendship)
 

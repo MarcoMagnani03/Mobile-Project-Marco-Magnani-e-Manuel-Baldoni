@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
             Trip::class,
             User::class,
             Friendship::class,
-            Activity::class,
+            TripActivity::class,
             ActivityType::class,
             Notification::class,
             NotificationType::class,
@@ -22,8 +22,8 @@ import androidx.room.RoomDatabase
 abstract class TravelDiaryDatabase : RoomDatabase() {
     abstract fun tripsDAO(): TripsDAO
     abstract fun usersDAO(): UsersDAO
-    abstract fun friendshipsDAO(): FriendshipDAO
-    abstract fun activitiesDAO(): ActivitiesDAO
+    abstract fun friendshipsDAO(): FriendshipsDAO
+    abstract fun activitiesDAO(): TripActivitiesDAO
     abstract fun activitiesTypesDAO(): ActivitiesTypesDAO
     abstract fun notificationsDAO(): NotificationsDAO
     abstract fun notificationsTypesDAO(): NotificationsTypesDAO
