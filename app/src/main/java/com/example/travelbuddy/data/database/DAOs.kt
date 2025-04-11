@@ -41,7 +41,7 @@ interface TripActivitiesDAO {
 }
 
 @Dao
-interface ActivityTypesDAO {
+interface ActivitiesTypesDAO {
     @Upsert
     suspend fun upsert(activityType: ActivityType)
 

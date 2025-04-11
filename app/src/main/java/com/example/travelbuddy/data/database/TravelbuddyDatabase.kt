@@ -19,7 +19,7 @@ import androidx.room.RoomDatabase
         ],
     version = 1
 )
-abstract class TravelDiaryDatabase : RoomDatabase() {
+abstract class TravelBuddyDatabase : RoomDatabase() {
     abstract fun tripsDAO(): TripsDAO
     abstract fun usersDAO(): UsersDAO
     abstract fun friendshipsDAO(): FriendshipsDAO
