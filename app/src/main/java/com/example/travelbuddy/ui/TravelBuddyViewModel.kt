@@ -11,8 +11,6 @@ import kotlinx.coroutines.launch
 
 data class TripsState(val trips: List<Trip>)
 
-class TravelBuddyViewModel(
-    private val usersRepository: UsersRepository
-) : ViewModel() {
+class TravelBuddyViewModel() : ViewModel() {
 
 }

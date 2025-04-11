@@ -28,7 +28,7 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
         }
 
         composable<TravelBuddyRoute.Login> {
-            val loginViewModel: LoginViewModel = koinViewModel<LoginViewModel>()
+            val loginViewModel = koinViewModel<LoginViewModel>()
             val state by loginViewModel.state.collectAsStateWithLifecycle()
             LoginScreen(state, loginViewModel.actions, navController)
         }
