@@ -32,6 +32,7 @@ import androidx.navigation.NavController
 import com.example.travelbuddy.ui.TravelBuddyRoute
 import com.example.travelbuddy.ui.composables.InputField
 import com.example.travelbuddy.ui.composables.InputFieldType
+import com.example.travelbuddy.ui.composables.TravelBuddyButton
 
 @Composable
 fun LoginScreen(
@@ -75,18 +76,12 @@ fun LoginScreen(
                 ) },
             )
             Spacer(modifier = Modifier.size(30.dp))
-            Button(
+            TravelBuddyButton(
+                label = "Sign In",
                 onClick = { navController.navigate(TravelBuddyRoute.Home) },
                 enabled = state.canSubmit,
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-            ) {
-                Text(
-                    "Login"
-                )
-            }
+                height = 50
+            )
         }
     }
 }
