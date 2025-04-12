@@ -21,7 +21,7 @@ sealed interface TravelBuddyRoute {
 fun TravelBuddyNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = TravelBuddyRoute.Home
+        startDestination = TravelBuddyRoute.Login
     ) {
         composable<TravelBuddyRoute.Home> {
             HomeScreen(navController)
