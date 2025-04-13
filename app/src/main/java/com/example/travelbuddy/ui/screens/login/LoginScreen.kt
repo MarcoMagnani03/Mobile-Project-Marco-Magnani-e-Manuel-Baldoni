@@ -57,8 +57,8 @@ fun LoginScreen(
             Spacer(modifier = Modifier.size(100.dp))
             InputField(
                 value = state.email,
+                label = "Email",
                 onValueChange = actions::setEmail,
-                placeholder = "Email",
                 leadingIcon = { Icon(
                     Icons.Outlined.Email,
                     contentDescription = "email icon"
@@ -67,8 +67,8 @@ fun LoginScreen(
             Spacer(modifier = Modifier.size(30.dp))
             InputField(
                 value = state.password,
+                label = "Password",
                 onValueChange = actions::setPassword,
-                placeholder = "Password",
                 type = InputFieldType.Password,
                 leadingIcon = { Icon(
                     Icons.Outlined.Lock,

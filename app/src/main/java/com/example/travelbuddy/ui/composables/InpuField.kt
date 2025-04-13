@@ -36,7 +36,7 @@ fun InputField(
     modifier: Modifier = Modifier,
     label: String? = "",
     isError: Boolean = false,
-    placeholder: String = "",
+    placeholder: String? = "",
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     type: InputFieldType = InputFieldType.Text
@@ -52,7 +52,7 @@ fun InputField(
         modifier = modifier
             .fillMaxWidth(),
         label = label?.let { { Text(text = it) } },
-        placeholder = { Text(text = placeholder) },
+        placeholder = placeholder?.let { { Text(text = placeholder) } },
         isError = isError,
         leadingIcon = leadingIcon,
         textStyle = MaterialTheme.typography.bodyMedium,
