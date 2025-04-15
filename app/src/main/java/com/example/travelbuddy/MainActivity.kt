@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            TravelBuddyTheme {
+            TravelBuddyTheme(dynamicColor = false) {
                 val navController = rememberNavController()
                 TravelBuddyNavGraph(navController)
             }

@@ -1,23 +1,19 @@
 package com.example.travelbuddy.ui.screens.code
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Backspace
 import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.outlined.Backspace
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun CustomKeypad(
@@ -52,7 +48,8 @@ fun CustomKeypad(
                             contentColor = Color.Black
                         )
                     ) {
-                        Text(text = key.number.toString())
+                        Text(text = key.number.toString(),
+                            fontSize = 20.sp)
                     }
                 }
 
@@ -63,8 +60,8 @@ fun CustomKeypad(
                             .size(72.dp),
                         shape = CircleShape,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.outline,
-                            contentColor = Color.Black
+                            containerColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.onError
                         )
                     ) {
                         Icon(imageVector = Icons.AutoMirrored.Outlined.Backspace, contentDescription = "Delete")
