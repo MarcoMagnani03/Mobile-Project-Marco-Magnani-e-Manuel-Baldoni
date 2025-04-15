@@ -32,7 +32,7 @@ data class Trip (
 )
 
 @Entity
-data class User (
+data class User(
     @PrimaryKey
     val email: String,
 
@@ -43,7 +43,7 @@ data class User (
     var passwordSalt: String,
 
     @ColumnInfo
-    var pin: Int,
+    var pin: String? = null,
 
     @ColumnInfo
     var firstname: String,
@@ -61,7 +61,7 @@ data class User (
     var bio: String?,
 
     @ColumnInfo
-    var profilePicture: ByteArray?
+    var profilePicture: ByteArray? = null
 )
 
 @Entity

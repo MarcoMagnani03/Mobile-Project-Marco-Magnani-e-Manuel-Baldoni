@@ -2,6 +2,7 @@ package com.example.travelbuddy.data.database
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Query
 import androidx.room.Upsert
 
 @Dao
@@ -65,6 +66,15 @@ interface UsersDAO {
 
     @Delete
     suspend fun delete(item: User)
+
+    @Query("SELECT * FROM User WHERE email = :email")
+    suspend fun getUserByEmail(email: String): User?
+
+    @Query("UPDATE User SET pin = :pin WHERE email = :email")
+    suspend fun updateUserPin(email: String, pin: String)
+
+    @Query("SELECT EXISTS(SELECT 1 FROM User WHERE email = :email AND pin = :pin)")
+    suspend fun verifyUserPin(email: String, pin: String): Boolean
 }
 
 @Dao

@@ -1,15 +1,21 @@
 package com.example.travelbuddy.ui.screens.login
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.travelbuddy.data.repositories.UserSessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 data class LoginState(
     val email: String = "",
-    val password: String = ""
+    val password: String = "",
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
 ) {
-    val canSubmit get() = email.isNotBlank() && password.isNotBlank()
+    val canSubmit: Boolean
+        get() = email.isNotBlank() && password.isNotBlank()
 }
 
 interface LoginActions {
@@ -17,7 +23,9 @@ interface LoginActions {
     fun setPassword(password: String)
 }
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(
+    private val appPreferences: UserSessionRepository
+) : ViewModel() {
     private val _state = MutableStateFlow(LoginState())
     val state = _state.asStateFlow()
 
@@ -27,5 +35,13 @@ class LoginViewModel : ViewModel() {
 
         override fun setPassword(password: String) =
             _state.update { it.copy(password = password) }
+    }
+
+    //TODO UNA VOLTA AGGIUNTA LA GESTIONE DELLA LOGIN CHIAMARE QUESTO
+    // METODO PRIMA DI PASSARE ALLA SCHERMATA CODE
+    fun onLoginSuccess(email: String) {
+        viewModelScope.launch {
+            appPreferences.saveUserEmail(email)
+        }
     }
 }

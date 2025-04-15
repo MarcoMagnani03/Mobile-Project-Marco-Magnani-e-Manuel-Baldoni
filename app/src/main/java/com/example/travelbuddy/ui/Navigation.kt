@@ -9,12 +9,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.travelbuddy.data.repositories.UserSessionRepository
 import com.example.travelbuddy.ui.screens.code.CodeScreen
 import com.example.travelbuddy.ui.screens.code.CodeViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpScreen
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 sealed interface TravelBuddyRoute {
     @Serializable data object Home : TravelBuddyRoute
@@ -27,7 +29,7 @@ sealed interface TravelBuddyRoute {
 fun TravelBuddyNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = TravelBuddyRoute.Code
+        startDestination = TravelBuddyRoute.Login
     ) {
         composable<TravelBuddyRoute.Home> {
             HomeScreen(navController)
@@ -42,8 +44,17 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
         composable<TravelBuddyRoute.Code> {
             val codeViewModel = koinViewModel<CodeViewModel>()
             val state by codeViewModel.state.collectAsStateWithLifecycle()
-            CodeScreen(state, codeViewModel.actions, navController)
+            val userSession = koinInject<UserSessionRepository>()
+
+            CodeScreen(
+                state = state,
+                actions = codeViewModel.actions,
+                navController = navController,
+                isNewPinSetup = true,
+                appPreferences = userSession
+            )
         }
+
 
         composable<TravelBuddyRoute.SignUp> {
             val loginViewModel = koinViewModel<SignUpViewModel>()

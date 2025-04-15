@@ -3,6 +3,8 @@ package com.example.travelbuddy.ui.composables
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation.Companion.keyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -39,7 +41,8 @@ fun InputField(
     placeholder: String? = "",
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
-    type: InputFieldType = InputFieldType.Text
+    type: InputFieldType = InputFieldType.Text ,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     val isPassword: Boolean = type == InputFieldType.Password
     var passwordVisible by remember { mutableStateOf(false) }
@@ -70,6 +73,7 @@ fun InputField(
                 trailingIcon != null -> trailingIcon()
             }
         },
+        keyboardOptions = keyboardOptions
     )
 }
 
