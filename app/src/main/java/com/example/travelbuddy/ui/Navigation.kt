@@ -11,6 +11,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.travelbuddy.ui.screens.code.CodeScreen
 import com.example.travelbuddy.ui.screens.code.CodeViewModel
+import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
+import com.example.travelbuddy.ui.screens.signup.SignUpScreen
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -18,6 +20,7 @@ sealed interface TravelBuddyRoute {
     @Serializable data object Home : TravelBuddyRoute
     @Serializable data object Login : TravelBuddyRoute
     @Serializable data object Code : TravelBuddyRoute
+    @Serializable data object SignUp : TravelBuddyRoute
 }
 
 @Composable
@@ -40,6 +43,12 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             val codeViewModel = koinViewModel<CodeViewModel>()
             val state by codeViewModel.state.collectAsStateWithLifecycle()
             CodeScreen(state, codeViewModel.actions, navController)
+        }
+
+        composable<TravelBuddyRoute.SignUp> {
+            val loginViewModel = koinViewModel<SignUpViewModel>()
+            val state by loginViewModel.state.collectAsStateWithLifecycle()
+            SignUpScreen(state, loginViewModel.actions, navController)
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.travelbuddy.ui.screens.login
+package com.example.travelbuddy.ui.screens.signup
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,9 +27,9 @@ import com.example.travelbuddy.ui.composables.TravelBuddyButton
 import androidx.compose.foundation.clickable
 
 @Composable
-fun LoginScreen(
-    state: LoginState,
-    actions: LoginActions,
+fun SignUpScreen(
+    state: SignUpState,
+    actions: SignUpActions,
     navController: NavController
 ) {
     Scaffold { contentPadding ->
@@ -73,60 +73,16 @@ fun LoginScreen(
             )
             Spacer(modifier = Modifier.size(30.dp))
             TravelBuddyButton(
-                label = "Sign In",
+                label = "Sign Up",
                 onClick = { navController.navigate(TravelBuddyRoute.Home) },
                 enabled = state.canSubmit,
                 height = 50
             )
             Spacer(modifier = Modifier.size(16.dp))
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-            ) {
-                androidx.compose.material3.HorizontalDivider(
-                    modifier = Modifier
-                        .weight(1f)
-                )
-                Text(
-                    text = "Or continue with",
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-                androidx.compose.material3.HorizontalDivider(
-                    modifier = Modifier
-                        .weight(1f)
-                )
-            }
 
-            Spacer(modifier = Modifier.size(16.dp))
-
-            TravelBuddyButton(
-                label = "Google",
-                onClick = {
-                    // TODO Aggiugere logica per l'autenticazione con Google
-                },
-                height = 50
-            )
 
             Spacer(modifier = Modifier.size(32.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(text = "If you don't have an Account")
-                Spacer(modifier = Modifier.size(4.dp))
-                Text(
-                    text = "Sign Up",
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable {
-                            navController.navigate(TravelBuddyRoute.SignUp)
-                    }
-                )
-            }
         }
     }
 }

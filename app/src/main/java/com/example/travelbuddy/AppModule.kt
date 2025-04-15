@@ -7,6 +7,7 @@ import com.example.travelbuddy.data.database.TravelBuddyDatabase
 import com.example.travelbuddy.ui.TravelBuddyViewModel
 import com.example.travelbuddy.ui.screens.code.CodeViewModel
 import com.example.travelbuddy.ui.screens.login.LoginViewModel
+import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -28,4 +29,6 @@ val appModule = module {
     viewModel { LoginViewModel() }
 
     viewModel { CodeViewModel() }
+
+    viewModel { SignUpViewModel() }
 }
