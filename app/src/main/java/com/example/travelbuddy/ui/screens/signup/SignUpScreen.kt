@@ -15,6 +15,7 @@ import com.example.travelbuddy.ui.TravelBuddyRoute
 import com.example.travelbuddy.ui.composables.InputField
 import com.example.travelbuddy.ui.composables.InputFieldType
 import com.example.travelbuddy.ui.composables.TravelBuddyButton
+
 @Composable
 fun SignUpScreen(
     state: SignUpState,

@@ -5,6 +5,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.example.travelbuddy.data.database.TravelBuddyDatabase
 import com.example.travelbuddy.data.repositories.UserSessionRepository
+import com.example.travelbuddy.data.repositories.UsersRepository
 import com.example.travelbuddy.ui.TravelBuddyViewModel
 import com.example.travelbuddy.ui.screens.code.CodeViewModel
 import com.example.travelbuddy.ui.screens.login.LoginViewModel
@@ -24,6 +25,11 @@ val appModule = module {
             "travel-buddy"
         ).build()
     }
+
+    single { get<TravelBuddyDatabase>().usersDAO() }
+
+    single { UsersRepository(get()) }
+
 
     single{ UserSessionRepository(get())}
 
