@@ -5,18 +5,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.travelbuddy.data.database.Trip
-import com.example.travelbuddy.ui.TravelBuddyRoute
 import com.example.travelbuddy.ui.composables.ActiveTripCard
 import com.example.travelbuddy.ui.composables.PastTripsSection
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
@@ -81,17 +78,23 @@ fun HomeScreen(
         )
     )
 
+    val scrollState = rememberScrollState()
+
     Scaffold(
         bottomBar = { TravelBuddyBottomBar(navController) }
     ) { contentPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(contentPadding).padding(12.dp).fillMaxSize()
+            modifier = Modifier
+                .padding(contentPadding)
+                .padding(12.dp)
+                .fillMaxSize()
+                .verticalScroll(scrollState)
         ) {
             ActiveTripCard(
                 trip = veneziaTrip,
-                onAddExpenseClick = { /* Gestisci l'aggiunta di una spesa */ },
-                onAddEventClick = { /* Gestisci l'aggiunta di un evento */ }
+                onAddExpenseClick = {  },
+                onAddEventClick = {  }
             )
 
             Spacer(Modifier.height(10.dp))
@@ -107,6 +110,8 @@ fun HomeScreen(
                 trips = pastTrips,
                 navController = navController
             )
+
+            Spacer(Modifier.height(10.dp))
         }
     }
 }

@@ -49,7 +49,6 @@ fun ActiveTripCard(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            // Header Row with Trip Title and Status Badge
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -78,7 +77,6 @@ fun ActiveTripCard(
                 }
             }
 
-            // Date Range
             Text(
                 text = "${trip.startDate} - ${trip.endDate}",
                 color = Color.Gray,
@@ -88,7 +86,6 @@ fun ActiveTripCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Events and Expenses Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -122,7 +119,6 @@ fun ActiveTripCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Add Expense Button using TravelBuddyButton
             TravelBuddyButton(
                 label = "Aggiungi spesa",
                 onClick = onAddExpenseClick,
@@ -138,7 +134,6 @@ fun ActiveTripCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Add Event Button using TravelBuddyButton
             TravelBuddyButton(
                 label = "Aggiungi evento",
                 onClick = onAddEventClick,
