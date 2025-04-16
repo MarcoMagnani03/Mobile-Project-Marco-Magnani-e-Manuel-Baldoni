@@ -8,13 +8,14 @@ import java.security.SecureRandom
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
-public class UsersRepository(
+class UsersRepository(
     private val dao: UsersDAO
 ) {
     suspend fun delete(user: User) = dao.delete(user)
 
     suspend fun getUserByEmail(email: String) = dao.getUserByEmail(email)
 
+    // TODO: Spotare business logic all'interno del repository
     suspend fun signInWithEmailAndPassword(email: String, password: String) = dao.loginUser(email,password)
 
     suspend fun updateUserPin(email: String, pin: String) = dao.updateUserPin(email,pin)

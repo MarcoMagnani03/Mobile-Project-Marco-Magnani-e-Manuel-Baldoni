@@ -31,6 +31,8 @@ fun SignUpScreen(
                 .padding(16.dp)
                 .fillMaxSize()
         ) {
+            // TODO: Manca bottone per tornare indietro
+
             Text(
                 text = "Travel Buddy",
                 style = MaterialTheme.typography.titleLarge,
