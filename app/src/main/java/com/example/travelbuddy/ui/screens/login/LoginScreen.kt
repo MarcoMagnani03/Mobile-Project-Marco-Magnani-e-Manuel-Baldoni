@@ -25,6 +25,8 @@ import com.example.travelbuddy.ui.composables.InputField
 import com.example.travelbuddy.ui.composables.InputFieldType
 import com.example.travelbuddy.ui.composables.TravelBuddyButton
 import androidx.compose.foundation.clickable
+import androidx.compose.runtime.LaunchedEffect
+import com.example.travelbuddy.ui.composables.ButtonStyle
 
 @Composable
 fun LoginScreen(
@@ -32,6 +34,14 @@ fun LoginScreen(
     actions: LoginActions,
     navController: NavController
 ) {
+    LaunchedEffect(state.navigateToCode) {
+        if (state.navigateToCode) {
+            navController.navigate(TravelBuddyRoute.Code) {
+                popUpTo(TravelBuddyRoute.Login) { inclusive = true }
+            }
+            actions.resetNavigation()
+        }
+    }
     Scaffold { contentPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -74,7 +84,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.size(30.dp))
             TravelBuddyButton(
                 label = "Sign In",
-                onClick = { navController.navigate(TravelBuddyRoute.Home) },
+                onClick = { actions.loginWithEmail()  },
                 enabled = state.canSubmit,
                 height = 50
             )
@@ -103,6 +113,7 @@ fun LoginScreen(
 
             TravelBuddyButton(
                 label = "Google",
+                style = ButtonStyle.PRIMARY_OUTLINED,
                 onClick = {
                     // TODO Aggiugere logica per l'autenticazione con Google
                 },

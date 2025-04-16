@@ -3,6 +3,7 @@ package com.example.travelbuddy.ui.screens.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelbuddy.data.repositories.UserSessionRepository
+import com.example.travelbuddy.data.repositories.UsersRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -11,8 +12,10 @@ import kotlinx.coroutines.launch
 data class LoginState(
     val email: String = "",
     val password: String = "",
+    val isSuccess: Boolean = false,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val navigateToCode: Boolean = false
 ) {
     val canSubmit: Boolean
         get() = email.isNotBlank() && password.isNotBlank()
@@ -21,10 +24,13 @@ data class LoginState(
 interface LoginActions {
     fun setEmail(email: String)
     fun setPassword(password: String)
+    fun resetNavigation()
+    fun loginWithEmail()
 }
 
 class LoginViewModel(
-    private val appPreferences: UserSessionRepository
+    private val appPreferences: UserSessionRepository,
+    private val userRepository: UsersRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(LoginState())
     val state = _state.asStateFlow()
@@ -35,13 +41,47 @@ class LoginViewModel(
 
         override fun setPassword(password: String) =
             _state.update { it.copy(password = password) }
+
+        override fun resetNavigation() {
+            _state.value = _state.value.copy(navigateToCode = false)
+        }
+
+        override fun loginWithEmail() {
+            viewModelScope.launch {
+                _state.value = _state.value.copy(isLoading = true)
+                try {
+                    val success = userRepository.signInWithEmailAndPassword(
+                        _state.value.email,
+                        _state.value.password
+                    )
+                    _state.value = _state.value.copy(
+                        isLoading = false,
+                        isSuccess = success,
+                        navigateToCode = success,
+                        errorMessage = if (!success) "Invalid credentials" else null
+                    )
+                } catch (e: Exception) {
+                    _state.value = _state.value.copy(
+                        isLoading = false,
+                        errorMessage = e.message ?: "Login failed"
+                    )
+                }
+            }
+        }
     }
 
-    //TODO UNA VOLTA AGGIUNTA LA GESTIONE DELLA LOGIN CHIAMARE QUESTO
-    // METODO PRIMA DI PASSARE ALLA SCHERMATA CODE
+
     fun onLoginSuccess(email: String) {
         viewModelScope.launch {
             appPreferences.saveUserEmail(email)
+
+            _state.value = _state.value.copy(
+                navigateToCode = true
+            )
         }
+    }
+
+    fun resetNavigation() {
+        _state.value = _state.value.copy(navigateToCode = false)
     }
 }

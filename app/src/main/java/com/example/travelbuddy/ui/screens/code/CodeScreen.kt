@@ -29,8 +29,8 @@ fun CodeScreen(
     isNewPinSetup: Boolean,
     appPreferences: UserSessionRepository
 ) {
-    val screenTitle = if (isNewPinSetup) "Create Secure PIN" else "Enter PIN"
-    val buttonText = if (isNewPinSetup) "Create PIN" else "Confirm"
+    val screenTitle = if (isNewPinSetup) "Create PIN" else "Enter PIN"
+    val buttonText = if (isNewPinSetup) "Create Secure PIN" else "Confirm"
     val inputLabel = if (isNewPinSetup) "Create 6-digit code" else "Enter your PIN"
 
     val emailState = appPreferences.userEmail.collectAsState(initial = "")

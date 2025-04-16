@@ -60,7 +60,6 @@ fun PastTripsSection(
             trips.forEachIndexed { index, trip ->
                 PastTripItem(trip = trip, navController)
 
-                // Aggiunge un divisore tra gli elementi, ma non dopo l'ultimo
                 if (index < trips.size - 1) {
                     HorizontalDivider(
                         modifier = Modifier.padding(vertical = 8.dp),

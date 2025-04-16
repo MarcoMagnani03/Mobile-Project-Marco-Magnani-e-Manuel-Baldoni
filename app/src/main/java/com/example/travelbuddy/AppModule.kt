@@ -30,12 +30,11 @@ val appModule = module {
 
     single { UsersRepository(get()) }
 
-
     single{ UserSessionRepository(get())}
 
     viewModel { TravelBuddyViewModel() }
 
-    viewModel { LoginViewModel(get()) }
+    viewModel { LoginViewModel(get(),get()) }
 
     viewModel { CodeViewModel(get(),get()) }
 

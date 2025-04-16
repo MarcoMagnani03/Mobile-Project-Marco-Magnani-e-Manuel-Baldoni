@@ -17,7 +17,7 @@ import androidx.room.RoomDatabase
             Expense::class,
             Photo::class
         ],
-    version = 1
+    version = 2
 )
 abstract class TravelBuddyDatabase : RoomDatabase() {
     abstract fun tripsDAO(): TripsDAO

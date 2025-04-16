@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelbuddy.data.database.User
 import com.example.travelbuddy.data.repositories.UsersRepository
+import com.example.travelbuddy.utils.PasswordHasher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -16,8 +17,7 @@ data class SignUpState(
     val phoneNumber: String = "",
     val bio: String = "",
     val email: String = "",
-    val password: String = "",
-    val pin: String = ""
+    val password: String = ""
 ) {
     val canSubmit: Boolean
         get() = firstName.isNotBlank() &&
@@ -34,7 +34,6 @@ interface SignUpActions {
     fun setBio(value: String)
     fun setEmail(value: String)
     fun setPassword(value: String)
-    fun setPin(value: String)
 }
 
 class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel() {
@@ -69,10 +68,6 @@ class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel()
         override fun setPassword(value: String) {
             _state.update { it.copy(password = value) }
         }
-
-        override fun setPin(value: String) {
-            _state.update { it.copy(pin = value) }
-        }
     }
 
 
@@ -84,8 +79,8 @@ class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel()
                     return@launch
                 }
 
-                val salt = UsersRepository.generateSalt()
-                val hashedPassword = UsersRepository.hashPassword(state.value.password, salt)
+                val salt = PasswordHasher.generateSalt()
+                val hashedPassword = PasswordHasher.hashPassword(state.value.password, salt)
 
                 val user = User(
                     firstname = state.value.firstName,
@@ -98,7 +93,8 @@ class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel()
                     passwordSalt = salt
                 )
 
-                userRepository.createUser(user)
+                userRepository.registerUser(state.value.email, state.value.password, state.value.firstName, state.value.lastName, state.value.phoneNumber, state.value.city,
+                    null, null)
             } catch (e: Exception) {
 
             }

@@ -5,10 +5,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -32,12 +34,13 @@ fun TravelBuddyButton(
     style: ButtonStyle = ButtonStyle.PRIMARY,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
+    isLoading: Boolean = false,
 ) {
     when (style) {
         ButtonStyle.PRIMARY -> {
             Button(
-                onClick = onClick,
-                enabled = enabled ?: true,
+                onClick = { if (!isLoading) onClick() },
+                enabled = (enabled ?: true) && !isLoading,
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -49,19 +52,26 @@ fun TravelBuddyButton(
                     .fillMaxWidth()
                     .height((height ?: 50).dp)
             ) {
-                ButtonContent(
-                    label = label,
-                    textColor = MaterialTheme.colorScheme.onPrimary,
-                    leadingIcon = leadingIcon,
-                    trailingIcon = trailingIcon
-                )
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                } else {
+                    ButtonContent(
+                        label = label,
+                        textColor = MaterialTheme.colorScheme.onPrimary,
+                        leadingIcon = leadingIcon,
+                        trailingIcon = trailingIcon
+                    )
+                }
             }
         }
 
         ButtonStyle.PRIMARY_OUTLINED -> {
             OutlinedButton(
-                onClick = onClick,
-                enabled = enabled ?: true,
+                onClick = { if (!isLoading) onClick() },
+                enabled = (enabled ?: true) && !isLoading,
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                 colors = ButtonDefaults.outlinedButtonColors(
@@ -72,12 +82,19 @@ fun TravelBuddyButton(
                     .fillMaxWidth()
                     .height((height ?: 50).dp)
             ) {
-                ButtonContent(
-                    label = label,
-                    textColor = MaterialTheme.colorScheme.primary,
-                    leadingIcon = leadingIcon,
-                    trailingIcon = trailingIcon
-                )
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                } else {
+                    ButtonContent(
+                        label = label,
+                        textColor = MaterialTheme.colorScheme.primary,
+                        leadingIcon = leadingIcon,
+                        trailingIcon = trailingIcon
+                    )
+                }
             }
         }
     }
