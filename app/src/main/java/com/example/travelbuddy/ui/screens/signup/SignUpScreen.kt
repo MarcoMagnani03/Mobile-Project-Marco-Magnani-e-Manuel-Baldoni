@@ -115,9 +115,10 @@ fun SignUpScreen(
 
             TravelBuddyButton(
                 label = "Sign up",
-                onClick = { navController.navigate(TravelBuddyRoute.Code) },
+                onClick = { actions.signUp() },
                 enabled = state.canSubmit,
-                height = 50
+                height = 50,
+                isLoading = state.isLoading
             )
 
             Spacer(modifier = Modifier.size(32.dp))

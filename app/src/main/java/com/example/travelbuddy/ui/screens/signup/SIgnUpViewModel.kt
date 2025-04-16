@@ -2,9 +2,7 @@ package com.example.travelbuddy.ui.screens.signup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.travelbuddy.data.database.User
 import com.example.travelbuddy.data.repositories.UsersRepository
-import com.example.travelbuddy.utils.PasswordHasher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -17,7 +15,9 @@ data class SignUpState(
     val phoneNumber: String = "",
     val bio: String = "",
     val email: String = "",
-    val password: String = ""
+    val password: String = "",
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
 ) {
     val canSubmit: Boolean
         get() = firstName.isNotBlank() &&
@@ -34,6 +34,7 @@ interface SignUpActions {
     fun setBio(value: String)
     fun setEmail(value: String)
     fun setPassword(value: String)
+    fun signUp()
 }
 
 class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel() {
@@ -68,37 +69,30 @@ class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel()
         override fun setPassword(value: String) {
             _state.update { it.copy(password = value) }
         }
-    }
 
+        override fun signUp() {
+            viewModelScope.launch {
+                _state.value = _state.value.copy(isLoading = true)
+                try {
+                    userRepository.getUserByEmail(state.value.email)?.let {
+                        return@launch
+                    }
 
-    fun signUp() {
-        viewModelScope.launch {
-            try {
-                userRepository.getUserByEmail(state.value.email)?.let {
-                    // Gestione errore utente esistente
-                    return@launch
+                    userRepository.registerUser(state.value.email, state.value.password, state.value.firstName, state.value.lastName, state.value.phoneNumber, state.value.city,
+                        null, null)
+
+                    _state.value = _state.value.copy(
+                        isLoading = false,
+                    )
+                } catch (e: Exception) {
+                    _state.value = _state.value.copy(
+                        isLoading = false,
+                        errorMessage = e.message ?: "Sign failed"
+                    )
                 }
-
-                val salt = PasswordHasher.generateSalt()
-                val hashedPassword = PasswordHasher.hashPassword(state.value.password, salt)
-
-                val user = User(
-                    firstname = state.value.firstName,
-                    lastname = state.value.lastName,
-                    location = state.value.city,
-                    phoneNumber = state.value.phoneNumber,
-                    bio = state.value.bio,
-                    email = state.value.email,
-                    password = hashedPassword,
-                    passwordSalt = salt
-                )
-
-                userRepository.registerUser(state.value.email, state.value.password, state.value.firstName, state.value.lastName, state.value.phoneNumber, state.value.city,
-                    null, null)
-            } catch (e: Exception) {
-
             }
         }
+
     }
 
 }

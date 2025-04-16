@@ -86,7 +86,8 @@ fun LoginScreen(
                 label = "Sign In",
                 onClick = { actions.loginWithEmail()  },
                 enabled = state.canSubmit,
-                height = 50
+                height = 50,
+                isLoading = state.isLoading,
             )
             Spacer(modifier = Modifier.size(16.dp))
 
