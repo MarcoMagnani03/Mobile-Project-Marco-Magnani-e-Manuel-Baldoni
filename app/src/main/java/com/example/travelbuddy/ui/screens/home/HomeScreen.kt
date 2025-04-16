@@ -1,40 +1,112 @@
 package com.example.travelbuddy.ui.screens.home
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.travelbuddy.data.database.Trip
 import com.example.travelbuddy.ui.TravelBuddyRoute
+import com.example.travelbuddy.ui.composables.ActiveTripCard
+import com.example.travelbuddy.ui.composables.PastTripsSection
+import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
+import com.example.travelbuddy.ui.composables.UpcomingTripsSection
 
 @Composable
 fun HomeScreen(
     navController: NavController
 ) {
-    Scaffold() { contentPadding ->
+    val veneziaTrip = Trip(
+        name = "Weekend a Venezia",
+        destination = "Venezia",
+        startDate = "Gen 15",
+        endDate = "Gen 22",
+        budget = 500.00,
+        description = ""
+    )
+
+    val upcomingTrips = listOf(
+        Trip(
+            name = "Francia, Parigi",
+            destination = "Parigi",
+            startDate = "Giu 15",
+            endDate = "Giu 22",
+            budget = 1000.00,
+            description = ""
+        ),
+        Trip(
+            name = "Giappone, Tokyo",
+            destination = "Giappone",
+            startDate = "Ago 10",
+            endDate = "Ago 20",
+            budget = 3000.00,
+            description = ""
+        ),
+        Trip(
+            name = "Paesi Bassi, Amsterdam",
+            destination = "Amsterdam",
+            startDate = "Set 5",
+            endDate = "Set 12",
+            budget = 500.00,
+            description = ""
+        )
+    )
+
+    val pastTrips = listOf(
+        Trip(
+            name = "Italia, Roma",
+            destination = "Roma",
+            startDate = "Mar 1",
+            endDate = "Mar 6",
+            budget = 300.00,
+            description = ""
+        ),
+        Trip(
+            name = "Spagna, Barcellona",
+            destination = "Barcellona",
+            startDate = "Gen 15",
+            endDate = "Gen 22",
+            budget = 500.00,
+            description = ""
+        )
+    )
+
+    Scaffold(
+        bottomBar = { TravelBuddyBottomBar(navController) }
+    ) { contentPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(contentPadding).padding(12.dp).fillMaxSize()
         ) {
-            Text(
-                text = "HOME"
+            ActiveTripCard(
+                trip = veneziaTrip,
+                onAddExpenseClick = { /* Gestisci l'aggiunta di una spesa */ },
+                onAddEventClick = { /* Gestisci l'aggiunta di un evento */ }
             )
 
-            Button(
-                onClick = {
-                    navController.navigate(TravelBuddyRoute.Login)
-                }
-            ) {
-                Text(
-                    text = "login"
-                )
-            }
+            Spacer(Modifier.height(10.dp))
+
+            UpcomingTripsSection(
+                trips = upcomingTrips,
+                navController = navController
+            )
+
+            Spacer(Modifier.height(10.dp))
+
+            PastTripsSection(
+                trips = pastTrips,
+                navController = navController
+            )
         }
     }
 }
