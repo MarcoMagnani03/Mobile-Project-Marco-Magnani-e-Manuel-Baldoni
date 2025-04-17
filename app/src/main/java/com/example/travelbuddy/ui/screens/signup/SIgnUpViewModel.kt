@@ -1,8 +1,11 @@
 package com.example.travelbuddy.ui.screens.signup
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelbuddy.data.repositories.UsersRepository
+import com.example.travelbuddy.utils.CameraUtils
+import com.example.travelbuddy.utils.MultiplePermissionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -16,8 +19,12 @@ data class SignUpState(
     val bio: String = "",
     val email: String = "",
     val password: String = "",
+    val picture: ByteArray? = null,
+    val profileImageUri: String ="",
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
+    val showImagePicker: Boolean = false,
+    val permissionRationaleVisible: Boolean = false
 ) {
     val canSubmit: Boolean
         get() = firstName.isNotBlank() &&
@@ -34,7 +41,11 @@ interface SignUpActions {
     fun setBio(value: String)
     fun setEmail(value: String)
     fun setPassword(value: String)
+    fun setPicture(value: ByteArray)
     fun signUp()
+    fun openCamera(context: Context)
+    fun showImagePicker(value: Boolean)
+    fun showPermissionRationale(value: Boolean)
 }
 
 class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel() {
@@ -70,6 +81,10 @@ class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel()
             _state.update { it.copy(password = value) }
         }
 
+        override fun setPicture(value: ByteArray) {
+            _state.update { it.copy(picture = value) }
+        }
+
         override fun signUp() {
             viewModelScope.launch {
                 _state.value = _state.value.copy(isLoading = true)
@@ -79,7 +94,7 @@ class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel()
                     }
 
                     userRepository.registerUser(state.value.email, state.value.password, state.value.firstName, state.value.lastName, state.value.phoneNumber, state.value.city,
-                        null, null)
+                        state.value.bio, state.value.picture)
 
                     _state.value = _state.value.copy(
                         isLoading = false,
@@ -93,6 +108,51 @@ class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel()
             }
         }
 
+        override fun openCamera(context: Context) {
+            viewModelScope.launch {
+                try {
+                    CameraUtils.takePhoto(
+                        context = context,
+                        onImageCaptured = { uri ->
+                            _state.value = _state.value.copy(
+                                profileImageUri = uri.toString(),
+                                isLoading = false
+                            )
+                        },
+                        onError = { error ->
+                            _state.value = _state.value.copy(
+                                errorMessage = error.message ?: "Errore fotocamera",
+                                isLoading = false
+                            )
+                        }
+                    )
+                } catch (e: SecurityException) {
+                    _state.value = _state.value.copy(
+                        errorMessage = "Permesso fotocamera negato",
+                        isLoading = false
+                    )
+                }
+            }
+        }
+
+        override fun showImagePicker(value: Boolean) {
+            _state.update { it.copy(showImagePicker = value) }
+        }
+
+        override fun showPermissionRationale(value: Boolean) {
+            _state.update { it.copy(permissionRationaleVisible = value) }
+        }
     }
 
+
+    fun checkAndRequestPermissions(
+        context: Context,
+        permissionHandler: MultiplePermissionHandler
+    ) {
+        if (permissionHandler.statuses.all { it.value.isGranted }) {
+            actions.showImagePicker(true)
+        } else {
+            permissionHandler.launchPermissionRequest()
+        }
+    }
 }
