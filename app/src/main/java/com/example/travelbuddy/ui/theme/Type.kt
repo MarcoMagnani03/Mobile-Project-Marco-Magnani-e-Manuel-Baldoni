@@ -33,8 +33,8 @@ val Typography = Typography(
             Font(R.font.pacifico, FontWeight.Bold)
         ),
         fontWeight = FontWeight.Normal,
-        fontSize = 20.sp,
-        lineHeight = 12.sp,
+        fontSize = 24.sp,
+        lineHeight = 14.sp,
         letterSpacing = 0.sp
     ),
 

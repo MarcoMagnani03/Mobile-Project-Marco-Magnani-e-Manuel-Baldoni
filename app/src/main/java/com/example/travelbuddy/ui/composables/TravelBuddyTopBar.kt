@@ -26,12 +26,11 @@ fun TravelBuddyTopBar(
     onNotificationsClick: () -> Unit = {}
 ) {
     TopAppBar(
+        modifier = Modifier.padding(12.dp, 0.dp),
         title = {
             Column(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp, 0.dp),
+                    Modifier.fillMaxWidth(),
                 horizontalAlignment = if (canNavigateBack) Alignment.CenterHorizontally else Alignment.Start
             ) {
                 Text(
@@ -73,7 +72,8 @@ fun TravelBuddyTopBar(
             IconButton(onClick = onNotificationsClick) {
                 Icon(
                     imageVector = Icons.Default.Notifications,
-                    contentDescription = "Notifiche"
+                    contentDescription = "Notifiche",
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         },
