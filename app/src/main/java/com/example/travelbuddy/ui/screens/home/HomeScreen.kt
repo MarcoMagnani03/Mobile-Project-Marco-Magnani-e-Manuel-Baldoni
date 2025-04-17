@@ -17,6 +17,7 @@ import com.example.travelbuddy.data.database.Trip
 import com.example.travelbuddy.ui.composables.ActiveTripCard
 import com.example.travelbuddy.ui.composables.PastTripsSection
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
+import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
 import com.example.travelbuddy.ui.composables.UpcomingTripsSection
 
 @Composable
@@ -81,6 +82,14 @@ fun HomeScreen(
     val scrollState = rememberScrollState()
 
     Scaffold(
+        topBar = {
+            TravelBuddyTopBar(
+                navController = navController,
+                title = "Travel Buddy",
+                subtitle = "Plan & Manage Your Adventures",
+                canNavigateBack = false
+            )
+        },
         bottomBar = { TravelBuddyBottomBar(navController) }
     ) { contentPadding ->
         Column(

@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -14,12 +15,15 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.travelbuddy.ui.TravelBuddyRoute
 
 sealed class BottomNavItem(
@@ -34,7 +38,7 @@ sealed class BottomNavItem(
     )
 
     object NewTrip : BottomNavItem(
-        route = TravelBuddyRoute.Home,
+        route = TravelBuddyRoute.NewTrip,
         title = "New Trip",
         icon = Icons.Default.AddCircle
     )
@@ -50,13 +54,20 @@ sealed class BottomNavItem(
         title = "Profile",
         icon = Icons.Default.Person
     )
+
+    object Settings : BottomNavItem(
+        route = TravelBuddyRoute.Home,
+        title = "Settings",
+        icon = Icons.Default.Settings
+    )
 }
 
 val bottomNavItems = listOf(
     BottomNavItem.Home,
     BottomNavItem.NewTrip,
     BottomNavItem.Friends,
-    BottomNavItem.Profile
+    BottomNavItem.Profile,
+    BottomNavItem.Settings
 )
 
 @Composable
@@ -79,26 +90,24 @@ fun RowScope.AddBottomNavItem(
     navItem: BottomNavItem,
     navController: NavController
 ) {
-    val selected = navController.currentDestination == navItem.route
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val selected =
+        navItem.route == TravelBuddyRoute.Home && backStackEntry?.destination?.hasRoute<TravelBuddyRoute.Home>() == true ||
+        navItem.route == TravelBuddyRoute.NewTrip && backStackEntry?.destination?.hasRoute<TravelBuddyRoute.NewTrip>() == true ||
+        navItem.route == TravelBuddyRoute.Home && backStackEntry?.destination?.hasRoute<TravelBuddyRoute.Home>() == true ||
+        navItem.route == TravelBuddyRoute.Home && backStackEntry?.destination?.hasRoute<TravelBuddyRoute.Home>() == true ||
+        navItem.route == TravelBuddyRoute.Home && backStackEntry?.destination?.hasRoute<TravelBuddyRoute.Home>() == true
 
-    NavigationBarItem(
+                NavigationBarItem(
         selected = selected,
         onClick = {
-            navController.navigate(navItem.route) {
-                // Evita di creare più istanze della stessa destinazione
-                popUpTo(navController.graph.findStartDestination().id) {
-                    saveState = true
-                }
-                launchSingleTop = true
-                restoreState = true
-            }
+            navController.navigate(navItem.route)
         },
         icon = {
             Icon(
                 imageVector = navItem.icon,
                 contentDescription = navItem.title,
                 modifier = Modifier.size(24.dp),
-                tint = if (selected) Color.White else Color.White.copy(alpha = 0.7f)
             )
         },
         label = { Text(text = navItem.title) },

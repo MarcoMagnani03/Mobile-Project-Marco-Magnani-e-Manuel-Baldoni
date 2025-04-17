@@ -14,17 +14,11 @@ fun LaunchScreen(navController: NavHostController) {
     val userSession = koinInject<UserSessionRepository>()
 
     val email by userSession.userEmail.collectAsState(initial = "")
-    val hasPin by userSession.hasPinFlow.collectAsState(initial = false)
 
-    LaunchedEffect(email, hasPin) {
+    LaunchedEffect(email) {
         when {
             email.isNullOrBlank() -> {
                 navController.navigate(TravelBuddyRoute.Login) {
-                    popUpTo(0) { inclusive = true }
-                }
-            }
-            !hasPin -> {
-                navController.navigate(TravelBuddyRoute.Code) {
                     popUpTo(0) { inclusive = true }
                 }
             }
