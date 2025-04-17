@@ -3,9 +3,7 @@ package com.example.travelbuddy.ui.composables
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,16 +12,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.travelbuddy.ui.TravelBuddyRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TravelBuddyTopBar(
+    navController: NavController,
     title: String,
     subtitle: String? = null,
     canNavigateBack: Boolean = false,
-    onNavigateBack: () -> Unit = {},
-    onSettingsClick: () -> Unit = {},
-    onNotificationsClick: () -> Unit = {}
+    onNavigateBack: (() -> Unit)? = {},
 ) {
     TopAppBar(
         modifier = Modifier.padding(12.dp, 0.dp),
@@ -54,22 +53,23 @@ fun TravelBuddyTopBar(
         },
         navigationIcon = {
             if (canNavigateBack) {
-                IconButton(onClick = onNavigateBack) {
+                IconButton(onClick = {
+                    if (onNavigateBack != null) {
+                        onNavigateBack()
+                    } else {
+                        navController.navigateUp()
+                    }
+                }) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Torna indietro"
                     )
                 }
             }
         },
         actions = {
-            IconButton(onClick = onSettingsClick) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Impostazioni"
-                )
-            }
-            IconButton(onClick = onNotificationsClick) {
+            // TODO: Cambiare con notifica
+            IconButton(onClick = { navController.navigate(TravelBuddyRoute.Home) }) {
                 Icon(
                     imageVector = Icons.Default.Notifications,
                     contentDescription = "Notifiche",

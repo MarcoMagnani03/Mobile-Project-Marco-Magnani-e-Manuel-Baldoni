@@ -13,6 +13,7 @@ import com.example.travelbuddy.data.repositories.UserSessionRepository
 import com.example.travelbuddy.ui.screens.code.CodeScreen
 import com.example.travelbuddy.ui.screens.code.CodeViewModel
 import com.example.travelbuddy.ui.screens.launch.LaunchScreen
+import com.example.travelbuddy.ui.screens.newTrip.NewTripScreen
 import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpScreen
 import kotlinx.serialization.Serializable
@@ -25,12 +26,12 @@ sealed interface TravelBuddyRoute {
     @Serializable data object Code : TravelBuddyRoute
     @Serializable data object SignUp : TravelBuddyRoute
     @Serializable data object Launch : TravelBuddyRoute
+    @Serializable data object NewTrip : TravelBuddyRoute
 }
 
 @Composable
 fun TravelBuddyNavGraph(navController: NavHostController) {
     val userSession = koinInject<UserSessionRepository>()
-    val isLoggedIn by userSession.userEmail.collectAsStateWithLifecycle(initialValue = null)
     val hasPin by userSession.hasPinFlow.collectAsStateWithLifecycle(initialValue = false)
 
     NavHost(
@@ -70,6 +71,10 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
 
         composable<TravelBuddyRoute.Launch> {
             LaunchScreen(navController)
+        }
+
+        composable<TravelBuddyRoute.NewTrip> {
+            NewTripScreen(navController)
         }
     }
 }

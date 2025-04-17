@@ -84,12 +84,10 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TravelBuddyTopBar(
+                navController = navController,
                 title = "Travel Buddy",
                 subtitle = "Plan & Manage Your Adventures",
-                canNavigateBack = false,
-                onNavigateBack = { /* gestisci navigazione indietro */ },
-                onSettingsClick = { /* gestisci click impostazioni */ },
-                onNotificationsClick = { /* gestisci click notifiche */ }
+                canNavigateBack = false
             )
         },
         bottomBar = { TravelBuddyBottomBar(navController) }

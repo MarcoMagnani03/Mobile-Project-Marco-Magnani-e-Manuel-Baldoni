@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -34,7 +35,7 @@ sealed class BottomNavItem(
     )
 
     object NewTrip : BottomNavItem(
-        route = TravelBuddyRoute.Home,
+        route = TravelBuddyRoute.NewTrip,
         title = "New Trip",
         icon = Icons.Default.AddCircle
     )
@@ -50,13 +51,20 @@ sealed class BottomNavItem(
         title = "Profile",
         icon = Icons.Default.Person
     )
+
+    object Settings : BottomNavItem(
+        route = TravelBuddyRoute.Home,
+        title = "Settings",
+        icon = Icons.Default.Settings
+    )
 }
 
 val bottomNavItems = listOf(
     BottomNavItem.Home,
     BottomNavItem.NewTrip,
     BottomNavItem.Friends,
-    BottomNavItem.Profile
+    BottomNavItem.Profile,
+    BottomNavItem.Settings
 )
 
 @Composable
