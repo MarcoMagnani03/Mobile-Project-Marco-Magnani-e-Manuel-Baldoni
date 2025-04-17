@@ -57,9 +57,12 @@ class LoginViewModel(
                     _state.value = _state.value.copy(
                         isLoading = false,
                         isSuccess = success,
-                        navigateToCode = success,
                         errorMessage = if (!success) "Invalid credentials" else null
                     )
+
+                    if(success){
+                        onLoginSuccess(_state.value.email)
+                    }
                 } catch (e: Exception) {
                     _state.value = _state.value.copy(
                         isLoading = false,
@@ -79,9 +82,5 @@ class LoginViewModel(
                 navigateToCode = true
             )
         }
-    }
-
-    fun resetNavigation() {
-        _state.value = _state.value.copy(navigateToCode = false)
     }
 }
