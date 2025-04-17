@@ -14,6 +14,7 @@ import com.example.travelbuddy.ui.screens.code.CodeScreen
 import com.example.travelbuddy.ui.screens.code.CodeViewModel
 import com.example.travelbuddy.ui.screens.launch.LaunchScreen
 import com.example.travelbuddy.ui.screens.newTrip.NewTripScreen
+import com.example.travelbuddy.ui.screens.newTrip.NewTripViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpScreen
 import kotlinx.serialization.Serializable
@@ -38,6 +39,10 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
         navController = navController,
         startDestination = TravelBuddyRoute.Launch
     ) {
+        composable<TravelBuddyRoute.Launch> {
+            LaunchScreen(navController)
+        }
+
         composable<TravelBuddyRoute.Home> {
             HomeScreen(navController)
         }
@@ -62,19 +67,16 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             )
         }
 
-
         composable<TravelBuddyRoute.SignUp> {
             val loginViewModel = koinViewModel<SignUpViewModel>()
             val state by loginViewModel.state.collectAsStateWithLifecycle()
             SignUpScreen(state, loginViewModel.actions, navController)
         }
 
-        composable<TravelBuddyRoute.Launch> {
-            LaunchScreen(navController)
-        }
-
         composable<TravelBuddyRoute.NewTrip> {
-            NewTripScreen(navController)
+            val newTripViewModel = koinViewModel<NewTripViewModel>()
+            val state by newTripViewModel.state.collectAsStateWithLifecycle()
+            NewTripScreen(state, newTripViewModel.actions, navController)
         }
     }
 }
