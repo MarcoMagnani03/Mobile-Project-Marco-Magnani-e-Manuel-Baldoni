@@ -73,4 +73,9 @@ object CameraUtils {
             }
         }, cameraExecutor)
     }
+
+    fun uriToByteArray(context: Context, uri: Uri): ByteArray {
+        val inputStream = context.contentResolver.openInputStream(uri)
+        return inputStream?.readBytes() ?: byteArrayOf()
+    }
 }

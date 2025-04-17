@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.koin.androidx.compose)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.room.ktx)
     implementation(libs.coil.compose)
     implementation(libs.firebase.crashlytics.buildtools)

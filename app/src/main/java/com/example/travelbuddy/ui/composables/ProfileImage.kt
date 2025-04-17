@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.example.travelbuddy.R
 import coil.compose.AsyncImage
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.offset
 import androidx.compose.material.icons.outlined.Image
 
 @Composable
@@ -29,17 +30,20 @@ fun ProfileImageSection(
     onClick: () -> Unit
 ) {
     val imageModifier = Modifier
-        .size(120.dp)
+        .size(140.dp)
         .clip(CircleShape)
         .clickable(onClick = onClick)
         .border(
             width = 2.dp,
-            color = MaterialTheme.colorScheme.primary,
+            color = if (profileImageUri.isEmpty())
+                MaterialTheme.colorScheme.surfaceVariant
+            else
+                MaterialTheme.colorScheme.primary,
             shape = CircleShape
         )
 
     Box(
-        contentAlignment = Alignment.BottomEnd,
+        contentAlignment = Alignment.Center,
         modifier = Modifier.padding(16.dp)
     ) {
         if (profileImageUri.isNotEmpty()) {
@@ -48,29 +52,43 @@ fun ProfileImageSection(
                 contentDescription = "Immagine profilo",
                 modifier = imageModifier,
                 contentScale = ContentScale.Crop,
-//                error = painterResource(R.drawable.profile_placeholder),
-//                placeholder = painterResource(R.drawable.profile_placeholder)
             )
         } else {
-            Image(
-                Icons.Outlined.Image,
-                contentDescription = "Placeholder profilo",
-                modifier = imageModifier,
-                contentScale = ContentScale.Crop
-            )
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = imageModifier
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        shape = CircleShape
+                    )
+            ) {
+                Icon(
+                    Icons.Outlined.Image,
+                    contentDescription = "Aggiungi foto",
+                    modifier = Modifier.size(48.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
 
-        Icon(
-            imageVector = Icons.Default.CameraAlt,
-            contentDescription = "Cambia foto",
+        // Icona camera sovrapposta
+        Box(
             modifier = Modifier
-                .size(32.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = CircleShape
-                )
-                .padding(6.dp),
-            tint = MaterialTheme.colorScheme.onPrimary
-        )
+                .align(Alignment.BottomEnd)
+                .offset((-8).dp, (-8).dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.CameraAlt,
+                contentDescription = "Cambia foto",
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = CircleShape
+                    )
+                    .padding(8.dp),
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
     }
 }

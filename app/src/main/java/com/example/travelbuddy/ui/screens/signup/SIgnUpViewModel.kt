@@ -24,7 +24,8 @@ data class SignUpState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val showImagePicker: Boolean = false,
-    val permissionRationaleVisible: Boolean = false
+    val permissionRationaleVisible: Boolean = false,
+    val permissionCameraDeniedVisible: Boolean = false
 ) {
     val canSubmit: Boolean
         get() = firstName.isNotBlank() &&
@@ -42,10 +43,12 @@ interface SignUpActions {
     fun setEmail(value: String)
     fun setPassword(value: String)
     fun setPicture(value: ByteArray)
+    fun setPictureUri(value: String)
     fun signUp()
     fun openCamera(context: Context)
     fun showImagePicker(value: Boolean)
     fun showPermissionRationale(value: Boolean)
+    fun showCameraPermissionDeniedAlert(value : Boolean)
 }
 
 class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel() {
@@ -83,6 +86,10 @@ class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel()
 
         override fun setPicture(value: ByteArray) {
             _state.update { it.copy(picture = value) }
+        }
+
+        override fun setPictureUri(value: String) {
+            _state.update { it.copy(profileImageUri = value) }
         }
 
         override fun signUp() {
@@ -141,6 +148,10 @@ class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel()
 
         override fun showPermissionRationale(value: Boolean) {
             _state.update { it.copy(permissionRationaleVisible = value) }
+        }
+
+        override fun showCameraPermissionDeniedAlert(value: Boolean) {
+            _state.update { it.copy(permissionCameraDeniedVisible = value) }
         }
     }
 

@@ -5,9 +5,13 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.PhotoLibrary
@@ -19,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -28,6 +33,8 @@ import com.example.travelbuddy.ui.composables.TravelBuddyButton
 import com.example.travelbuddy.utils.PermissionStatus
 import com.example.travelbuddy.utils.rememberMultiplePermissions
 import com.example.travelbuddy.ui.composables.ProfileImageSection
+import com.example.travelbuddy.utils.CameraUtils
+import com.example.travelbuddy.utils.CameraUtils.uriToByteArray
 
 @Composable
 fun SignUpScreen(
@@ -38,7 +45,8 @@ fun SignUpScreen(
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val permissionHandler = rememberMultiplePermissions(
+
+    val cameraPermissionHandler = rememberMultiplePermissions(
         permissions = listOf(
             Manifest.permission.CAMERA,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -54,54 +62,29 @@ fun SignUpScreen(
             if (statuses.any { it.value == PermissionStatus.PermanentlyDenied }) {
                 actions.showPermissionRationale(true)
             }
+            else{
+                actions.showCameraPermissionDeniedAlert(true)
+            }
         }
+    }
+
+    val scrollState = rememberScrollState();
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            val bytes = uriToByteArray(context, uri)
+
+            actions.setPicture(bytes)
+            actions.setPictureUri(uri.toString())
+        }
+        actions.showImagePicker(false)
     }
 
     Scaffold { contentPadding ->
 
-        Column(
-            modifier = Modifier
-                .padding(contentPadding)
-                .fillMaxSize()
-        ) {
-            ProfileImageSection(
-                profileImageUri = state.profileImageUri,
-                onClick = {
-                    if (permissionHandler.statuses.all { it.value.isGranted }) {
-                        actions.showImagePicker(true)
-                    } else {
-//                        viewModel.checkAndRequestPermissions(context, permissionHandler)
-                    }
-                }
-            )
 
-            if (state.permissionRationaleVisible) {
-                LaunchedEffect(snackbarHostState) {
-                    val res = snackbarHostState.showSnackbar(
-                        "Location permission is required.",
-                        "Go to Settings",
-                        duration = SnackbarDuration.Long
-                    )
-                    if (res == SnackbarResult.ActionPerformed) {
-                        context.startActivity(
-                            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                data = Uri.fromParts("package", context.packageName, null)
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            }
-                        )
-                    }
-                    actions.showPermissionRationale(false)
-                }
-            }
-
-            if (state.showImagePicker) {
-                ImageSourceDialog(
-                    onCameraSelected = { /* ... */ },
-                    onGallerySelected = { /* ... */ },
-                    onDismiss = { actions.showImagePicker(false) }
-                )
-            }
-        }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
@@ -109,6 +92,7 @@ fun SignUpScreen(
                 .padding(contentPadding)
                 .padding(16.dp)
                 .fillMaxSize()
+                .verticalScroll(scrollState)
         ) {
             // TODO: Manca bottone per tornare indietro
 
@@ -120,9 +104,49 @@ fun SignUpScreen(
 
             Spacer(modifier = Modifier.size(24.dp))
 
+            ProfileImageSection(
+                profileImageUri = state.profileImageUri,
+                onClick = {
+                    if (cameraPermissionHandler.statuses.all { it.value.isGranted }) {
+                        actions.showImagePicker(true)
+                    } else {
+                        cameraPermissionHandler.launchPermissionRequest()
+                    }
+                }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
 
+            Text(
+                text = "Select a profile image",
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.bodyLarge,
+//                modifier = Modifier.clickable(onClick = onClick)
+            )
 
-            Spacer(modifier = Modifier.size(16.dp))
+            if (state.showImagePicker) {
+                ImageSourceDialog(
+                    onCameraSelected = {
+                        CameraUtils.takePhoto(
+                            context = context,
+                            onImageCaptured = { uri ->
+                                val bytes = uriToByteArray(context, uri)
+
+                                actions.setPicture(bytes)
+                                actions.setPictureUri(uri.toString())
+                                actions.showImagePicker(false)
+                            },
+                            onError = {
+                                actions.showImagePicker(false)
+                            }
+                        )
+                    }
+                    ,
+                    onGallerySelected = {galleryLauncher.launch("image/*")},
+                    onDismiss = { actions.showImagePicker(false) }
+                )
+            }
+
+            Spacer(modifier = Modifier.size(25.dp))
 
             InputField(
                 value = state.firstName,
@@ -207,6 +231,45 @@ fun SignUpScreen(
             )
 
             Spacer(modifier = Modifier.size(32.dp))
+        }
+        if (state.permissionRationaleVisible) {
+            LaunchedEffect(snackbarHostState) {
+                val res = snackbarHostState.showSnackbar(
+                    "Camera permission is required.",
+                    "Go to Settings",
+                    duration = SnackbarDuration.Long
+                )
+                if (res == SnackbarResult.ActionPerformed) {
+                    context.startActivity(
+                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", context.packageName, null)
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
+                    )
+                }
+                actions.showPermissionRationale(false)
+            }
+        }
+
+        if (state.permissionCameraDeniedVisible) {
+            AlertDialog(
+                title = { Text("Camera permission denied") },
+                text = { Text("Camera and photo gallery permission is required to use the camera in the app.") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        cameraPermissionHandler.launchPermissionRequest()
+                        actions.showCameraPermissionDeniedAlert(false)
+                    }) {
+                        Text("Grant")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { actions.showCameraPermissionDeniedAlert(false) }) {
+                        Text("Dismiss")
+                    }
+                },
+                onDismissRequest = { actions.showCameraPermissionDeniedAlert(false) }
+            )
         }
     }
 }
