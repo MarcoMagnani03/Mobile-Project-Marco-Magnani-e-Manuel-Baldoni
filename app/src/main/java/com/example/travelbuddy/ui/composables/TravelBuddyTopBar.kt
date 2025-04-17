@@ -21,8 +21,7 @@ fun TravelBuddyTopBar(
     navController: NavController,
     title: String,
     subtitle: String? = null,
-    canNavigateBack: Boolean = false,
-    onNavigateBack: (() -> Unit)? = {},
+    canNavigateBack: Boolean = false
 ) {
     TopAppBar(
         modifier = Modifier.padding(12.dp, 0.dp),
@@ -52,14 +51,8 @@ fun TravelBuddyTopBar(
             }
         },
         navigationIcon = {
-            if (canNavigateBack) {
-                IconButton(onClick = {
-                    if (onNavigateBack != null) {
-                        onNavigateBack()
-                    } else {
-                        navController.navigateUp()
-                    }
-                }) {
+            if (canNavigateBack && navController.previousBackStackEntry != null) {
+                IconButton(onClick = { navController.navigateUp() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Torna indietro"
