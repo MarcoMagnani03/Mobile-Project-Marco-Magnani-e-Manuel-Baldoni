@@ -38,4 +38,10 @@ class UserSessionRepository(
             preferences[HAS_PIN] = hasPin
         }
     }
+
+    suspend fun clearAllSessionData() {
+        dataStore.edit { preferences ->
+            preferences.clear()
+        }
+    }
 }

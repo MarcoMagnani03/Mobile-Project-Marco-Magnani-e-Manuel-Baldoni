@@ -76,6 +76,9 @@ class LoginViewModel(
 
     fun onLoginSuccess(email: String) {
         viewModelScope.launch {
+            val hasPin = userRepository.hasPin(_state.value.email)
+            appPreferences.saveHasPin(hasPin)
+
             appPreferences.saveUserEmail(email)
 
             _state.value = _state.value.copy(

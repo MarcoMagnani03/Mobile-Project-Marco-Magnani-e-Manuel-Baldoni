@@ -29,9 +29,19 @@ sealed interface TravelBuddyRoute {
 
 @Composable
 fun TravelBuddyNavGraph(navController: NavHostController) {
+    val userSession = koinInject<UserSessionRepository>()
+    val isLoggedIn by userSession.userEmail.collectAsStateWithLifecycle(initialValue = null)
+    val hasPin by userSession.hasPinFlow.collectAsStateWithLifecycle(initialValue = false)
+
     NavHost(
         navController = navController,
-        startDestination = TravelBuddyRoute.Login
+        startDestination = if (isLoggedIn != null && hasPin) {
+            TravelBuddyRoute.Code
+        } else if (isLoggedIn != null) {
+            TravelBuddyRoute.Code
+        } else {
+            TravelBuddyRoute.Login
+        }
     ) {
         composable<TravelBuddyRoute.Home> {
             HomeScreen(navController)
@@ -52,7 +62,7 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
                 state = state,
                 actions = codeViewModel.actions,
                 navController = navController,
-                isNewPinSetup = true,
+                isNewPinSetup = !hasPin,
                 appPreferences = userSession
             )
         }

@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.example.travelbuddy.utils.PasswordHasher
 
 @Dao
 interface TripsDAO {
@@ -74,14 +73,11 @@ interface UsersDAO {
     @Query("UPDATE User SET pin = :pin WHERE email = :email")
     suspend fun updateUserPin(email: String, pin: String)
 
+    @Query("SELECT EXISTS(SELECT 1 FROM User WHERE email = :email AND pin IS NOT NULL)")
+    suspend fun hasPin(email: String): Boolean
+
     @Query("SELECT EXISTS(SELECT 1 FROM User WHERE email = :email AND pin = :pin)")
     suspend fun verifyUserPin(email: String, pin: String): Boolean
-
-    suspend fun loginUser(email: String, password: String): Boolean {
-        val user = getUserByEmail(email) ?: return false
-        val hashedInput = PasswordHasher.hashPassword(password, user.passwordSalt)
-        return hashedInput == user.password
-    }
 }
 
 @Dao

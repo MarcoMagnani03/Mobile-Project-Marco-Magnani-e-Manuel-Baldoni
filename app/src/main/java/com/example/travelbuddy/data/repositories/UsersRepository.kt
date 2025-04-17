@@ -3,10 +3,6 @@ package com.example.travelbuddy.data.repositories
 import com.example.travelbuddy.data.database.User
 import com.example.travelbuddy.data.database.UsersDAO
 import com.example.travelbuddy.utils.PasswordHasher
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Hex
-import java.security.SecureRandom
-import javax.crypto.SecretKeyFactory
-import javax.crypto.spec.PBEKeySpec
 
 class UsersRepository(
     private val dao: UsersDAO
@@ -15,8 +11,14 @@ class UsersRepository(
 
     suspend fun getUserByEmail(email: String) = dao.getUserByEmail(email)
 
-    // TODO: Spotare business logic all'interno del repository
-    suspend fun signInWithEmailAndPassword(email: String, password: String) = dao.loginUser(email,password)
+    suspend fun loginUser(email: String, password: String): Boolean {
+        val user = dao.getUserByEmail(email) ?: return false
+        val hashedInput = PasswordHasher.hashPassword(password, user.passwordSalt)
+        return hashedInput == user.password
+    }
+    
+    suspend fun signInWithEmailAndPassword(email: String, password: String) =
+        loginUser(email, password)
 
     suspend fun updateUserPin(email: String, pin: String) = dao.updateUserPin(email,pin)
     suspend fun verifyPin(email: String, pin: String) = dao.verifyUserPin(email,pin)
@@ -46,5 +48,7 @@ class UsersRepository(
         )
         dao.upsert(user)
     }
+
+    suspend fun hasPin(email: String): Boolean = dao.hasPin(email)
 
 }

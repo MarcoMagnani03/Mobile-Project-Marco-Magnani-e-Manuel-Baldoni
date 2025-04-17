@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.travelbuddy.data.repositories.UserSessionRepository
 import com.example.travelbuddy.ui.TravelBuddyRoute
+import com.example.travelbuddy.ui.composables.CustomKeypad
 import com.example.travelbuddy.ui.composables.InputField
 import com.example.travelbuddy.ui.composables.TravelBuddyButton
 @Composable
@@ -85,7 +86,8 @@ fun CodeScreen(
                         actions.setCode(state.code + digit.toString())
                     }
                 },
-                onConfirm = {
+                //TODO: Cambiare quello che avviene quando si clicca questo bottone
+                onBiometrics = {
                     if (state.code.length == 6 && !state.isLoading) {
                         userEmail?.let { email ->
                             handlePinAction(

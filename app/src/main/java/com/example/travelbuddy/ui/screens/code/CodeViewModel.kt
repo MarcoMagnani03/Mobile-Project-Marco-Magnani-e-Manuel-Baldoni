@@ -58,6 +58,7 @@ class CodeViewModel(
                 _state.value = _state.value.copy(isLoading = true)
                 try {
                     userRepository.updateUserPin(email, pin)
+                    appPreferences.saveHasPin(true)
                     onComplete()
                 } catch (e: Exception) {
                     showError("Save failed: ${e.localizedMessage}")
