@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.example.travelbuddy.data.database.TravelBuddyDatabase
+import com.example.travelbuddy.data.repositories.GroupsRepository
 import com.example.travelbuddy.data.repositories.TripsRepository
 import com.example.travelbuddy.data.repositories.UserSessionRepository
 import com.example.travelbuddy.data.repositories.UsersRepository
@@ -30,14 +31,16 @@ val appModule = module {
 
     single { get<TravelBuddyDatabase>().usersDAO() }
     single { get<TravelBuddyDatabase>().tripsDAO() }
+    single { get<TravelBuddyDatabase>().groupsDAO() }
 
     single { UsersRepository(get()) }
     single { UserSessionRepository(get()) }
     single { TripsRepository(get()) }
+    single { GroupsRepository(get()) }
 
     viewModel { TravelBuddyViewModel() }
     viewModel { LoginViewModel(get(),get()) }
     viewModel { CodeViewModel(get(),get()) }
     viewModel { SignUpViewModel(get()) }
-    viewModel { NewTripViewModel(get()) }
+    viewModel { NewTripViewModel(get(), get(), get()) }
 }

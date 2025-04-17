@@ -1,9 +1,13 @@
 package com.example.travelbuddy.ui.screens.newTrip
 
+import androidx.compose.ui.graphics.vector.Group
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelbuddy.data.database.Trip
+import com.example.travelbuddy.data.database.Group
+import com.example.travelbuddy.data.repositories.GroupsRepository
 import com.example.travelbuddy.data.repositories.TripsRepository
+import com.example.travelbuddy.data.repositories.UserSessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -16,8 +20,8 @@ data class NewTripState(
     val endDate: String = "",
     val budget: Double = 0.00,
     val description: String = "",
-    val isLoading: Boolean = false,
     val errorMessage: String = "",
+    val isLoading: Boolean = false,
 ) {
     val canSubmit: Boolean
         get() = tripName.isNotBlank() &&
@@ -34,10 +38,15 @@ interface NewTripActions {
     fun setBudget(value: Double)
     fun setDescription(value: String)
     fun setErrorMessage(value: String)
+    fun setIsLoading(value: Boolean)
     fun createTrip()
 }
 
-class NewTripViewModel(private val tripsRepository: TripsRepository): ViewModel() {
+class NewTripViewModel(
+    private val tripsRepository: TripsRepository,
+    private val groupsRepository: GroupsRepository,
+    private val userSessionRepository: UserSessionRepository
+): ViewModel() {
     private val _state = MutableStateFlow(NewTripState())
     val state = _state.asStateFlow()
 
@@ -70,6 +79,10 @@ class NewTripViewModel(private val tripsRepository: TripsRepository): ViewModel(
             _state.update { it.copy(errorMessage = value) }
         }
 
+        override fun setIsLoading(value: Boolean) {
+            _state.update { it.copy(isLoading = value) }
+        }
+
         override fun createTrip() {
             viewModelScope.launch {
                 _state.value = _state.value.copy(isLoading = true)
@@ -84,6 +97,13 @@ class NewTripViewModel(private val tripsRepository: TripsRepository): ViewModel(
                     )
 
                     tripsRepository.upsert(newTrip)
+
+                    val newGroup = Group(
+                        userEmail = userSessionRepository.userEmail.toString(),
+                        tripId = newTrip.id
+                    )
+
+                    groupsRepository.upsert(newGroup)
 
                     _state.value = _state.value.copy(
                         isLoading = false,

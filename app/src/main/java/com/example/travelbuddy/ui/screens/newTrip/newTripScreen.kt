@@ -1,5 +1,6 @@
 package com.example.travelbuddy.ui.screens.newTrip
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -9,6 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,6 +25,7 @@ import androidx.navigation.NavController
 import com.example.travelbuddy.ui.composables.InputField
 import com.example.travelbuddy.ui.composables.InputFieldType
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
+import com.example.travelbuddy.ui.composables.TravelBuddyButton
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
 
 @Composable
@@ -42,6 +49,7 @@ fun NewTripScreen(
     ) { contentPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .padding(contentPadding)
                 .padding(12.dp)
@@ -62,6 +70,20 @@ fun NewTripScreen(
                 label = "Destination*",
                 placeholder = "Where are you going?",
                 type = InputFieldType.Text,
+            )
+
+            InputField(
+                value = state.startDate,
+                onValueChange = actions::setStartDate,
+                label = "Start date*",
+                type = InputFieldType.Date,
+            )
+
+            InputField(
+                value = state.endDate,
+                onValueChange = actions::setEndDate,
+                label = "End date*",
+                type = InputFieldType.Date,
             )
 
             InputField(
@@ -86,6 +108,19 @@ fun NewTripScreen(
                     .defaultMinSize(0.dp, 100.dp),
             )
 
+            TravelBuddyButton(
+                enabled = state.canSubmit && !state.isLoading,
+                onClick = actions::createTrip,
+                label = "Create trip",
+                isLoading = state.isLoading,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Create trip",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            )
             Spacer(Modifier.height(10.dp))
         }
     }
