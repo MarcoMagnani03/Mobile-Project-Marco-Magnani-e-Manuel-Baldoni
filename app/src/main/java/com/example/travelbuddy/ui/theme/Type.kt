@@ -28,6 +28,23 @@ val Typography = Typography(
         letterSpacing = 0.sp
     ),
 
+    titleMedium = TextStyle(
+        fontFamily = FontFamily(
+            Font(R.font.pacifico, FontWeight.Bold)
+        ),
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp,
+        lineHeight = 12.sp,
+        letterSpacing = 0.sp
+    ),
+
+    headlineLarge = TextStyle(
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp,
+        lineHeight = 12.sp,
+        letterSpacing = 0.sp
+    ),
+
     /* Other default text styles to override
     titleLarge = TextStyle(
         fontFamily = FontFamily.Default,
