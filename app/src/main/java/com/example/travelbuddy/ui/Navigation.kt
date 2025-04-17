@@ -35,13 +35,7 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
 
     NavHost(
         navController = navController,
-        startDestination = if (isLoggedIn != null && hasPin) {
-            TravelBuddyRoute.Code
-        } else if (isLoggedIn != null) {
-            TravelBuddyRoute.Code
-        } else {
-            TravelBuddyRoute.Login
-        }
+        startDestination = TravelBuddyRoute.Launch
     ) {
         composable<TravelBuddyRoute.Home> {
             HomeScreen(navController)
