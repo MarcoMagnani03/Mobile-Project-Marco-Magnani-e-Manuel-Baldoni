@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.junit)

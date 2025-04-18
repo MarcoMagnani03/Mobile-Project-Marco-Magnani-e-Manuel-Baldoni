@@ -7,34 +7,28 @@ import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
-import com.example.travelbuddy.ui.composables.InputField
-import com.example.travelbuddy.ui.composables.InputFieldType
-import com.example.travelbuddy.ui.composables.TravelBuddyButton
+import com.example.travelbuddy.ui.TravelBuddyRoute
+import com.example.travelbuddy.ui.composables.*
+import com.example.travelbuddy.ui.screens.camera.CameraCaptureScreen
+import com.example.travelbuddy.ui.screens.camera.ImagePreviewScreen
+import com.example.travelbuddy.utils.ImageUtils
 import com.example.travelbuddy.utils.PermissionStatus
 import com.example.travelbuddy.utils.rememberMultiplePermissions
-import com.example.travelbuddy.ui.composables.ProfileImageSection
-import com.example.travelbuddy.utils.CameraUtils
-import com.example.travelbuddy.utils.CameraUtils.uriToByteArray
 
 @Composable
 fun SignUpScreen(
@@ -44,7 +38,6 @@ fun SignUpScreen(
 ) {
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
-
 
     val cameraPermissionHandler = rememberMultiplePermissions(
         permissions = listOf(
@@ -61,41 +54,34 @@ fun SignUpScreen(
         } else {
             if (statuses.any { it.value == PermissionStatus.PermanentlyDenied }) {
                 actions.showPermissionRationale(true)
-            }
-            else{
+            } else {
                 actions.showCameraPermissionDeniedAlert(true)
             }
         }
     }
 
-    val scrollState = rememberScrollState();
-
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            val bytes = uriToByteArray(context, uri)
-
+            val bytes = ImageUtils.uriToByteArray(context, it)
             actions.setPicture(bytes)
-            actions.setPictureUri(uri.toString())
+            actions.setPictureUri(it.toString())
         }
         actions.showImagePicker(false)
     }
 
+    val scrollState = rememberScrollState()
+
     Scaffold { contentPadding ->
-
-
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .padding(contentPadding)
                 .padding(16.dp)
                 .fillMaxSize()
-                .verticalScroll(scrollState)
+                .verticalScroll(scrollState),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // TODO: Manca bottone per tornare indietro
-
             Text(
                 text = "Travel Buddy",
                 style = MaterialTheme.typography.titleLarge,
@@ -114,34 +100,22 @@ fun SignUpScreen(
                     }
                 }
             )
+
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = "Select a profile image",
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.bodyLarge,
-//                modifier = Modifier.clickable(onClick = onClick)
+                style = MaterialTheme.typography.bodyLarge
             )
 
             if (state.showImagePicker) {
                 ImageSourceDialog(
                     onCameraSelected = {
-                        CameraUtils.takePhoto(
-                            context = context,
-                            onImageCaptured = { uri ->
-                                val bytes = uriToByteArray(context, uri)
-
-                                actions.setPicture(bytes)
-                                actions.setPictureUri(uri.toString())
-                                actions.showImagePicker(false)
-                            },
-                            onError = {
-                                actions.showImagePicker(false)
-                            }
-                        )
-                    }
-                    ,
-                    onGallerySelected = {galleryLauncher.launch("image/*")},
+                        actions.showImagePicker(false)
+                        navController.navigate(TravelBuddyRoute.CameraCapture)
+                    },
+                    onGallerySelected = { galleryLauncher.launch("image/*") },
                     onDismiss = { actions.showImagePicker(false) }
                 )
             }
@@ -152,62 +126,56 @@ fun SignUpScreen(
                 value = state.firstName,
                 label = "Nome",
                 onValueChange = actions::setFirstName,
-                leadingIcon = {
-                    Icon(Icons.Outlined.Person, contentDescription = "Nome")
-                }
+                leadingIcon = { Icon(Icons.Outlined.Person, null) }
             )
+
             Spacer(modifier = Modifier.size(16.dp))
 
             InputField(
                 value = state.lastName,
                 label = "Cognome",
                 onValueChange = actions::setLastName,
-                leadingIcon = {
-                    Icon(Icons.Outlined.PersonOutline, contentDescription = "Cognome")
-                }
+                leadingIcon = { Icon(Icons.Outlined.PersonOutline, null) }
             )
+
             Spacer(modifier = Modifier.size(16.dp))
 
             InputField(
                 value = state.city,
                 label = "Città",
                 onValueChange = actions::setCity,
-                leadingIcon = {
-                    Icon(Icons.Outlined.LocationCity, contentDescription = "Città")
-                }
+                leadingIcon = { Icon(Icons.Outlined.LocationCity, null) }
             )
+
             Spacer(modifier = Modifier.size(16.dp))
 
             InputField(
                 value = state.phoneNumber,
                 label = "Numero di telefono",
                 onValueChange = actions::setPhoneNumber,
-                leadingIcon = {
-                    Icon(Icons.Outlined.Phone, contentDescription = "Telefono")
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                leadingIcon = { Icon(Icons.Outlined.Phone, null) }
             )
+
             Spacer(modifier = Modifier.size(16.dp))
 
             InputField(
                 value = state.bio,
                 label = "Bio",
                 onValueChange = actions::setBio,
-                leadingIcon = {
-                    Icon(Icons.Outlined.Info, contentDescription = "Bio")
-                }
+                leadingIcon = { Icon(Icons.Outlined.Info, null) }
             )
+
             Spacer(modifier = Modifier.size(16.dp))
 
             InputField(
                 value = state.email,
                 label = "Email",
                 onValueChange = actions::setEmail,
-                leadingIcon = {
-                    Icon(Icons.Outlined.Email, contentDescription = "Email")
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                leadingIcon = { Icon(Icons.Outlined.Email, null) }
             )
+
             Spacer(modifier = Modifier.size(16.dp))
 
             InputField(
@@ -215,16 +183,14 @@ fun SignUpScreen(
                 label = "Password",
                 onValueChange = actions::setPassword,
                 type = InputFieldType.Password,
-                leadingIcon = {
-                    Icon(Icons.Outlined.Lock, contentDescription = "Password")
-                }
+                leadingIcon = { Icon(Icons.Outlined.Lock, null) }
             )
 
             Spacer(modifier = Modifier.size(24.dp))
 
             TravelBuddyButton(
                 label = "Sign up",
-                onClick = { actions.signUp() },
+                onClick = actions::signUp,
                 enabled = state.canSubmit,
                 height = 50,
                 isLoading = state.isLoading
@@ -232,6 +198,53 @@ fun SignUpScreen(
 
             Spacer(modifier = Modifier.size(32.dp))
         }
+
+        // CAMERA SCREEN
+        if (state.showCameraScreen) {
+            CameraCaptureScreen(
+                context = context,
+                onImageCaptured = { uri, _ ->
+                    actions.setPreviewImageUri(uri.toString())
+                    actions.showCameraScreen(false)
+                    actions.showImagePreview(true)
+                },
+                onError = { actions.showCameraScreen(false) },
+                onClose = { actions.showCameraScreen(false) }
+            )
+        }
+
+        // IMAGE PREVIEW
+        if (state.showImagePreview && state.previewImageUri != null) {
+            ImagePreviewScreen(
+                imageUri = state.previewImageUri.toUri(),
+                onConfirm = {
+                    val bytes = ImageUtils.uriToByteArray(context, Uri.parse(state.previewImageUri))
+                    actions.setPicture(bytes)
+                    actions.showImagePreview(false)
+                },
+                onRetake = {
+                    actions.showImagePreview(false)
+                    actions.showCameraScreen(true)
+                }
+            )
+        }
+
+        val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+        val newImageBytes = savedStateHandle?.get<ByteArray>("imageBytes")
+        val confirmedImageUri = savedStateHandle?.get<String>("confirmedImageUri")
+        LaunchedEffect(newImageBytes, confirmedImageUri) {
+            if (newImageBytes != null && confirmedImageUri != null) {
+                actions.setPicture(newImageBytes)
+                actions.setPictureUri(confirmedImageUri)
+
+                ImageUtils.saveImageToGallery(context, newImageBytes)
+
+                savedStateHandle.remove<ByteArray>("imageBytes")
+                savedStateHandle.remove<String>("confirmedImageUri")
+                savedStateHandle.remove<String>("previewImageUri")
+            }
+        }
+
         if (state.permissionRationaleVisible) {
             LaunchedEffect(snackbarHostState) {
                 val res = snackbarHostState.showSnackbar(
@@ -251,10 +264,11 @@ fun SignUpScreen(
             }
         }
 
+        // CAMERA DENIED ALERT
         if (state.permissionCameraDeniedVisible) {
             AlertDialog(
                 title = { Text("Camera permission denied") },
-                text = { Text("Camera and photo gallery permission is required to use the camera in the app.") },
+                text = { Text("Camera and gallery permission is required.") },
                 confirmButton = {
                     TextButton(onClick = {
                         cameraPermissionHandler.launchPermissionRequest()
@@ -272,34 +286,4 @@ fun SignUpScreen(
             )
         }
     }
-}
-
-
-@Composable
-private fun ImageSourceDialog(
-    onCameraSelected: () -> Unit,
-    onGallerySelected: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Seleziona origine") },
-        text = {
-            Column {
-                ListItem(
-                    headlineContent = { Text("Scatta una foto") },
-                    leadingContent = { Icon(Icons.Filled.CameraAlt, "Camera") },
-                    modifier = Modifier.clickable(onClick = onCameraSelected)
-                )
-                ListItem(
-                    headlineContent = { Text("Scegli dalla galleria") },
-                    leadingContent = { Icon(Icons.Filled.PhotoLibrary, "Photo gallery") },
-                    modifier = Modifier.clickable(onClick = onGallerySelected)
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text("Annulla") }
-        }
-    )
 }

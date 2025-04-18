@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelbuddy.data.repositories.UsersRepository
-import com.example.travelbuddy.utils.CameraUtils
+import com.example.travelbuddy.utils.ImageUtils
 import com.example.travelbuddy.utils.MultiplePermissionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,7 +25,10 @@ data class SignUpState(
     val errorMessage: String? = null,
     val showImagePicker: Boolean = false,
     val permissionRationaleVisible: Boolean = false,
-    val permissionCameraDeniedVisible: Boolean = false
+    val permissionCameraDeniedVisible: Boolean = false,
+    val showCameraScreen: Boolean =false,
+    val previewImageUri: String? = null,
+    val showImagePreview: Boolean = false
 ) {
     val canSubmit: Boolean
         get() = firstName.isNotBlank() &&
@@ -45,10 +48,12 @@ interface SignUpActions {
     fun setPicture(value: ByteArray)
     fun setPictureUri(value: String)
     fun signUp()
-    fun openCamera(context: Context)
     fun showImagePicker(value: Boolean)
     fun showPermissionRationale(value: Boolean)
     fun showCameraPermissionDeniedAlert(value : Boolean)
+    fun showCameraScreen(value: Boolean)
+    fun setPreviewImageUri(value: String)
+    fun showImagePreview(value: Boolean)
 }
 
 class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel() {
@@ -92,6 +97,18 @@ class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel()
             _state.update { it.copy(profileImageUri = value) }
         }
 
+        override fun showCameraScreen(value: Boolean) {
+            _state.update { it.copy(showCameraScreen = value) }
+        }
+
+        override fun setPreviewImageUri(value:String){
+            _state.update { it.copy(previewImageUri = value) }
+        }
+
+        override fun showImagePreview(value: Boolean) {
+            _state.update { it.copy(showImagePreview = value) }
+        }
+
         override fun signUp() {
             viewModelScope.launch {
                 _state.value = _state.value.copy(isLoading = true)
@@ -110,33 +127,6 @@ class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel()
                     _state.value = _state.value.copy(
                         isLoading = false,
                         errorMessage = e.message ?: "Sign failed"
-                    )
-                }
-            }
-        }
-
-        override fun openCamera(context: Context) {
-            viewModelScope.launch {
-                try {
-                    CameraUtils.takePhoto(
-                        context = context,
-                        onImageCaptured = { uri ->
-                            _state.value = _state.value.copy(
-                                profileImageUri = uri.toString(),
-                                isLoading = false
-                            )
-                        },
-                        onError = { error ->
-                            _state.value = _state.value.copy(
-                                errorMessage = error.message ?: "Errore fotocamera",
-                                isLoading = false
-                            )
-                        }
-                    )
-                } catch (e: SecurityException) {
-                    _state.value = _state.value.copy(
-                        errorMessage = "Permesso fotocamera negato",
-                        isLoading = false
                     )
                 }
             }

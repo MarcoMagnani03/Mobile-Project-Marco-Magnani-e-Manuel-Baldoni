@@ -71,7 +71,6 @@ fun ProfileImageSection(
             }
         }
 
-        // Icona camera sovrapposta
         Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
