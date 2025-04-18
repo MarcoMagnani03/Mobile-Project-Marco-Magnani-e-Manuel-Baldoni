@@ -10,9 +10,11 @@ import com.example.travelbuddy.data.repositories.UserSessionRepository
 import com.example.travelbuddy.data.repositories.UsersRepository
 import com.example.travelbuddy.ui.TravelBuddyViewModel
 import com.example.travelbuddy.ui.screens.code.CodeViewModel
+import com.example.travelbuddy.ui.screens.home.HomeViewModel
 import com.example.travelbuddy.ui.screens.login.LoginViewModel
 import com.example.travelbuddy.ui.screens.newTrip.NewTripViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
+import com.example.travelbuddy.ui.screens.tripDetails.TripDetailsViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -38,9 +40,11 @@ val appModule = module {
     single { TripsRepository(get()) }
     single { GroupsRepository(get()) }
 
+    viewModel { HomeViewModel(get(), get()) }
     viewModel { TravelBuddyViewModel() }
     viewModel { LoginViewModel(get(),get()) }
     viewModel { CodeViewModel(get(),get()) }
     viewModel { SignUpViewModel(get()) }
     viewModel { NewTripViewModel(get(), get(), get()) }
+    viewModel { TripDetailsViewModel(get()) }
 }

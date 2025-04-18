@@ -22,6 +22,8 @@ import com.example.travelbuddy.ui.composables.UpcomingTripsSection
 
 @Composable
 fun HomeScreen(
+    state: HomeState,
+    actions: HomeActions,
     navController: NavController
 ) {
     val veneziaTrip = Trip(
@@ -108,10 +110,12 @@ fun HomeScreen(
 
             Spacer(Modifier.height(10.dp))
 
-            UpcomingTripsSection(
-                trips = upcomingTrips,
-                navController = navController
-            )
+            state.userWithTrips?.let {
+                UpcomingTripsSection(
+                    trips = it.trips,
+                    navController = navController
+                )
+            }
 
             Spacer(Modifier.height(10.dp))
 

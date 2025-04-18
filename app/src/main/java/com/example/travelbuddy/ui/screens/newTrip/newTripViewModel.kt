@@ -18,10 +18,11 @@ data class NewTripState(
     val destination: String = "",
     val startDate: String = "",
     val endDate: String = "",
-    val budget: Double = 0.00,
-    val description: String = "",
+    val budget: Double? = null,
+    val description: String? = null,
     val errorMessage: String = "",
     val isLoading: Boolean = false,
+    val newTripId: Long? = null
 ) {
     val canSubmit: Boolean
         get() = tripName.isNotBlank() &&
@@ -39,6 +40,7 @@ interface NewTripActions {
     fun setDescription(value: String)
     fun setErrorMessage(value: String)
     fun setIsLoading(value: Boolean)
+    fun setNewTripId(value: Long)
     fun createTrip()
 }
 
@@ -83,6 +85,10 @@ class NewTripViewModel(
             _state.update { it.copy(isLoading = value) }
         }
 
+        override fun setNewTripId(value: Long) {
+            _state.update { it.copy(newTripId = value) }
+        }
+
         override fun createTrip() {
             viewModelScope.launch {
                 _state.value = _state.value.copy(isLoading = true)
@@ -96,18 +102,26 @@ class NewTripViewModel(
                         description = state.value.description
                     )
 
-                    tripsRepository.upsert(newTrip)
+                    val tripId = tripsRepository.upsert(newTrip)
 
-                    val newGroup = Group(
-                        userEmail = userSessionRepository.userEmail.toString(),
-                        tripId = newTrip.id
-                    )
+                    viewModelScope.launch {
+                        userSessionRepository.userEmail.collect { email ->
+                            if(email.isNullOrBlank()){
+                                return@collect
+                            }
 
-                    groupsRepository.upsert(newGroup)
+                            val newGroup = Group(
+                                userEmail = email,
+                                tripId = tripId
+                            )
 
-                    _state.value = _state.value.copy(
-                        isLoading = false,
-                    )
+                            groupsRepository.upsert(newGroup)
+
+                            _state.value = _state.value.copy(
+                                newTripId = tripId
+                            )
+                        }
+                    }
                 } catch (e: Exception) {
                     _state.value = _state.value.copy(
                         isLoading = false,

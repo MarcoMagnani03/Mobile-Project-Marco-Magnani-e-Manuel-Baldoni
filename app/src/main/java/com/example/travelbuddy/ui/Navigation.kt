@@ -4,10 +4,12 @@ import com.example.travelbuddy.ui.screens.home.HomeScreen
 import com.example.travelbuddy.ui.screens.login.LoginScreen
 import com.example.travelbuddy.ui.screens.login.LoginViewModel
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -17,11 +19,14 @@ import com.example.travelbuddy.ui.screens.camera.CameraCaptureScreen
 import com.example.travelbuddy.ui.screens.camera.ImagePreviewScreen
 import com.example.travelbuddy.ui.screens.code.CodeScreen
 import com.example.travelbuddy.ui.screens.code.CodeViewModel
+import com.example.travelbuddy.ui.screens.home.HomeViewModel
 import com.example.travelbuddy.ui.screens.launch.LaunchScreen
 import com.example.travelbuddy.ui.screens.newTrip.NewTripScreen
 import com.example.travelbuddy.ui.screens.newTrip.NewTripViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpScreen
+import com.example.travelbuddy.ui.screens.tripDetails.TripDetailsScreen
+import com.example.travelbuddy.ui.screens.tripDetails.TripDetailsViewModel
 import com.example.travelbuddy.utils.ImageUtils
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -36,6 +41,7 @@ sealed interface TravelBuddyRoute {
     @Serializable data object NewTrip : TravelBuddyRoute
     @Serializable data object CameraCapture : TravelBuddyRoute
     @Serializable data object ImagePreview : TravelBuddyRoute
+    @Serializable data class TripDetails(val tripId: String) : TravelBuddyRoute
 }
 
 @Composable
@@ -52,7 +58,14 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
         }
 
         composable<TravelBuddyRoute.Home> {
-            HomeScreen(navController)
+            val homeViewModel = koinViewModel<HomeViewModel>()
+            val state by homeViewModel.state.collectAsStateWithLifecycle()
+
+            LaunchedEffect(Unit) {
+                homeViewModel.actions.loadUserWithTrips()
+            }
+
+            HomeScreen(state, homeViewModel.actions, navController)
         }
 
         composable<TravelBuddyRoute.Login> {
@@ -134,6 +147,21 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             }
         }
 
+        composable<TravelBuddyRoute.TripDetails> { backStackEntry ->
+            val tripId = backStackEntry.arguments?.getString("tripId") ?: ""
+            val tripIdLong = tripId.toLongOrNull() ?: -1L
+            val tripDetailsViewModel = koinViewModel<TripDetailsViewModel>()
+            val state by tripDetailsViewModel.state.collectAsStateWithLifecycle()
 
+            LaunchedEffect(tripId) {
+                tripDetailsViewModel.actions.loadTrip(tripIdLong)
+            }
+
+            TripDetailsScreen(
+                state = state,
+                actions = tripDetailsViewModel.actions,
+                navController = navController
+            )
+        }
     }
 }
