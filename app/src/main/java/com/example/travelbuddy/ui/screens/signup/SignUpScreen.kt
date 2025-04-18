@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -30,6 +31,7 @@ import com.example.travelbuddy.utils.ImageUtils
 import com.example.travelbuddy.utils.PermissionStatus
 import com.example.travelbuddy.utils.rememberMultiplePermissions
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(
     state: SignUpState,
@@ -82,13 +84,29 @@ fun SignUpScreen(
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Travel Buddy",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "Sign up",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primary ,
+                        modifier = Modifier.padding(top = 5.dp, bottom = 25.dp)
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Go back",
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
+                }
             )
 
-            Spacer(modifier = Modifier.size(24.dp))
+            Spacer(modifier = Modifier.size(16.dp))
+
+
 
             ProfileImageSection(
                 profileImageUri = state.profileImageUri,
@@ -124,7 +142,7 @@ fun SignUpScreen(
 
             InputField(
                 value = state.firstName,
-                label = "Nome",
+                label = "First Name",
                 onValueChange = actions::setFirstName,
                 leadingIcon = { Icon(Icons.Outlined.Person, null) }
             )
@@ -133,7 +151,7 @@ fun SignUpScreen(
 
             InputField(
                 value = state.lastName,
-                label = "Cognome",
+                label = "Surname",
                 onValueChange = actions::setLastName,
                 leadingIcon = { Icon(Icons.Outlined.PersonOutline, null) }
             )
@@ -142,7 +160,7 @@ fun SignUpScreen(
 
             InputField(
                 value = state.city,
-                label = "Città",
+                label = "City",
                 onValueChange = actions::setCity,
                 leadingIcon = { Icon(Icons.Outlined.LocationCity, null) }
             )
@@ -151,7 +169,7 @@ fun SignUpScreen(
 
             InputField(
                 value = state.phoneNumber,
-                label = "Numero di telefono",
+                label = "Phone number",
                 onValueChange = actions::setPhoneNumber,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 leadingIcon = { Icon(Icons.Outlined.Phone, null) }
@@ -188,13 +206,41 @@ fun SignUpScreen(
 
             Spacer(modifier = Modifier.size(24.dp))
 
+            InputField(
+                value = state.confirmPassword,
+                label = "Confirm city",
+                onValueChange = actions::setConfirmPassword,
+                type = InputFieldType.Password,
+                leadingIcon = { Icon(Icons.Outlined.Lock, null) }
+            )
+
+            if (state.confirmPassword.isNotEmpty() && state.password != state.confirmPassword) {
+                Text(
+                    text = "The passwords do not match",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+
+
+            Spacer(modifier = Modifier.size(24.dp))
+
             TravelBuddyButton(
                 label = "Sign up",
-                onClick = actions::signUp,
+                onClick = {actions.signUp(navController)},
                 enabled = state.canSubmit,
                 height = 50,
                 isLoading = state.isLoading
             )
+
+            state.errorMessage?.let {
+                Text(
+                    text = it,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(top = 12.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.size(32.dp))
         }
@@ -218,7 +264,7 @@ fun SignUpScreen(
             ImagePreviewScreen(
                 imageUri = state.previewImageUri.toUri(),
                 onConfirm = {
-                    val bytes = ImageUtils.uriToByteArray(context, Uri.parse(state.previewImageUri))
+                    val bytes = ImageUtils.uriToByteArray(context, state.previewImageUri.toUri())
                     actions.setPicture(bytes)
                     actions.showImagePreview(false)
                 },

@@ -3,8 +3,9 @@ package com.example.travelbuddy.ui.screens.signup
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.example.travelbuddy.data.repositories.UsersRepository
-import com.example.travelbuddy.utils.ImageUtils
+import com.example.travelbuddy.ui.TravelBuddyRoute
 import com.example.travelbuddy.utils.MultiplePermissionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,13 +29,16 @@ data class SignUpState(
     val permissionCameraDeniedVisible: Boolean = false,
     val showCameraScreen: Boolean =false,
     val previewImageUri: String? = null,
-    val showImagePreview: Boolean = false
+    val showImagePreview: Boolean = false,
+    val confirmPassword: String = "",
 ) {
     val canSubmit: Boolean
         get() = firstName.isNotBlank() &&
                 lastName.isNotBlank() &&
                 email.isNotBlank() &&
-                password.isNotBlank()
+                password.isNotBlank() &&
+                confirmPassword.isNotBlank() &&
+                password == confirmPassword
 }
 
 interface SignUpActions {
@@ -47,13 +51,14 @@ interface SignUpActions {
     fun setPassword(value: String)
     fun setPicture(value: ByteArray)
     fun setPictureUri(value: String)
-    fun signUp()
+    fun signUp(navController: NavController)
     fun showImagePicker(value: Boolean)
     fun showPermissionRationale(value: Boolean)
     fun showCameraPermissionDeniedAlert(value : Boolean)
     fun showCameraScreen(value: Boolean)
     fun setPreviewImageUri(value: String)
     fun showImagePreview(value: Boolean)
+    fun setConfirmPassword(value: String)
 }
 
 class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel() {
@@ -82,7 +87,12 @@ class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel()
         }
 
         override fun setEmail(value: String) {
-            _state.update { it.copy(email = value) }
+            _state.update {
+                it.copy(
+                    email = value,
+                    errorMessage = if (it.errorMessage == "Email already registered") null else it.errorMessage
+                )
+            }
         }
 
         override fun setPassword(value: String) {
@@ -109,28 +119,66 @@ class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel()
             _state.update { it.copy(showImagePreview = value) }
         }
 
-        override fun signUp() {
+        override fun setConfirmPassword(value: String) {
+            _state.update {
+                val updated = it.copy(confirmPassword = value)
+                updated.copy(errorMessage = null)
+            }
+        }
+
+        override fun signUp(navController: NavController) {
             viewModelScope.launch {
-                _state.value = _state.value.copy(isLoading = true)
+                val current = _state.value
+
+                if (current.password != current.confirmPassword) {
+                    _state.update {
+                        it.copy(errorMessage = "The passwords do not match")
+                    }
+                    return@launch
+                }
+
+                _state.update { it.copy(isLoading = true, errorMessage = null) }
+
                 try {
-                    userRepository.getUserByEmail(state.value.email)?.let {
+                    val existingUser = userRepository.getUserByEmail(current.email)
+                    if (existingUser != null) {
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = "Email already registered"
+                            )
+                        }
                         return@launch
                     }
 
-                    userRepository.registerUser(state.value.email, state.value.password, state.value.firstName, state.value.lastName, state.value.phoneNumber, state.value.city,
-                        state.value.bio, state.value.picture)
+                    userRepository.registerUser(
+                        current.email,
+                        current.password,
+                        current.firstName,
+                        current.lastName,
+                        current.phoneNumber,
+                        current.city,
+                        current.bio,
+                        current.picture
+                    )
 
-                    _state.value = _state.value.copy(
-                        isLoading = false,
-                    )
+                    _state.update { it.copy(isLoading = false) }
+
+                    navController.navigate(TravelBuddyRoute.Login) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 } catch (e: Exception) {
-                    _state.value = _state.value.copy(
-                        isLoading = false,
-                        errorMessage = e.message ?: "Sign failed"
-                    )
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = e.message ?: "Sign up failed"
+                        )
+                    }
                 }
             }
         }
+
 
         override fun showImagePicker(value: Boolean) {
             _state.update { it.copy(showImagePicker = value) }
@@ -142,18 +190,6 @@ class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel()
 
         override fun showCameraPermissionDeniedAlert(value: Boolean) {
             _state.update { it.copy(permissionCameraDeniedVisible = value) }
-        }
-    }
-
-
-    fun checkAndRequestPermissions(
-        context: Context,
-        permissionHandler: MultiplePermissionHandler
-    ) {
-        if (permissionHandler.statuses.all { it.value.isGranted }) {
-            actions.showImagePicker(true)
-        } else {
-            permissionHandler.launchPermissionRequest()
         }
     }
 }
