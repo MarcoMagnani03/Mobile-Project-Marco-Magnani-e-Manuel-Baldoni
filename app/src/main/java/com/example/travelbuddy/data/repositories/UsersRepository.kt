@@ -1,6 +1,7 @@
 package com.example.travelbuddy.data.repositories
 
 import com.example.travelbuddy.data.database.User
+import com.example.travelbuddy.data.database.UserWithTrips
 import com.example.travelbuddy.data.database.UsersDAO
 import com.example.travelbuddy.utils.PasswordHasher
 
@@ -51,4 +52,5 @@ class UsersRepository(
 
     suspend fun hasPin(email: String): Boolean = dao.hasPin(email)
 
+    suspend fun getUserWithTrips(email: String): UserWithTrips? = dao.getUserWithTrips(email)
 }

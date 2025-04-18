@@ -22,7 +22,8 @@ import androidx.compose.ui.unit.dp
 
 enum class ButtonStyle {
     PRIMARY,
-    PRIMARY_OUTLINED
+    PRIMARY_OUTLINED,
+    ERROR
 }
 
 @Composable
@@ -91,6 +92,37 @@ fun TravelBuddyButton(
                     ButtonContent(
                         label = label,
                         textColor = MaterialTheme.colorScheme.primary,
+                        leadingIcon = leadingIcon,
+                        trailingIcon = trailingIcon
+                    )
+                }
+            }
+        }
+
+        ButtonStyle.ERROR -> {
+            Button(
+                onClick = { if (!isLoading) onClick() },
+                enabled = (enabled ?: true) && !isLoading,
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError,
+                    disabledContainerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.2f),
+                    disabledContentColor = MaterialTheme.colorScheme.onError.copy(alpha = 0.2f)
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height((height ?: 50).dp)
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.onError,
+                        modifier = Modifier.size(24.dp)
+                    )
+                } else {
+                    ButtonContent(
+                        label = label,
+                        textColor = MaterialTheme.colorScheme.onError,
                         leadingIcon = leadingIcon,
                         trailingIcon = trailingIcon
                     )

@@ -3,15 +3,19 @@ package com.example.travelbuddy.data.database
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Upsert
 
 @Dao
 interface TripsDAO {
     @Upsert
-    suspend fun upsert(trip: Trip)
+    suspend fun upsert(trip: Trip): Long
 
     @Delete
     suspend fun delete(item: Trip)
+
+    @Query("SELECT * FROM Trip WHERE id = :tripId")
+    suspend fun getTripById(tripId: Long): Trip?
 }
 
 @Dao
@@ -78,6 +82,10 @@ interface UsersDAO {
 
     @Query("SELECT EXISTS(SELECT 1 FROM User WHERE email = :email AND pin = :pin)")
     suspend fun verifyUserPin(email: String, pin: String): Boolean
+
+    @Transaction
+    @Query("SELECT * FROM User WHERE email = :email")
+    suspend fun getUserWithTrips(email: String): UserWithTrips?
 }
 
 @Dao

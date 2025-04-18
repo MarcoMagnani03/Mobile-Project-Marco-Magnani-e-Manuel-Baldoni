@@ -17,11 +17,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.travelbuddy.ui.TravelBuddyRoute
 import com.example.travelbuddy.ui.composables.InputField
 import com.example.travelbuddy.ui.composables.InputFieldType
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
@@ -35,6 +37,12 @@ fun NewTripScreen(
     navController: NavController
 ) {
     val scrollState = rememberScrollState()
+
+    LaunchedEffect(state.newTripId) {
+        state.newTripId?.let { tripId ->
+            navController.navigate(TravelBuddyRoute.TripDetails(tripId = tripId.toString()))
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -99,7 +107,7 @@ fun NewTripScreen(
             )
 
             InputField(
-                value = state.description,
+                value = state.description ?: "",
                 onValueChange = actions::setDescription,
                 label = "Description",
                 placeholder = "Enter a description of the trip",

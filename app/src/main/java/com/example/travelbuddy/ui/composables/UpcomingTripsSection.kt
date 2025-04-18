@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.travelbuddy.data.database.Trip
+import com.example.travelbuddy.ui.TravelBuddyRoute
 
 @Composable
 fun UpcomingTripsSection(
@@ -79,7 +80,9 @@ fun UpcomingTripItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {  }
+            .clickable {
+                navController.navigate(TravelBuddyRoute.TripDetails(tripId = trip.id.toString()))
+            }
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

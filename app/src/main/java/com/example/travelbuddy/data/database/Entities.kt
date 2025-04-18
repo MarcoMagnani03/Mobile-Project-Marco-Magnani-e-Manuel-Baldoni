@@ -1,5 +1,6 @@
 package com.example.travelbuddy.data.database
 
+import androidx.annotation.Nullable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
@@ -25,10 +26,10 @@ data class Trip (
     var endDate: String,
 
     @ColumnInfo
-    var budget: Double,
+    var budget: Double?,
 
     @ColumnInfo
-    var description: String,
+    var description: String?,
 )
 
 @Entity
@@ -209,17 +210,26 @@ data class UserWithTrips(
     @Embedded val user: User,
     @Relation(
         parentColumn = "email",
-        entityColumn = "userEmail",
-        associateBy = Junction(Group::class)
+        entityColumn = "id", // This is Trip.id
+        associateBy = Junction(
+            value = Group::class,
+            parentColumn = "userEmail",
+            entityColumn = "tripId"
+        )
     )
     val trips: List<Trip>
 )
+
 data class TripWithUsers(
     @Embedded val trip: Trip,
     @Relation(
         parentColumn = "id",
-        entityColumn = "tripId",
-        associateBy = Junction(Group::class)
+        entityColumn = "email",
+        associateBy = Junction(
+            value = Group::class,
+            parentColumn = "tripId",
+            entityColumn = "userEmail"
+        )
     )
     val users: List<User>
 )
