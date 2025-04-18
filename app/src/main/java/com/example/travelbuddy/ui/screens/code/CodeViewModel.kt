@@ -23,6 +23,7 @@ interface CodeActions {
     fun verifyPin(email: String, pin: String, onResult: (Boolean) -> Unit)
     fun showError(message: String)
     fun clearError()
+    fun clearUserSession(onComplete: () -> Unit)
 }
 class CodeViewModel(
     private val userRepository: UsersRepository,
@@ -88,6 +89,13 @@ class CodeViewModel(
 
         override fun clearError() {
             _state.value = _state.value.copy(errorMessage = null)
+        }
+
+        override fun clearUserSession(onComplete: () -> Unit) {
+            viewModelScope.launch {
+                appPreferences.clearAllSessionData()
+                onComplete()
+            }
         }
     }
 }

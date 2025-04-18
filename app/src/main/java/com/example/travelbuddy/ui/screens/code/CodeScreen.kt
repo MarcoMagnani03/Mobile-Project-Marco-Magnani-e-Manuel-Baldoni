@@ -52,15 +52,22 @@ fun CodeScreen(
                 color = MaterialTheme.colorScheme.primary
             )
 
-            Spacer(modifier = Modifier.size(40.dp))
-
-            if (!isNewPinSetup) {
+            if (isNewPinSetup) {
+                Spacer(modifier = Modifier.size(16.dp))
                 TravelBuddyButton(
-                    label = "Use biometrics",
-                    onClick = { navController.navigate(TravelBuddyRoute.Home) },
+                    label = "Back to login",
+                    onClick = {
+                        actions.clearUserSession {
+                            navController.navigate(TravelBuddyRoute.Login) {
+                                popUpTo(0) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+                    }
                 )
-                Spacer(modifier = Modifier.size(20.dp))
             }
+
+            Spacer(modifier = Modifier.size(40.dp))
 
             InputField(
                 value = state.code,
@@ -126,6 +133,8 @@ fun CodeScreen(
                 },
                 enabled = state.code.length == 6 && !state.isLoading
             )
+
+
         }
     }
 }
