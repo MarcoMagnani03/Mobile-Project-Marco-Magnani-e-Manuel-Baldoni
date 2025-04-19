@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.travelbuddy.ui.TravelBuddyRoute
 
@@ -50,7 +49,7 @@ sealed class BottomNavItem(
     )
 
     object Profile : BottomNavItem(
-        route = TravelBuddyRoute.Home,
+        route = TravelBuddyRoute.Profile,
         title = "Profile",
         icon = Icons.Default.Person
     )

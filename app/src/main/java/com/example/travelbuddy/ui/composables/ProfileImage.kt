@@ -23,10 +23,12 @@ import coil.compose.AsyncImage
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material.icons.outlined.Image
+import androidx.compose.ui.graphics.ImageBitmap
 
 @Composable
 fun ProfileImageSection(
-    profileImageUri: String,
+    profileImageBitmap: ImageBitmap? = null,
+    profileImageUri: String? = null,
     onClick: () -> Unit
 ) {
     val imageModifier = Modifier
@@ -35,10 +37,10 @@ fun ProfileImageSection(
         .clickable(onClick = onClick)
         .border(
             width = 2.dp,
-            color = if (profileImageUri.isEmpty())
-                MaterialTheme.colorScheme.surfaceVariant
+            color = if (profileImageBitmap != null || !profileImageUri.isNullOrEmpty())
+                MaterialTheme.colorScheme.primary
             else
-                MaterialTheme.colorScheme.primary,
+                MaterialTheme.colorScheme.surfaceVariant,
             shape = CircleShape
         )
 
@@ -46,28 +48,41 @@ fun ProfileImageSection(
         contentAlignment = Alignment.Center,
         modifier = Modifier.padding(16.dp)
     ) {
-        if (profileImageUri.isNotEmpty()) {
-            AsyncImage(
-                model = profileImageUri,
-                contentDescription = "Immagine profilo",
-                modifier = imageModifier,
-                contentScale = ContentScale.Crop,
-            )
-        } else {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = imageModifier
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        shape = CircleShape
-                    )
-            ) {
-                Icon(
-                    Icons.Outlined.Image,
-                    contentDescription = "Aggiungi foto",
-                    modifier = Modifier.size(48.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+        when {
+            profileImageBitmap != null -> {
+                Image(
+                    bitmap = profileImageBitmap,
+                    contentDescription = "Immagine profilo (bitmap)",
+                    modifier = imageModifier,
+                    contentScale = ContentScale.Crop,
                 )
+            }
+
+            !profileImageUri.isNullOrEmpty() -> {
+                AsyncImage(
+                    model = profileImageUri,
+                    contentDescription = "Immagine profilo (uri)",
+                    modifier = imageModifier,
+                    contentScale = ContentScale.Crop,
+                )
+            }
+
+            else -> {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = imageModifier
+                        .background(
+                            color = MaterialTheme.colorScheme.surfaceVariant,
+                            shape = CircleShape
+                        )
+                ) {
+                    Icon(
+                        Icons.Outlined.Image,
+                        contentDescription = "Aggiungi foto",
+                        modifier = Modifier.size(48.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
 

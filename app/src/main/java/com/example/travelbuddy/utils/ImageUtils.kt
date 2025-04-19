@@ -2,16 +2,23 @@ package com.example.travelbuddy.utils
 
 import android.content.ContentValues
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.widget.Toast
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import java.io.ByteArrayInputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
 object ImageUtils {
+
     fun uriToByteArray(context: Context, uri: Uri): ByteArray {
         val inputStream = context.contentResolver.openInputStream(uri)
         return inputStream?.readBytes() ?: byteArrayOf()
@@ -46,5 +53,39 @@ object ImageUtils {
             Toast.makeText(context, "Image saved into gallery", Toast.LENGTH_SHORT).show()
             true
         } ?: false
+    }
+
+    fun byteArrayToBitmap(byteArray: ByteArray): Bitmap? {
+        return if (byteArray.isNotEmpty()) {
+            BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        } else {
+            null
+        }
+    }
+
+    fun Bitmap?.toImageBitmapOrNull(): ImageBitmap? {
+        return this?.asImageBitmap()
+    }
+
+    fun byteArrayToOrientedBitmap(byteArray: ByteArray): Bitmap {
+        val inputStreamForBitmap = ByteArrayInputStream(byteArray)
+        val bitmap = BitmapFactory.decodeStream(inputStreamForBitmap)
+
+        val inputStreamForExif = ByteArrayInputStream(byteArray)
+        val exif = ExifInterface(inputStreamForExif)
+
+        val orientation = exif.getAttributeInt(
+            ExifInterface.TAG_ORIENTATION,
+            ExifInterface.ORIENTATION_NORMAL
+        )
+
+        val matrix = Matrix()
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+        }
+
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 }
