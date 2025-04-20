@@ -13,6 +13,7 @@ import com.example.travelbuddy.ui.screens.code.CodeViewModel
 import com.example.travelbuddy.ui.screens.home.HomeViewModel
 import com.example.travelbuddy.ui.screens.login.LoginViewModel
 import com.example.travelbuddy.ui.screens.newTrip.NewTripViewModel
+import com.example.travelbuddy.ui.screens.profile.EditProfileViewModel
 import com.example.travelbuddy.ui.screens.profile.ProfileViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
 import com.example.travelbuddy.ui.screens.tripDetails.TripDetailsViewModel
@@ -49,4 +50,5 @@ val appModule = module {
     viewModel { NewTripViewModel(get(), get(), get()) }
     viewModel { TripDetailsViewModel(get()) }
     viewModel { ProfileViewModel(get(), get()) }
+    viewModel { EditProfileViewModel(get(), get())}
 }

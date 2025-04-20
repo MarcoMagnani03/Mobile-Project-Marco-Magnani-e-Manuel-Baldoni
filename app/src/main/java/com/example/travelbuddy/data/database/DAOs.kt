@@ -84,6 +84,13 @@ interface UsersDAO {
     suspend fun verifyUserPin(email: String, pin: String): Boolean
 
     @Transaction
+    suspend fun modifyUserAndUpdateEmail(oldUser: User, newEmail: String) {
+        val updatedUser = oldUser.copy(email = newEmail)
+        upsert(updatedUser)
+        delete(oldUser)
+    }
+
+    @Transaction
     @Query("SELECT * FROM User WHERE email = :email")
     suspend fun getUserWithTrips(email: String): UserWithTrips?
 }

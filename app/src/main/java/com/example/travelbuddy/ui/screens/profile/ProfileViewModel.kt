@@ -7,13 +7,13 @@ import androidx.navigation.NavController
 import com.example.travelbuddy.data.repositories.UserSessionRepository
 import com.example.travelbuddy.data.repositories.UsersRepository
 import com.example.travelbuddy.ui.TravelBuddyRoute
-import com.example.travelbuddy.ui.screens.signup.SignUpActions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import com.example.travelbuddy.utils.ImageUtils
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 
 data class ProfileState(
     val name: String = "",
@@ -28,6 +28,8 @@ data class ProfileState(
 
 interface ProfileActions {
     fun loadUserData()
+    fun logout(navController: NavController)
+    fun editProfile(navController: NavController)
 }
 
 class ProfileViewModel(
@@ -50,9 +52,7 @@ class ProfileViewModel(
                         return@launch
                     }
                     val user = usersRepository.getUserByEmail(email)
-                    println("user "+ user)
                     if (user != null) {
-                        println(user.profilePicture)
                         val profileBitmap = user.profilePicture?.let { ImageUtils.byteArrayToOrientedBitmap(it) }
 
 
@@ -75,6 +75,24 @@ class ProfileViewModel(
                         errorMessage = e.message,
                         isLoading = false
                     )
+                }
+            }
+        }
+
+        override fun logout(navController: NavController) {
+            viewModelScope.launch {
+                sessionRepository.clearAllSessionData()
+                navController.navigate(TravelBuddyRoute.Login) {
+                    popUpTo(0) { inclusive = true }
+                }
+            }
+        }
+
+        override fun editProfile(navController: NavController) {
+            viewModelScope.launch {
+                val email = sessionRepository.userEmail.firstOrNull()
+                if (email != null) {
+                    navController.navigate(TravelBuddyRoute.EditProfile)
                 }
             }
         }

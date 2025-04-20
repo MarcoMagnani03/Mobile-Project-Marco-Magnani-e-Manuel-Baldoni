@@ -1,20 +1,14 @@
 package com.example.travelbuddy.ui.screens.profile
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,8 +28,6 @@ fun ProfileScreen(
 ) {
     LaunchedEffect(Unit) {
         actions.loadUserData()
-        println(state.profileImage)
-        println(state.profileImage.toImageBitmapOrNull())
     }
     Column(
         modifier = Modifier
@@ -72,7 +64,7 @@ fun ProfileScreen(
 
         TravelBuddyButton(
             label = "Edit Profile",
-            onClick = { /* Naviga alla schermata di modifica profilo */ },
+            onClick = { actions.editProfile(navController)},
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Edit,
@@ -108,12 +100,12 @@ fun ProfileScreen(
 
         TravelBuddyButton(
             label = "Log Out",
-            onClick = { /* Gestisci logout */ },
+            onClick = { actions.logout(navController) },
             style = ButtonStyle.ERROR,
             leadingIcon = {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Logout,
-                    contentDescription = "Edit",
+                    contentDescription = "Log out",
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -130,7 +122,7 @@ fun ProfileDetailItem(label: String, value: String?) {
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
         )
         Text(
-            text = if (!value.isNullOrBlank()) value else "undefined",
+            text = if (!value.isNullOrBlank()) value else "not defined",
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium
         )

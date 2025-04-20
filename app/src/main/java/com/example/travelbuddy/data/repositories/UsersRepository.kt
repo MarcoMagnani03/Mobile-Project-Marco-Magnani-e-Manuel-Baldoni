@@ -8,6 +8,7 @@ import com.example.travelbuddy.utils.PasswordHasher
 class UsersRepository(
     private val dao: UsersDAO
 ) {
+
     suspend fun delete(user: User) = dao.delete(user)
 
     suspend fun getUserByEmail(email: String) = dao.getUserByEmail(email)
@@ -53,4 +54,34 @@ class UsersRepository(
     suspend fun hasPin(email: String): Boolean = dao.hasPin(email)
 
     suspend fun getUserWithTrips(email: String): UserWithTrips? = dao.getUserWithTrips(email)
+
+
+    suspend fun editUser(
+        oldEmail: String,
+        newEmail: String?,
+        firstName: String,
+        lastName: String,
+        phoneNumber: String?,
+        location: String?,
+        bio: String?,
+        profilePicture: ByteArray?
+    ) {
+        val existingUser = dao.getUserByEmail(oldEmail) ?: return
+
+        val updatedUser = existingUser.copy(
+            email = newEmail ?: oldEmail,
+            firstname = firstName,
+            lastname = lastName,
+            phoneNumber = phoneNumber,
+            location = location,
+            bio = bio,
+            profilePicture = profilePicture
+        )
+
+        if (newEmail == null) {
+            dao.upsert(updatedUser)
+        } else {
+            dao.modifyUserAndUpdateEmail(existingUser, newEmail)
+        }
+    }
 }

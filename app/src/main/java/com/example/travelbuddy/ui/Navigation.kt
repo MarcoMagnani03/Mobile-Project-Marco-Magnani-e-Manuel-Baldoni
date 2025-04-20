@@ -23,6 +23,8 @@ import com.example.travelbuddy.ui.screens.home.HomeViewModel
 import com.example.travelbuddy.ui.screens.launch.LaunchScreen
 import com.example.travelbuddy.ui.screens.newTrip.NewTripScreen
 import com.example.travelbuddy.ui.screens.newTrip.NewTripViewModel
+import com.example.travelbuddy.ui.screens.profile.EditProfileScreen
+import com.example.travelbuddy.ui.screens.profile.EditProfileViewModel
 import com.example.travelbuddy.ui.screens.profile.ProfileScreen
 import com.example.travelbuddy.ui.screens.profile.ProfileViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
@@ -45,6 +47,7 @@ sealed interface TravelBuddyRoute {
     @Serializable data object ImagePreview : TravelBuddyRoute
     @Serializable data object Profile : TravelBuddyRoute
     @Serializable data class TripDetails(val tripId: String) : TravelBuddyRoute
+    @Serializable data object EditProfile : TravelBuddyRoute
 }
 
 @Composable
@@ -83,10 +86,15 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             ProfileScreen(state, profileViewModel.actions, navController)
         }
 
+        composable<TravelBuddyRoute.EditProfile> {
+            val editProfileViewModel = koinViewModel<EditProfileViewModel>()
+            val state by editProfileViewModel.state.collectAsStateWithLifecycle()
+            EditProfileScreen(state, editProfileViewModel.actions, navController)
+        }
+
         composable<TravelBuddyRoute.Code> {
             val codeViewModel = koinViewModel<CodeViewModel>()
             val state by codeViewModel.state.collectAsStateWithLifecycle()
-            val userSession = koinInject<UserSessionRepository>()
 
             CodeScreen(
                 state = state,
