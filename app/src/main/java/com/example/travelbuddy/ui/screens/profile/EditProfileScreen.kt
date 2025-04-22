@@ -28,13 +28,14 @@ import com.example.travelbuddy.ui.composables.*
 import com.example.travelbuddy.ui.screens.camera.CameraCaptureScreen
 import com.example.travelbuddy.ui.screens.camera.ImagePreviewScreen
 import com.example.travelbuddy.utils.ImageUtils
+import com.example.travelbuddy.utils.ImageUtils.toImageBitmapOrNull
 import com.example.travelbuddy.utils.PermissionStatus
 import com.example.travelbuddy.utils.rememberMultiplePermissions
 
 @Composable
 fun EditProfileScreen(
-    state: EditProfileState,
-    actions: EditProfileActions,
+    state: ProfileState,
+    actions: ProfileActions,
     navController: NavController
 ) {
     val context = LocalContext.current
@@ -51,12 +52,12 @@ fun EditProfileScreen(
         )
     ) { statuses ->
         if (statuses.all { it.value.isGranted }) {
-            actions.showImagePicker(true)
+            actions.toggleUIControl(ProfileControl.ImagePicker, true)
         } else {
             if (statuses.any { it.value == PermissionStatus.PermanentlyDenied }) {
-                actions.showPermissionRationale(true)
+                actions.toggleUIControl(ProfileControl.CameraRationale, true)
             } else {
-                actions.showCameraPermissionDeniedAlert(true)
+                actions.toggleUIControl(ProfileControl.CameraDenied, true)
             }
         }
     }
@@ -69,7 +70,7 @@ fun EditProfileScreen(
             actions.setPicture(bytes)
             actions.setPictureUri(it.toString())
         }
-        actions.showImagePicker(false)
+        actions.toggleUIControl(ProfileControl.ImagePicker, false)
     }
 
     val scrollState = rememberScrollState()
@@ -93,15 +94,18 @@ fun EditProfileScreen(
             Spacer(modifier = Modifier.size(16.dp))
 
             ProfileImageSection(
-                profileImageUri = state.profileImageUri,
+                profileImageBitmap = state.picture
+                    ?.let { ImageUtils.byteArrayToOrientedBitmap(it).toImageBitmapOrNull() }
+                    ?: state.profileBitmap?.toImageBitmapOrNull(),
                 onClick = {
                     if (cameraPermissionHandler.statuses.all { it.value.isGranted }) {
-                        actions.showImagePicker(true)
+                        actions.toggleUIControl(ProfileControl.ImagePicker, true)
                     } else {
                         cameraPermissionHandler.launchPermissionRequest()
                     }
                 }
             )
+
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -114,11 +118,11 @@ fun EditProfileScreen(
             if (state.showImagePicker) {
                 ImageSourceDialog(
                     onCameraSelected = {
-                        actions.showImagePicker(false)
+                        actions.toggleUIControl(ProfileControl.ImagePicker, false)
                         navController.navigate(TravelBuddyRoute.CameraCapture)
                     },
                     onGallerySelected = { galleryLauncher.launch("image/*") },
-                    onDismiss = { actions.showImagePicker(false) }
+                    onDismiss = { actions.toggleUIControl(ProfileControl.ImagePicker, false) }
                 )
             }
 
@@ -127,7 +131,7 @@ fun EditProfileScreen(
             InputField(
                 value = state.firstName,
                 label = "First Name",
-                onValueChange = actions::setFirstName,
+                onValueChange = actions.updateFieldFor(ProfileField.FirstName),
                 leadingIcon = { Icon(Icons.Outlined.Person, null) }
             )
 
@@ -136,7 +140,7 @@ fun EditProfileScreen(
             InputField(
                 value = state.lastName,
                 label = "Surname",
-                onValueChange = actions::setLastName,
+                onValueChange = actions.updateFieldFor(ProfileField.LastName),
                 leadingIcon = { Icon(Icons.Outlined.PersonOutline, null) }
             )
 
@@ -145,7 +149,7 @@ fun EditProfileScreen(
             InputField(
                 value = state.city,
                 label = "City",
-                onValueChange = actions::setCity,
+                onValueChange = actions.updateFieldFor(ProfileField.City),
                 leadingIcon = { Icon(Icons.Outlined.LocationCity, null) }
             )
 
@@ -154,7 +158,7 @@ fun EditProfileScreen(
             InputField(
                 value = state.phoneNumber,
                 label = "Phone number",
-                onValueChange = actions::setPhoneNumber,
+                onValueChange = actions.updateFieldFor(ProfileField.Phone),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 leadingIcon = { Icon(Icons.Outlined.Phone, null) }
             )
@@ -164,7 +168,7 @@ fun EditProfileScreen(
             InputField(
                 value = state.bio,
                 label = "Bio",
-                onValueChange = actions::setBio,
+                onValueChange = actions.updateFieldFor(ProfileField.Bio),
                 leadingIcon = { Icon(Icons.Outlined.Info, null) }
             )
 
@@ -173,7 +177,7 @@ fun EditProfileScreen(
             InputField(
                 value = state.email,
                 label = "Email",
-                onValueChange = actions::setEmail,
+                onValueChange = actions.updateFieldFor(ProfileField.Email),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 leadingIcon = { Icon(Icons.Outlined.Email, null) }
             )
@@ -182,7 +186,7 @@ fun EditProfileScreen(
 
             TravelBuddyButton(
                 label = "Edit user",
-                onClick = {actions.editUser()},
+                onClick = {actions.submitProfileChanges(navController)},
                 enabled = state.canSubmit,
                 height = 50,
                 isLoading = state.isLoading
@@ -205,11 +209,11 @@ fun EditProfileScreen(
                 context = context,
                 onImageCaptured = { uri, _ ->
                     actions.setPreviewImageUri(uri.toString())
-                    actions.showCameraScreen(false)
-                    actions.showImagePreview(true)
+                    actions.toggleUIControl(ProfileControl.CameraScreen, false)
+                    actions.toggleUIControl(ProfileControl.ImagePreview, true)
                 },
-                onError = { actions.showCameraScreen(false) },
-                onClose = { actions.showCameraScreen(false) }
+                onError = { actions.toggleUIControl(ProfileControl.CameraScreen, false) },
+                onClose = { actions.toggleUIControl(ProfileControl.CameraScreen, false) }
             )
         }
 
@@ -220,11 +224,11 @@ fun EditProfileScreen(
                 onConfirm = {
                     val bytes = ImageUtils.uriToByteArray(context, state.previewImageUri.toUri())
                     actions.setPicture(bytes)
-                    actions.showImagePreview(false)
+                    actions.toggleUIControl(ProfileControl.ImagePreview, false)
                 },
                 onRetake = {
-                    actions.showImagePreview(false)
-                    actions.showCameraScreen(true)
+                    actions.toggleUIControl(ProfileControl.ImagePreview, false)
+                    actions.toggleUIControl(ProfileControl.CameraScreen, true)
                 }
             )
         }
@@ -232,6 +236,7 @@ fun EditProfileScreen(
         val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
         val newImageBytes = savedStateHandle?.get<ByteArray>("imageBytes")
         val confirmedImageUri = savedStateHandle?.get<String>("confirmedImageUri")
+
         LaunchedEffect(newImageBytes, confirmedImageUri) {
             if (newImageBytes != null && confirmedImageUri != null) {
                 actions.setPicture(newImageBytes)
@@ -260,7 +265,7 @@ fun EditProfileScreen(
                         }
                     )
                 }
-                actions.showPermissionRationale(false)
+                actions.toggleUIControl(ProfileControl.CameraRationale, false)
             }
         }
 
@@ -272,17 +277,17 @@ fun EditProfileScreen(
                 confirmButton = {
                     TextButton(onClick = {
                         cameraPermissionHandler.launchPermissionRequest()
-                        actions.showCameraPermissionDeniedAlert(false)
+                        actions.toggleUIControl(ProfileControl.CameraDenied, false)
                     }) {
                         Text("Grant")
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { actions.showCameraPermissionDeniedAlert(false) }) {
+                    TextButton(onClick = { actions.toggleUIControl(ProfileControl.CameraDenied, false)}) {
                         Text("Dismiss")
                     }
                 },
-                onDismissRequest = { actions.showCameraPermissionDeniedAlert(false) }
+                onDismissRequest = { actions.toggleUIControl(ProfileControl.CameraDenied, false)}
             )
         }
     }

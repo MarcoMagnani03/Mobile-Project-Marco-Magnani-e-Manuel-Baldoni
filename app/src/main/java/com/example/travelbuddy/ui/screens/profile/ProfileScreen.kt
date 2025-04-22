@@ -1,6 +1,8 @@
 package com.example.travelbuddy.ui.screens.profile
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Edit
@@ -26,19 +28,21 @@ fun ProfileScreen(
     actions: ProfileActions,
     navController: NavController
 ) {
+    val scrollState = rememberScrollState()
     LaunchedEffect(Unit) {
         actions.loadUserData()
     }
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         TravelBuddyTopBar(navController,"Profile", "Edit your information", canNavigateBack = true)
         ProfileImageSection(
-            profileImageBitmap = state.profileImage.toImageBitmapOrNull(),
+            profileImageBitmap = state.profileBitmap.toImageBitmapOrNull(),
             onClick = { }
         )
 
@@ -91,8 +95,9 @@ fun ProfileScreen(
 
                 ProfileDetailItem("Name", state.name)
                 ProfileDetailItem("Email", state.email)
-                ProfileDetailItem("Phone", state.phone)
+                ProfileDetailItem("Phone", state.phoneNumber)
                 ProfileDetailItem("Location", state.city)
+                ProfileDetailItem("Bio", state.bio)
             }
         }
 

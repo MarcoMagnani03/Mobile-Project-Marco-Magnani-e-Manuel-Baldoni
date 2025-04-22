@@ -19,7 +19,7 @@ import coil.compose.rememberAsyncImagePainter
 @Composable
 fun ImagePreviewScreen(
     imageUri: Uri,
-    onConfirm: () -> Unit,
+    onConfirm: (Uri) -> Unit,
     onRetake: () -> Unit
 ) {
     val context = LocalContext.current
@@ -59,7 +59,7 @@ fun ImagePreviewScreen(
 
             Button(
                 onClick = {
-                    onConfirm()
+                    onConfirm(imageUri)
                 },
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Green)

@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
-import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -24,7 +23,6 @@ import com.example.travelbuddy.ui.screens.launch.LaunchScreen
 import com.example.travelbuddy.ui.screens.newTrip.NewTripScreen
 import com.example.travelbuddy.ui.screens.newTrip.NewTripViewModel
 import com.example.travelbuddy.ui.screens.profile.EditProfileScreen
-import com.example.travelbuddy.ui.screens.profile.EditProfileViewModel
 import com.example.travelbuddy.ui.screens.profile.ProfileScreen
 import com.example.travelbuddy.ui.screens.profile.ProfileViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
@@ -32,6 +30,7 @@ import com.example.travelbuddy.ui.screens.signup.SignUpScreen
 import com.example.travelbuddy.ui.screens.tripDetails.TripDetailsScreen
 import com.example.travelbuddy.ui.screens.tripDetails.TripDetailsViewModel
 import com.example.travelbuddy.utils.ImageUtils
+import com.example.travelbuddy.utils.getBackStackEntryOrNull
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -87,9 +86,16 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
         }
 
         composable<TravelBuddyRoute.EditProfile> {
-            val editProfileViewModel = koinViewModel<EditProfileViewModel>()
-            val state by editProfileViewModel.state.collectAsStateWithLifecycle()
-            EditProfileScreen(state, editProfileViewModel.actions, navController)
+            val parentEntry = navController.getBackStackEntry(TravelBuddyRoute.Profile)
+            val profileViewModel = koinViewModel<ProfileViewModel>(
+                viewModelStoreOwner = parentEntry
+            )
+
+            EditProfileScreen(
+                state = profileViewModel.state.collectAsStateWithLifecycle().value,
+                actions = profileViewModel.actions,
+                navController = navController
+            )
         }
 
         composable<TravelBuddyRoute.Code> {
@@ -147,12 +153,22 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
                     onConfirm = {
                         val bytes = ImageUtils.uriToByteArray(context, uri)
 
-                        val signupBackEntry = navController.getBackStackEntry(TravelBuddyRoute.SignUp)
+                        val signupBackEntry = navController.getBackStackEntryOrNull(TravelBuddyRoute.SignUp)
+                        val profileBackEntry = navController.getBackStackEntryOrNull(TravelBuddyRoute.EditProfile)
+                        if(signupBackEntry != null){
+                            signupBackEntry.savedStateHandle["imageBytes"] = bytes
+                            signupBackEntry.savedStateHandle["confirmedImageUri"] = uri.toString()
 
-                        signupBackEntry.savedStateHandle["imageBytes"] = bytes
-                        signupBackEntry.savedStateHandle["confirmedImageUri"] = uri.toString()
+                            navController.popBackStack(TravelBuddyRoute.SignUp, inclusive = false)
+                        }
 
-                        navController.popBackStack(TravelBuddyRoute.SignUp, inclusive = false)
+                        println(profileBackEntry)
+                        if(profileBackEntry != null){
+                            profileBackEntry.savedStateHandle["imageBytes"] = bytes
+                            profileBackEntry.savedStateHandle["confirmedImageUri"] = uri.toString()
+
+                            navController.popBackStack(TravelBuddyRoute.EditProfile, inclusive = false)
+                        }
                     },
                     onRetake = {
                         navController.popBackStack(TravelBuddyRoute.ImagePreview, inclusive = true)
@@ -163,6 +179,9 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
                 )
             }
         }
+
+
+
 
         composable<TravelBuddyRoute.TripDetails> { backStackEntry ->
             val tripId = backStackEntry.arguments?.getString("tripId") ?: ""

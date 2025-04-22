@@ -1,6 +1,7 @@
 package com.example.travelbuddy.ui.screens.signup
 
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -61,7 +62,8 @@ interface SignUpActions {
     fun setConfirmPassword(value: String)
 }
 
-class SignUpViewModel(private val userRepository: UsersRepository) : ViewModel() {
+class SignUpViewModel(private val userRepository: UsersRepository
+) : ViewModel() {
     private val _state = MutableStateFlow(SignUpState())
     val state = _state.asStateFlow()
 
