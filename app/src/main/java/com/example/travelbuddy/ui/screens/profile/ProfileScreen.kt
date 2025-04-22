@@ -43,7 +43,7 @@ fun ProfileScreen(
         TravelBuddyTopBar(navController,"Profile", "Edit your information", canNavigateBack = true)
         ProfileImageSection(
             profileImageBitmap = state.profileBitmap.toImageBitmapOrNull(),
-            onClick = { }
+            isClickable = false
         )
 
 

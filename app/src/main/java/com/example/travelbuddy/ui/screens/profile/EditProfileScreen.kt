@@ -87,11 +87,9 @@ fun EditProfileScreen(
             TravelBuddyTopBar(
                 navController,
                 "Edit Profile",
-                null,
+                "Edit profile informations",
                 canNavigateBack = true
             )
-
-            Spacer(modifier = Modifier.size(16.dp))
 
             ProfileImageSection(
                 profileImageBitmap = state.picture
@@ -132,7 +130,7 @@ fun EditProfileScreen(
                 value = state.firstName,
                 label = "First Name",
                 onValueChange = actions.updateFieldFor(ProfileField.FirstName),
-                leadingIcon = { Icon(Icons.Outlined.Person, null) }
+                leadingIcon = { Icon(Icons.Outlined.Person, "FirstName") }
             )
 
             Spacer(modifier = Modifier.size(16.dp))
@@ -141,7 +139,7 @@ fun EditProfileScreen(
                 value = state.lastName,
                 label = "Surname",
                 onValueChange = actions.updateFieldFor(ProfileField.LastName),
-                leadingIcon = { Icon(Icons.Outlined.PersonOutline, null) }
+                leadingIcon = { Icon(Icons.Outlined.PersonOutline, "LastName") }
             )
 
             Spacer(modifier = Modifier.size(16.dp))
@@ -150,7 +148,7 @@ fun EditProfileScreen(
                 value = state.city,
                 label = "City",
                 onValueChange = actions.updateFieldFor(ProfileField.City),
-                leadingIcon = { Icon(Icons.Outlined.LocationCity, null) }
+                leadingIcon = { Icon(Icons.Outlined.LocationCity, "Location") }
             )
 
             Spacer(modifier = Modifier.size(16.dp))
@@ -160,7 +158,7 @@ fun EditProfileScreen(
                 label = "Phone number",
                 onValueChange = actions.updateFieldFor(ProfileField.Phone),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                leadingIcon = { Icon(Icons.Outlined.Phone, null) }
+                leadingIcon = { Icon(Icons.Outlined.Phone, "Phone") }
             )
 
             Spacer(modifier = Modifier.size(16.dp))
@@ -169,7 +167,7 @@ fun EditProfileScreen(
                 value = state.bio,
                 label = "Bio",
                 onValueChange = actions.updateFieldFor(ProfileField.Bio),
-                leadingIcon = { Icon(Icons.Outlined.Info, null) }
+                leadingIcon = { Icon(Icons.Outlined.Info, "Bio") }
             )
 
             Spacer(modifier = Modifier.size(16.dp))
@@ -179,7 +177,7 @@ fun EditProfileScreen(
                 label = "Email",
                 onValueChange = actions.updateFieldFor(ProfileField.Email),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                leadingIcon = { Icon(Icons.Outlined.Email, null) }
+                leadingIcon = { Icon(Icons.Outlined.Email, "Email") }
             )
 
             Spacer(modifier = Modifier.size(24.dp))

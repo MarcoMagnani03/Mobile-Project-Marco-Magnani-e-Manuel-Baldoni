@@ -29,12 +29,13 @@ import androidx.compose.ui.graphics.ImageBitmap
 fun ProfileImageSection(
     profileImageBitmap: ImageBitmap? = null,
     profileImageUri: String? = null,
-    onClick: () -> Unit
+    isClickable: Boolean = true,
+    onClick: () -> Unit = {}
 ) {
     val imageModifier = Modifier
         .size(140.dp)
         .clip(CircleShape)
-        .clickable(onClick = onClick)
+        .then(if (isClickable) Modifier.clickable(onClick = onClick) else Modifier)
         .border(
             width = 2.dp,
             color = if (profileImageBitmap != null || !profileImageUri.isNullOrEmpty())
@@ -78,7 +79,7 @@ fun ProfileImageSection(
                 ) {
                     Icon(
                         Icons.Outlined.Image,
-                        contentDescription = "Aggiungi foto",
+                        contentDescription = "Add photo",
                         modifier = Modifier.size(48.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -91,18 +92,20 @@ fun ProfileImageSection(
                 .align(Alignment.BottomEnd)
                 .offset((-8).dp, (-8).dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.CameraAlt,
-                contentDescription = "Cambia foto",
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = CircleShape
-                    )
-                    .padding(8.dp),
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            if(isClickable){
+                Icon(
+                    imageVector = Icons.Default.CameraAlt,
+                    contentDescription = "Cambia foto",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = CircleShape
+                        )
+                        .padding(8.dp),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
         }
     }
 }
