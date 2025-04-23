@@ -75,7 +75,18 @@ fun EditProfileScreen(
 
     val scrollState = rememberScrollState()
 
-    Scaffold { contentPadding ->
+    Scaffold(
+        topBar = {
+            TravelBuddyTopBar(
+                navController,
+                "Edit Profile",
+                "Edit profile informations",
+                canNavigateBack = true
+            )
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        bottomBar = { TravelBuddyBottomBar(navController) }
+    ) { contentPadding ->
         Column(
             modifier = Modifier
                 .padding(contentPadding)
@@ -84,13 +95,6 @@ fun EditProfileScreen(
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TravelBuddyTopBar(
-                navController,
-                "Edit Profile",
-                "Edit profile informations",
-                canNavigateBack = true
-            )
-
             ProfileImageSection(
                 profileImageBitmap = state.picture
                     ?.let { ImageUtils.byteArrayToOrientedBitmap(it).toImageBitmapOrNull() }
@@ -103,7 +107,6 @@ fun EditProfileScreen(
                     }
                 }
             )
-
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -184,7 +187,7 @@ fun EditProfileScreen(
 
             TravelBuddyButton(
                 label = "Edit user",
-                onClick = {actions.submitProfileChanges(navController)},
+                onClick = { actions.submitProfileChanges(navController) },
                 enabled = state.canSubmit,
                 height = 50,
                 isLoading = state.isLoading
@@ -197,96 +200,95 @@ fun EditProfileScreen(
                     modifier = Modifier.padding(top = 12.dp)
                 )
             }
-
-            Spacer(modifier = Modifier.size(32.dp))
         }
+    }
 
-        // CAMERA SCREEN
-        if (state.showCameraScreen) {
-            CameraCaptureScreen(
-                context = context,
-                onImageCaptured = { uri, _ ->
-                    actions.setPreviewImageUri(uri.toString())
-                    actions.toggleUIControl(ProfileControl.CameraScreen, false)
-                    actions.toggleUIControl(ProfileControl.ImagePreview, true)
-                },
-                onError = { actions.toggleUIControl(ProfileControl.CameraScreen, false) },
-                onClose = { actions.toggleUIControl(ProfileControl.CameraScreen, false) }
-            )
-        }
+    if (state.showCameraScreen) {
+        CameraCaptureScreen(
+            context = context,
+            onImageCaptured = { uri, _ ->
+                actions.setPreviewImageUri(uri.toString())
+                actions.toggleUIControl(ProfileControl.CameraScreen, false)
+                actions.toggleUIControl(ProfileControl.ImagePreview, true)
+            },
+            onError = { actions.toggleUIControl(ProfileControl.CameraScreen, false) },
+            onClose = { actions.toggleUIControl(ProfileControl.CameraScreen, false) }
+        )
+    }
 
-        // IMAGE PREVIEW
-        if (state.showImagePreview && state.previewImageUri != null) {
-            ImagePreviewScreen(
-                imageUri = state.previewImageUri.toUri(),
-                onConfirm = {
-                    val bytes = ImageUtils.uriToByteArray(context, state.previewImageUri.toUri())
-                    actions.setPicture(bytes)
-                    actions.toggleUIControl(ProfileControl.ImagePreview, false)
-                },
-                onRetake = {
-                    actions.toggleUIControl(ProfileControl.ImagePreview, false)
-                    actions.toggleUIControl(ProfileControl.CameraScreen, true)
-                }
-            )
-        }
-
-        val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
-        val newImageBytes = savedStateHandle?.get<ByteArray>("imageBytes")
-        val confirmedImageUri = savedStateHandle?.get<String>("confirmedImageUri")
-
-        LaunchedEffect(newImageBytes, confirmedImageUri) {
-            if (newImageBytes != null && confirmedImageUri != null) {
-                actions.setPicture(newImageBytes)
-                actions.setPictureUri(confirmedImageUri)
-
-                ImageUtils.saveImageToGallery(context, newImageBytes)
-
-                savedStateHandle.remove<ByteArray>("imageBytes")
-                savedStateHandle.remove<String>("confirmedImageUri")
-                savedStateHandle.remove<String>("previewImageUri")
+    if (state.showImagePreview && state.previewImageUri != null) {
+        ImagePreviewScreen(
+            imageUri = state.previewImageUri.toUri(),
+            onConfirm = {
+                val bytes = ImageUtils.uriToByteArray(context, state.previewImageUri.toUri())
+                actions.setPicture(bytes)
+                actions.toggleUIControl(ProfileControl.ImagePreview, false)
+            },
+            onRetake = {
+                actions.toggleUIControl(ProfileControl.ImagePreview, false)
+                actions.toggleUIControl(ProfileControl.CameraScreen, true)
             }
-        }
+        )
+    }
 
-        if (state.permissionRationaleVisible) {
-            LaunchedEffect(snackbarHostState) {
-                val res = snackbarHostState.showSnackbar(
-                    "Camera permission is required.",
-                    "Go to Settings",
-                    duration = SnackbarDuration.Long
+    val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+    val newImageBytes = savedStateHandle?.get<ByteArray>("imageBytes")
+    val confirmedImageUri = savedStateHandle?.get<String>("confirmedImageUri")
+
+    LaunchedEffect(newImageBytes, confirmedImageUri) {
+        if (newImageBytes != null && confirmedImageUri != null) {
+            actions.setPicture(newImageBytes)
+            actions.setPictureUri(confirmedImageUri)
+
+            ImageUtils.saveImageToGallery(context, newImageBytes)
+
+            savedStateHandle.remove<ByteArray>("imageBytes")
+            savedStateHandle.remove<String>("confirmedImageUri")
+            savedStateHandle.remove<String>("previewImageUri")
+        }
+    }
+
+    if (state.permissionRationaleVisible) {
+        LaunchedEffect(snackbarHostState) {
+            val res = snackbarHostState.showSnackbar(
+                "Camera permission is required.",
+                "Go to Settings",
+                duration = SnackbarDuration.Long
+            )
+            if (res == SnackbarResult.ActionPerformed) {
+                context.startActivity(
+                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", context.packageName, null)
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
                 )
-                if (res == SnackbarResult.ActionPerformed) {
-                    context.startActivity(
-                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                            data = Uri.fromParts("package", context.packageName, null)
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        }
-                    )
-                }
-                actions.toggleUIControl(ProfileControl.CameraRationale, false)
             }
+            actions.toggleUIControl(ProfileControl.CameraRationale, false)
         }
+    }
 
-        // CAMERA DENIED ALERT
-        if (state.permissionCameraDeniedVisible) {
-            AlertDialog(
-                title = { Text("Camera permission denied") },
-                text = { Text("Camera and gallery permission is required.") },
-                confirmButton = {
-                    TextButton(onClick = {
-                        cameraPermissionHandler.launchPermissionRequest()
-                        actions.toggleUIControl(ProfileControl.CameraDenied, false)
-                    }) {
-                        Text("Grant")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { actions.toggleUIControl(ProfileControl.CameraDenied, false)}) {
-                        Text("Dismiss")
-                    }
-                },
-                onDismissRequest = { actions.toggleUIControl(ProfileControl.CameraDenied, false)}
-            )
-        }
+    if (state.permissionCameraDeniedVisible) {
+        AlertDialog(
+            title = { Text("Camera permission denied") },
+            text = { Text("Camera and gallery permission is required.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    cameraPermissionHandler.launchPermissionRequest()
+                    actions.toggleUIControl(ProfileControl.CameraDenied, false)
+                }) {
+                    Text("Grant")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    actions.toggleUIControl(ProfileControl.CameraDenied, false)
+                }) {
+                    Text("Dismiss")
+                }
+            },
+            onDismissRequest = {
+                actions.toggleUIControl(ProfileControl.CameraDenied, false)
+            }
+        )
     }
 }

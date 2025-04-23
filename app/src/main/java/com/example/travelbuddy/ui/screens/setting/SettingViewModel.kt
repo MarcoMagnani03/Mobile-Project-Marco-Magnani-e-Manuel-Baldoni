@@ -19,8 +19,6 @@ interface SettingActions {
     fun onThemeSelected(option: ThemeOption)
 }
 
-
-
 class SettingViewModel(
     private val settingPreferenceRepository: SettingPreferenceRepository
 ) : ViewModel() {

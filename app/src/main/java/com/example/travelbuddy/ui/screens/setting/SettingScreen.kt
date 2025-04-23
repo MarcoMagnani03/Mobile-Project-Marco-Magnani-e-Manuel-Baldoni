@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.travelbuddy.ui.composables.CardWithRow
+import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
 import com.example.travelbuddy.ui.screens.setting.SettingViewModel
 
@@ -36,7 +37,8 @@ fun SettingScreen(
                 null,
                 canNavigateBack = true
             )
-        }
+        },
+        bottomBar = { TravelBuddyBottomBar(navController) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -48,7 +50,7 @@ fun SettingScreen(
                 // handle navigation
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(15.dp))
 
             CardWithRow("Set Access PIN") {
                 // handle navigation
