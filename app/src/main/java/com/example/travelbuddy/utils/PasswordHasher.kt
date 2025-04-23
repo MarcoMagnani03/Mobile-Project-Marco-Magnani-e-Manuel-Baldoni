@@ -26,4 +26,9 @@ object PasswordHasher {
         random.nextBytes(salt)
         return Hex.encodeHexString(salt)
     }
+
+    fun verifyPassword(plainPassword: String, hashedPassword: String, saltBase64: String): Boolean {
+        val inputHashed = hashPassword(plainPassword, saltBase64)
+        return inputHashed == hashedPassword
+    }
 }

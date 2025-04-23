@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.travelbuddy.ui.TravelBuddyRoute
 import com.example.travelbuddy.ui.composables.CardWithRow
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
@@ -46,14 +47,17 @@ fun SettingScreen(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
+
+            Text("Privacy", style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(15.dp))
             CardWithRow("Change Password") {
-                // handle navigation
+                navController.navigate(TravelBuddyRoute.ChangePassword)
             }
 
             Spacer(modifier = Modifier.height(15.dp))
 
             CardWithRow("Set Access PIN") {
-                // handle navigation
+                navController.navigate(TravelBuddyRoute.ChangePin)
             }
 
             Spacer(modifier = Modifier.height(24.dp))

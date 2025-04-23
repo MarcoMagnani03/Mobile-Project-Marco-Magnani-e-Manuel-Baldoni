@@ -54,5 +54,5 @@ val appModule = module {
     viewModel { NewTripViewModel(get(), get(), get()) }
     viewModel { TripDetailsViewModel(get()) }
     viewModel { ProfileViewModel(get(), get()) }
-    viewModel { SettingViewModel(get()) }
+    viewModel { SettingViewModel(get(),get(),get()) }
 }

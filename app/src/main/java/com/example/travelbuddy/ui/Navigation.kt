@@ -24,6 +24,8 @@ import com.example.travelbuddy.ui.screens.newTrip.NewTripViewModel
 import com.example.travelbuddy.ui.screens.profile.EditProfileScreen
 import com.example.travelbuddy.ui.screens.profile.ProfileScreen
 import com.example.travelbuddy.ui.screens.profile.ProfileViewModel
+import com.example.travelbuddy.ui.screens.setting.ChangePasswordScreen
+import com.example.travelbuddy.ui.screens.setting.ChangePinScreen
 import com.example.travelbuddy.ui.screens.setting.SettingScreen
 import com.example.travelbuddy.ui.screens.setting.SettingViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
@@ -49,6 +51,8 @@ sealed interface TravelBuddyRoute {
     @Serializable data class TripDetails(val tripId: String) : TravelBuddyRoute
     @Serializable data object EditProfile : TravelBuddyRoute
     @Serializable data object Setting:TravelBuddyRoute
+    @Serializable data object ChangePassword: TravelBuddyRoute
+    @Serializable data object ChangePin: TravelBuddyRoute
 }
 
 @Composable
@@ -123,6 +127,18 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             val settingViewModel = koinViewModel<SettingViewModel>()
             val state by settingViewModel.state.collectAsStateWithLifecycle()
             SettingScreen(state, settingViewModel.actions, navController)
+        }
+
+        composable<TravelBuddyRoute.ChangePassword> {
+            val settingViewModel = koinViewModel<SettingViewModel>()
+            val state by settingViewModel.state.collectAsStateWithLifecycle()
+            ChangePasswordScreen(state, settingViewModel.actions, navController)
+        }
+
+        composable<TravelBuddyRoute.ChangePin> {
+            val settingViewModel = koinViewModel<SettingViewModel>()
+            val state by settingViewModel.state.collectAsStateWithLifecycle()
+            ChangePinScreen(state, settingViewModel.actions, navController)
         }
 
         composable<TravelBuddyRoute.NewTrip> {

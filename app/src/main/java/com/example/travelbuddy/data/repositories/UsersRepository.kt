@@ -55,7 +55,6 @@ class UsersRepository(
 
     suspend fun getUserWithTrips(email: String): UserWithTrips? = dao.getUserWithTrips(email)
 
-
     suspend fun editUser(
         oldEmail: String,
         newEmail: String?,
@@ -84,4 +83,54 @@ class UsersRepository(
             dao.modifyUserAndUpdateEmail(existingUser, newEmail)
         }
     }
+
+    suspend fun changePassword(
+        email: String,
+        oldPlain: String,
+        newPlain: String
+    ): Result<Unit> {
+        val user = dao.getUserByEmail(email)
+            ?: return Result.failure(Exception("User not found"))
+
+        val validOldPassword = PasswordHasher.verifyPassword(
+            plainPassword = oldPlain,
+            hashedPassword = user.password,
+            saltBase64 = user.passwordSalt
+        )
+
+        if (!validOldPassword) {
+            return Result.failure(Exception("Old password is incorrect"))
+        }
+
+        val newSalt = PasswordHasher.generateSalt()
+        val newHashedPassword = PasswordHasher.hashPassword(newPlain, newSalt)
+
+        val updatedUser = user.copy(
+            password = newHashedPassword,
+            passwordSalt = newSalt
+        )
+
+        dao.upsert(updatedUser)
+        return Result.success(Unit)
+    }
+
+    suspend fun setPin(
+        email: String,
+        oldPin: String?,
+        newPin: String
+    ): Result<Unit> {
+        val user = dao.getUserByEmail(email)
+            ?: return Result.failure(Exception("User not found"))
+
+        if (user.pin != null && user.pin != oldPin) {
+            return Result.failure(Exception("Old PIN is incorrect"))
+        }
+
+        val updatedUser = user.copy(pin = newPin)
+        dao.upsert(updatedUser)
+
+        return Result.success(Unit)
+    }
+
+
 }
