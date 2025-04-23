@@ -37,7 +37,7 @@ fun TravelBuddyTopBar(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = if (canNavigateBack) TextAlign.Center else TextAlign.Start,
-                    color = if (canNavigateBack) Color.Black else MaterialTheme.colorScheme.primary
+                    color = if (canNavigateBack) Color.Unspecified else MaterialTheme.colorScheme.primary
                 )
                 if (subtitle != null) {
                     Text(
@@ -71,8 +71,7 @@ fun TravelBuddyTopBar(
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            titleContentColor = MaterialTheme.colorScheme.onSurface,
+            containerColor = Color.Transparent
         )
     )
 }
