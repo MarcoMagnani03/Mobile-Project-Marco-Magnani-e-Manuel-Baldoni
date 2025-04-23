@@ -55,7 +55,7 @@ sealed class BottomNavItem(
     )
 
     object Settings : BottomNavItem(
-        route = TravelBuddyRoute.Home,
+        route = TravelBuddyRoute.Setting,
         title = "Settings",
         icon = Icons.Default.Settings
     )

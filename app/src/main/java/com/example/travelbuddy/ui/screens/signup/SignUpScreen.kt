@@ -144,7 +144,7 @@ fun SignUpScreen(
                 value = state.firstName,
                 label = "First Name",
                 onValueChange = actions::setFirstName,
-                leadingIcon = { Icon(Icons.Outlined.Person, null) }
+                leadingIcon = { Icon(Icons.Outlined.Person, "Name") }
             )
 
             Spacer(modifier = Modifier.size(16.dp))
@@ -153,7 +153,7 @@ fun SignUpScreen(
                 value = state.lastName,
                 label = "Surname",
                 onValueChange = actions::setLastName,
-                leadingIcon = { Icon(Icons.Outlined.PersonOutline, null) }
+                leadingIcon = { Icon(Icons.Outlined.PersonOutline, "Surname") }
             )
 
             Spacer(modifier = Modifier.size(16.dp))
@@ -162,7 +162,7 @@ fun SignUpScreen(
                 value = state.city,
                 label = "City",
                 onValueChange = actions::setCity,
-                leadingIcon = { Icon(Icons.Outlined.LocationCity, null) }
+                leadingIcon = { Icon(Icons.Outlined.LocationCity, "City") }
             )
 
             Spacer(modifier = Modifier.size(16.dp))
@@ -172,7 +172,7 @@ fun SignUpScreen(
                 label = "Phone number",
                 onValueChange = actions::setPhoneNumber,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                leadingIcon = { Icon(Icons.Outlined.Phone, null) }
+                leadingIcon = { Icon(Icons.Outlined.Phone, "Phone") }
             )
 
             Spacer(modifier = Modifier.size(16.dp))
@@ -181,7 +181,7 @@ fun SignUpScreen(
                 value = state.bio,
                 label = "Bio",
                 onValueChange = actions::setBio,
-                leadingIcon = { Icon(Icons.Outlined.Info, null) }
+                leadingIcon = { Icon(Icons.Outlined.Info, "bio") }
             )
 
             Spacer(modifier = Modifier.size(16.dp))
@@ -191,7 +191,7 @@ fun SignUpScreen(
                 label = "Email",
                 onValueChange = actions::setEmail,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                leadingIcon = { Icon(Icons.Outlined.Email, null) }
+                leadingIcon = { Icon(Icons.Outlined.Email, "mail") }
             )
 
             Spacer(modifier = Modifier.size(16.dp))
@@ -201,17 +201,17 @@ fun SignUpScreen(
                 label = "Password",
                 onValueChange = actions::setPassword,
                 type = InputFieldType.Password,
-                leadingIcon = { Icon(Icons.Outlined.Lock, null) }
+                leadingIcon = { Icon(Icons.Outlined.Lock, "Password") }
             )
 
             Spacer(modifier = Modifier.size(24.dp))
 
             InputField(
                 value = state.confirmPassword,
-                label = "Confirm city",
+                label = "Confirm password",
                 onValueChange = actions::setConfirmPassword,
                 type = InputFieldType.Password,
-                leadingIcon = { Icon(Icons.Outlined.Lock, null) }
+                leadingIcon = { Icon(Icons.Outlined.Lock, "Confirm password") }
             )
 
             if (state.confirmPassword.isNotEmpty() && state.password != state.confirmPassword) {

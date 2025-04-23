@@ -5,6 +5,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.example.travelbuddy.data.database.TravelBuddyDatabase
 import com.example.travelbuddy.data.repositories.GroupsRepository
+import com.example.travelbuddy.data.repositories.SettingPreferenceRepository
 import com.example.travelbuddy.data.repositories.TripsRepository
 import com.example.travelbuddy.data.repositories.UserSessionRepository
 import com.example.travelbuddy.data.repositories.UsersRepository
@@ -14,15 +15,18 @@ import com.example.travelbuddy.ui.screens.home.HomeViewModel
 import com.example.travelbuddy.ui.screens.login.LoginViewModel
 import com.example.travelbuddy.ui.screens.newTrip.NewTripViewModel
 import com.example.travelbuddy.ui.screens.profile.ProfileViewModel
+import com.example.travelbuddy.ui.screens.setting.SettingViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
 import com.example.travelbuddy.ui.screens.tripDetails.TripDetailsViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val Context.dataStore by preferencesDataStore("settings")
+val Context.themeDataStore by preferencesDataStore("user_preferences")
 
 val appModule = module {
     single { get<Context>().dataStore }
+    single { get<Context>().themeDataStore}
 
     single {
         Room.databaseBuilder(
@@ -38,6 +42,7 @@ val appModule = module {
 
     single { UsersRepository(get()) }
     single { UserSessionRepository(get()) }
+    single { SettingPreferenceRepository(get()) }
     single { TripsRepository(get()) }
     single { GroupsRepository(get()) }
 
@@ -49,4 +54,5 @@ val appModule = module {
     viewModel { NewTripViewModel(get(), get(), get()) }
     viewModel { TripDetailsViewModel(get()) }
     viewModel { ProfileViewModel(get(), get()) }
+    viewModel { SettingViewModel(get()) }
 }

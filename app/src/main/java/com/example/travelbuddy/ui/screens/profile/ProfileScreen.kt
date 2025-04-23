@@ -49,7 +49,6 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Name
         Text(
             text = state.name,
             fontSize = 24.sp,
@@ -81,7 +80,10 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Card(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            )
         ) {
             Column(
                 modifier = Modifier.padding(16.dp)
@@ -124,7 +126,7 @@ fun ProfileDetailItem(label: String, value: String?) {
         Text(
             text = label,
             fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            color = MaterialTheme.colorScheme.onPrimaryContainer
         )
         Text(
             text = if (!value.isNullOrBlank()) value else "not defined",

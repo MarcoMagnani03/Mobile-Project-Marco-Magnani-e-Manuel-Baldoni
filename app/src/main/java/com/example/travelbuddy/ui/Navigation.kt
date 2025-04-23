@@ -6,7 +6,6 @@ import com.example.travelbuddy.ui.screens.login.LoginViewModel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -25,6 +24,8 @@ import com.example.travelbuddy.ui.screens.newTrip.NewTripViewModel
 import com.example.travelbuddy.ui.screens.profile.EditProfileScreen
 import com.example.travelbuddy.ui.screens.profile.ProfileScreen
 import com.example.travelbuddy.ui.screens.profile.ProfileViewModel
+import com.example.travelbuddy.ui.screens.setting.SettingScreen
+import com.example.travelbuddy.ui.screens.setting.SettingViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpScreen
 import com.example.travelbuddy.ui.screens.tripDetails.TripDetailsScreen
@@ -47,6 +48,7 @@ sealed interface TravelBuddyRoute {
     @Serializable data object Profile : TravelBuddyRoute
     @Serializable data class TripDetails(val tripId: String) : TravelBuddyRoute
     @Serializable data object EditProfile : TravelBuddyRoute
+    @Serializable data object Setting:TravelBuddyRoute
 }
 
 @Composable
@@ -115,6 +117,12 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             val loginViewModel = koinViewModel<SignUpViewModel>()
             val state by loginViewModel.state.collectAsStateWithLifecycle()
             SignUpScreen(state, loginViewModel.actions, navController)
+        }
+
+        composable<TravelBuddyRoute.Setting> {
+            val settingViewModel = koinViewModel<SettingViewModel>()
+            val state by settingViewModel.state.collectAsStateWithLifecycle()
+            SettingScreen(state, settingViewModel.actions, navController)
         }
 
         composable<TravelBuddyRoute.NewTrip> {
