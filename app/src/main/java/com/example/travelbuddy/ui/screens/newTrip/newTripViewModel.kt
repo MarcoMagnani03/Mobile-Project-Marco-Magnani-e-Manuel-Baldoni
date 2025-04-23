@@ -18,7 +18,7 @@ data class NewTripState(
     val destination: String = "",
     val startDate: String = "",
     val endDate: String = "",
-    val budget: Double? = null,
+    val budget: Double? = 0.0,
     val description: String? = null,
     val errorMessage: String = "",
     val isLoading: Boolean = false,

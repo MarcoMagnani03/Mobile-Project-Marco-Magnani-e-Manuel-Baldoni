@@ -97,7 +97,7 @@ fun RowScope.AddBottomNavItem(
         navItem.route == TravelBuddyRoute.Home && backStackEntry?.destination?.hasRoute<TravelBuddyRoute.Home>() == true ||
         navItem.route == TravelBuddyRoute.Home && backStackEntry?.destination?.hasRoute<TravelBuddyRoute.Home>() == true
 
-                NavigationBarItem(
+    NavigationBarItem(
         selected = selected,
         onClick = {
             navController.navigate(navItem.route)
