@@ -23,7 +23,7 @@ data class SettingState(
 interface SettingActions {
     fun onThemeSelected(option: ThemeOption)
     fun onChangePassword(old: String, new: String)
-    fun onSetPin(old: String?, new: String)
+    fun onSetPin(old: String, new: String)
     fun clearMessages()
 }
 
@@ -78,7 +78,7 @@ class SettingViewModel(
             }
         }
 
-        override fun onSetPin(old: String?, new: String) {
+        override fun onSetPin(old: String, new: String) {
             viewModelScope.launch {
                 val userEmail = userSessionRepository.userEmail.first()
                 if (new.length != 6) {

@@ -4,7 +4,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.travelbuddy.data.repositories.UsersRepository
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.example.travelbuddy.data.repositories.UserSessionRepository
+import com.example.travelbuddy.ui.TravelBuddyRoute
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,7 +25,7 @@ interface CodeActions {
     fun verifyPin(email: String, pin: String, onResult: (Boolean) -> Unit)
     fun showError(message: String)
     fun clearError()
-    fun clearUserSession(onComplete: () -> Unit)
+    fun logout(navController: NavController)
 }
 class CodeViewModel(
     private val userRepository: UsersRepository,
@@ -91,10 +93,12 @@ class CodeViewModel(
             _state.value = _state.value.copy(errorMessage = null)
         }
 
-        override fun clearUserSession(onComplete: () -> Unit) {
+        override fun logout(navController: NavController) {
             viewModelScope.launch {
                 appPreferences.clearAllSessionData()
-                onComplete()
+                navController.navigate(TravelBuddyRoute.Login) {
+                    popUpTo(0) { inclusive = true }
+                }
             }
         }
     }

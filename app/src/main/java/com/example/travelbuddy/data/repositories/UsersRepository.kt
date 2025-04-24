@@ -15,15 +15,38 @@ class UsersRepository(
 
     suspend fun loginUser(email: String, password: String): Boolean {
         val user = dao.getUserByEmail(email) ?: return false
-        val hashedInput = PasswordHasher.hashPassword(password, user.passwordSalt)
+        var hashedInput = ""
+        val passwordSalt = user.passwordSalt
+        if(!passwordSalt.isNullOrBlank()){
+            hashedInput = PasswordHasher.hashPassword(password, passwordSalt)
+        }
+
         return hashedInput == user.password
     }
     
     suspend fun signInWithEmailAndPassword(email: String, password: String) =
         loginUser(email, password)
 
-    suspend fun updateUserPin(email: String, pin: String) = dao.updateUserPin(email,pin)
-    suspend fun verifyPin(email: String, pin: String) = dao.verifyUserPin(email,pin)
+    suspend fun updateUserPin(email: String, plainPin: String) {
+        val salt = PasswordHasher.generateSalt()
+        val hashedPin = PasswordHasher.hashPassword(plainPin, salt)
+
+        dao.updateUserPin(
+            email = email,
+            pin = hashedPin,
+            pinSalt = salt
+        )
+    }
+
+    suspend fun verifyPin(email: String, plainPin: String): Boolean {
+        val pinData = dao.getUserPinAndSalt(email) ?: return false
+
+        return PasswordHasher.verifyPassword(
+            plainPassword = plainPin,
+            hashedPassword = pinData.pin,
+            saltBase64 = pinData.pinSalt
+        )
+    }
 
     suspend fun registerUser(email: String,
                              plainPassword: String,
@@ -92,11 +115,18 @@ class UsersRepository(
         val user = dao.getUserByEmail(email)
             ?: return Result.failure(Exception("User not found"))
 
-        val validOldPassword = PasswordHasher.verifyPassword(
-            plainPassword = oldPlain,
-            hashedPassword = user.password,
-            saltBase64 = user.passwordSalt
-        )
+        var validOldPassword=false
+
+        val password = user.password
+        val passwordSalt = user.passwordSalt
+
+        if (!password.isNullOrBlank() && !passwordSalt.isNullOrBlank()) {
+            validOldPassword = PasswordHasher.verifyPassword(
+                plainPassword = oldPlain,
+                hashedPassword = password,
+                saltBase64 = passwordSalt
+            )
+        }
 
         if (!validOldPassword) {
             return Result.failure(Exception("Old password is incorrect"))
@@ -114,23 +144,45 @@ class UsersRepository(
         return Result.success(Unit)
     }
 
+
     suspend fun setPin(
         email: String,
-        oldPin: String?,
+        oldPin: String,
         newPin: String
     ): Result<Unit> {
         val user = dao.getUserByEmail(email)
             ?: return Result.failure(Exception("User not found"))
 
-        if (user.pin != null && user.pin != oldPin) {
-            return Result.failure(Exception("Old PIN is incorrect"))
+        var validOldPin =false;
+
+        val pin = user.pin
+        val pinSalt = user.pinSalt
+
+        if (!pin.isNullOrBlank() && !pinSalt.isNullOrBlank()) {
+            validOldPin = PasswordHasher.verifyPassword(
+                plainPassword = oldPin,
+                hashedPassword = pin,
+                saltBase64 = pinSalt
+            )
         }
 
-        val updatedUser = user.copy(pin = newPin)
+
+        if (!validOldPin) {
+            return Result.failure(Exception("Old pin is incorrect"))
+        }
+
+        val newSalt = PasswordHasher.generateSalt()
+        val newHashedPin = PasswordHasher.hashPassword(newPin, newSalt)
+
+        val updatedUser = user.copy(
+            pin = newHashedPin,
+            pinSalt = newSalt
+        )
         dao.upsert(updatedUser)
 
         return Result.success(Unit)
     }
+
 
 
 }

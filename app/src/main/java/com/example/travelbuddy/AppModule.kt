@@ -33,7 +33,7 @@ val appModule = module {
             get(),
             TravelBuddyDatabase::class.java,
             "travel-buddy"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     single { get<TravelBuddyDatabase>().usersDAO() }

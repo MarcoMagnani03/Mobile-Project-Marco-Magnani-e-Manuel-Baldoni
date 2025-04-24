@@ -4,9 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.travelbuddy.data.repositories.UserSessionRepository
 import com.example.travelbuddy.ui.TravelBuddyRoute
+import com.example.travelbuddy.ui.composables.ButtonStyle
 import com.example.travelbuddy.ui.composables.CustomKeypad
 import com.example.travelbuddy.ui.composables.InputField
 import com.example.travelbuddy.ui.composables.TravelBuddyButton
@@ -51,21 +56,6 @@ fun CodeScreen(
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.primary
             )
-
-            if (isNewPinSetup) {
-                Spacer(modifier = Modifier.size(16.dp))
-                TravelBuddyButton(
-                    label = "Back to login",
-                    onClick = {
-                        actions.clearUserSession {
-                            navController.navigate(TravelBuddyRoute.Login) {
-                                popUpTo(0) { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        }
-                    }
-                )
-            }
 
             Spacer(modifier = Modifier.size(40.dp))
 
@@ -134,6 +124,23 @@ fun CodeScreen(
                 enabled = state.code.length == 6 && !state.isLoading
             )
 
+
+            if(!isNewPinSetup){
+                Spacer(modifier = Modifier.height(16.dp))
+
+                TravelBuddyButton(
+                    label = "Back to login",
+                    onClick = { actions.logout(navController) },
+                    style = ButtonStyle.ERROR,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Logout,
+                            contentDescription = "Back to login",
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                )
+            }
 
         }
     }

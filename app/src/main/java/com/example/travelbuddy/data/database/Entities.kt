@@ -38,13 +38,16 @@ data class User(
     val email: String,
 
     @ColumnInfo
-    var password: String,
+    var password: String?,
 
     @ColumnInfo
-    var passwordSalt: String,
+    var passwordSalt: String?,
 
     @ColumnInfo
     var pin: String? = null,
+
+    @ColumnInfo
+    var pinSalt: String? = null,
 
     @ColumnInfo
     var firstname: String,
@@ -64,6 +67,12 @@ data class User(
     @ColumnInfo
     var profilePicture: ByteArray? = null
 )
+
+data class PinData(
+    val pin: String,
+    val pinSalt: String
+)
+
 
 @Entity
 data class NotificationType(
