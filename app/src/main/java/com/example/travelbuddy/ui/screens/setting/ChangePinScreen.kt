@@ -26,6 +26,7 @@ fun ChangePinScreen(
     actions: SettingActions,
     navController: NavController
 ) {
+    var pinMismatchError by remember { mutableStateOf<String?>(null) }
     var currentPin by remember { mutableStateOf("") }
     var newPin by remember { mutableStateOf("") }
     var confirmPin by remember { mutableStateOf("") }
@@ -49,7 +50,7 @@ fun ChangePinScreen(
         ) {
             InputField(
                 value = currentPin,
-                onValueChange = { currentPin = it },
+                onValueChange = { if(currentPin.length <= 6 ) currentPin = it },
                 label = "Current PIN",
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
@@ -57,7 +58,7 @@ fun ChangePinScreen(
 
             InputField(
                 value = newPin,
-                onValueChange = { newPin = it },
+                onValueChange = { if(newPin.length <= 6) newPin = it },
                 label = "New PIN",
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
@@ -65,11 +66,15 @@ fun ChangePinScreen(
 
             InputField(
                 value = confirmPin,
-                onValueChange = { confirmPin = it },
+                onValueChange = { if(confirmPin.length <= 6) confirmPin = it },
                 label = "Confirm New PIN",
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
             )
+
+            pinMismatchError?.let {
+                Text(text = it, color = MaterialTheme.colorScheme.error)
+            }
 
             state.errorMessage?.let {
                 Text(text = it, color = MaterialTheme.colorScheme.error)
@@ -85,9 +90,10 @@ fun ChangePinScreen(
             Button(
                 onClick = {
                     if (newPin != confirmPin) {
+                        pinMismatchError = "Confirmation PIN does not match"
                         actions.clearMessages()
-                        actions.onSetPin("", "")
                     } else {
+                        pinMismatchError = null
                         actions.onSetPin(currentPin, newPin)
                     }
                 },

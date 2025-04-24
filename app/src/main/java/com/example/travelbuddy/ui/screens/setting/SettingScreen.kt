@@ -48,7 +48,7 @@ fun SettingScreen(
                 .padding(16.dp)
         ) {
 
-            Text("Privacy", style = MaterialTheme.typography.bodyMedium)
+            Text("Privacy", style = MaterialTheme.typography.bodyLarge)
             Spacer(modifier = Modifier.height(15.dp))
             CardWithRow("Change Password") {
                 navController.navigate(TravelBuddyRoute.ChangePassword)
@@ -62,7 +62,7 @@ fun SettingScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text("Theme", style = MaterialTheme.typography.bodyMedium)
+            Text("Theme", style = MaterialTheme.typography.bodyLarge)
             Spacer(modifier = Modifier.height(8.dp))
 
             ThemeOption.entries.forEach { option ->

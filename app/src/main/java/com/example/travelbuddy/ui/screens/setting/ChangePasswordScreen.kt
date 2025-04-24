@@ -10,10 +10,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.example.travelbuddy.ui.composables.InputField
+import com.example.travelbuddy.ui.composables.InputFieldType
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
 
 @Composable
@@ -25,6 +29,8 @@ fun ChangePasswordScreen(
     var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var passwordMismatchError by remember { mutableStateOf<String?>(null) }
+
 
     Scaffold(
         topBar = {
@@ -43,26 +49,36 @@ fun ChangePasswordScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            OutlinedTextField(
+            InputField(
                 value = currentPassword,
                 onValueChange = { currentPassword = it },
-                label = { Text("Current Password") },
-                modifier = Modifier.fillMaxWidth()
+                label = "Current Password",
+                modifier = Modifier.fillMaxWidth(),
+                type = InputFieldType.Password,
+                leadingIcon = { Icon(Icons.Outlined.Lock, "Password") }
             )
 
-            OutlinedTextField(
+            InputField(
                 value = newPassword,
                 onValueChange = { newPassword = it },
-                label = { Text("New Password") },
-                modifier = Modifier.fillMaxWidth()
+                label = "New Password",
+                modifier = Modifier.fillMaxWidth(),
+                type = InputFieldType.Password,
+                leadingIcon = { Icon(Icons.Outlined.Lock, "Password") }
             )
 
-            OutlinedTextField(
+            InputField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
-                label = { Text("Confirm New Password") },
-                modifier = Modifier.fillMaxWidth()
+                label = "Confirm New Password",
+                modifier = Modifier.fillMaxWidth(),
+                type = InputFieldType.Password,
+                leadingIcon = { Icon(Icons.Outlined.Lock, "Password") }
             )
+
+            passwordMismatchError?.let {
+                Text(text = it, color = MaterialTheme.colorScheme.error)
+            }
 
             state.errorMessage?.let {
                 Text(text = it, color = MaterialTheme.colorScheme.error)
@@ -78,9 +94,10 @@ fun ChangePasswordScreen(
             Button(
                 onClick = {
                     if (newPassword != confirmPassword) {
+                        passwordMismatchError = "Confirmation password does not match"
                         actions.clearMessages()
-                        actions.onChangePassword("", "")
                     } else {
+                        passwordMismatchError = null
                         actions.onChangePassword(currentPassword, newPassword)
                     }
                 },
