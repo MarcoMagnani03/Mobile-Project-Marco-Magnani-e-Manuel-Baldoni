@@ -39,19 +39,22 @@ interface NotificationsTypesDAO {
 @Dao
 interface TripActivitiesDAO {
     @Upsert
-    suspend fun upsert(tripActivity: TripActivity)
+    suspend fun upsert(tripActivity: TripActivity): Long
 
     @Delete
     suspend fun delete(item: TripActivity)
 }
 
 @Dao
-interface ActivitiesTypesDAO {
+interface TripActivitiesTypesDAO {
     @Upsert
-    suspend fun upsert(activityType: ActivityType)
+    suspend fun upsert(tripActivityType: TripActivityType)
 
     @Delete
-    suspend fun delete(item: ActivityType)
+    suspend fun delete(item: TripActivityType)
+
+    @Query("SELECT * FROM TripActivityType")
+    suspend fun getAll(): List<TripActivityType>
 }
 
 @Dao

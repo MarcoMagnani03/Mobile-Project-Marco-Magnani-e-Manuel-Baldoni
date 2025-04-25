@@ -21,6 +21,8 @@ import com.example.travelbuddy.ui.screens.home.HomeViewModel
 import com.example.travelbuddy.ui.screens.launch.LaunchScreen
 import com.example.travelbuddy.ui.screens.newTrip.NewTripScreen
 import com.example.travelbuddy.ui.screens.newTrip.NewTripViewModel
+import com.example.travelbuddy.ui.screens.newTripActivity.NewTripActivityViewModel
+import com.example.travelbuddy.ui.screens.newTripActivity.NewTripActivityScreen
 import com.example.travelbuddy.ui.screens.profile.EditProfileScreen
 import com.example.travelbuddy.ui.screens.profile.ProfileScreen
 import com.example.travelbuddy.ui.screens.profile.ProfileViewModel
@@ -48,11 +50,12 @@ sealed interface TravelBuddyRoute {
     @Serializable data object CameraCapture : TravelBuddyRoute
     @Serializable data object ImagePreview : TravelBuddyRoute
     @Serializable data object Profile : TravelBuddyRoute
-    @Serializable data class TripDetails(val tripId: String) : TravelBuddyRoute
     @Serializable data object EditProfile : TravelBuddyRoute
     @Serializable data object Setting:TravelBuddyRoute
     @Serializable data object ChangePassword: TravelBuddyRoute
     @Serializable data object ChangePin: TravelBuddyRoute
+    @Serializable data class TripDetails(val tripId: String) : TravelBuddyRoute
+    @Serializable data class NewTripActivity(val tripId: String) : TravelBuddyRoute
 }
 
 @Composable
@@ -204,9 +207,6 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             }
         }
 
-
-
-
         composable<TravelBuddyRoute.TripDetails> { backStackEntry ->
             val tripId = backStackEntry.arguments?.getString("tripId") ?: ""
             val tripIdLong = tripId.toLongOrNull() ?: -1L
@@ -220,6 +220,24 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             TripDetailsScreen(
                 state = state,
                 actions = tripDetailsViewModel.actions,
+                navController = navController
+            )
+        }
+
+        composable<TravelBuddyRoute.NewTripActivity> { backStackEntry ->
+            val tripId = backStackEntry.arguments?.getString("tripId") ?: ""
+            val tripIdLong = tripId.toLongOrNull() ?: -1L
+            val newTripActivityViewModel = koinViewModel<NewTripActivityViewModel>()
+            val state by newTripActivityViewModel.state.collectAsStateWithLifecycle()
+
+            LaunchedEffect(tripId) {
+                newTripActivityViewModel.actions.setTripId(tripIdLong)
+                newTripActivityViewModel.actions.loadTripActivityTypes()
+            }
+
+            NewTripActivityScreen(
+                state = state,
+                actions = newTripActivityViewModel.actions,
                 navController = navController
             )
         }

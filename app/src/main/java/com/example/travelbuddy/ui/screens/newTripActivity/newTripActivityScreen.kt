@@ -1,11 +1,9 @@
-package com.example.travelbuddy.ui.screens.newTrip
+package com.example.travelbuddy.ui.screens.newTripActivity
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -25,21 +23,22 @@ import androidx.navigation.NavController
 import com.example.travelbuddy.ui.TravelBuddyRoute
 import com.example.travelbuddy.ui.composables.InputField
 import com.example.travelbuddy.ui.composables.InputFieldType
+import com.example.travelbuddy.ui.composables.SelectOption
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
 import com.example.travelbuddy.ui.composables.TravelBuddyButton
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
 
 @Composable
-fun NewTripScreen(
-    state: NewTripState,
-    actions: NewTripActions,
+fun NewTripActivityScreen(
+    state: NewTripActivityState,
+    actions: NewTripActivityActions,
     navController: NavController
 ) {
     val scrollState = rememberScrollState()
 
-    LaunchedEffect(state.newTripId) {
-        state.newTripId?.let { tripId ->
-            navController.navigate(TravelBuddyRoute.TripDetails(tripId = tripId.toString()))
+    LaunchedEffect(state.newTripActivityId) {
+        state.newTripActivityId?.let {
+            navController.navigate(TravelBuddyRoute.TripDetails(tripId = state.tripId.toString()))
         }
     }
 
@@ -47,7 +46,7 @@ fun NewTripScreen(
         topBar = {
             TravelBuddyTopBar(
                 navController = navController,
-                title = "New trip",
+                title = "New Activity",
                 subtitle = "Plan your next adventure",
                 canNavigateBack = true,
             )
@@ -64,18 +63,10 @@ fun NewTripScreen(
                 .verticalScroll(scrollState)
         ) {
             InputField(
-                value = state.tripName,
-                onValueChange = actions::setTripName,
-                label = "Trip name*",
-                placeholder = "Enter trip name",
-                type = InputFieldType.Text,
-            )
-
-            InputField(
-                value = state.destination,
-                onValueChange = actions::setDestination,
-                label = "Destination*",
-                placeholder = "Where are you going?",
+                value = state.tripActivityName,
+                onValueChange = actions::setTripActivityName,
+                label = "Activity name*",
+                placeholder = "Enter activity name",
                 type = InputFieldType.Text,
             )
 
@@ -83,33 +74,54 @@ fun NewTripScreen(
                 value = state.startDate,
                 onValueChange = actions::setStartDate,
                 label = "Start date*",
-                type = InputFieldType.Date,
+                type = InputFieldType.DateTime,
             )
 
             InputField(
                 value = state.endDate,
                 onValueChange = actions::setEndDate,
                 label = "End date*",
-                type = InputFieldType.Date,
+                type = InputFieldType.DateTime,
             )
 
+            state.tripActivityTypes?.let {
+                InputField(
+                    value = state.tripActivityTypeId.toString(),
+                    onValueChange = actions::setTripActivityTypeId,
+                    label = "Type",
+                    placeholder = "Select type",
+                    type = InputFieldType.Select,
+                    options = it.map { tripActivityType ->
+                        SelectOption(
+                            label = tripActivityType.label,
+                            value = tripActivityType.id.toString()
+                        )
+                    }
+                )
+            }
+
             InputField(
-                value = state.budget.toString(),
+                value = state.pricePerPerson.toString(),
                 onValueChange = { value ->
-                    val newBudget = value.toDoubleOrNull() ?: 0.0
-                    actions.setBudget(newBudget)
+                    val newPricePerPerson = value.toDoubleOrNull() ?: 0.0
+                    actions.setPricePerPerson(newPricePerPerson)
                 },
-                label = "Budget",
-                placeholder = "Enter your budget",
+                label = "Price per person",
                 type = InputFieldType.Text,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
 
             InputField(
-                value = state.description ?: "",
-                onValueChange = actions::setDescription,
-                label = "Description",
-                placeholder = "Enter a description of the trip",
+                value = state.position?: "",
+                onValueChange = actions::setPosition,
+                label = "Position",
+                type = InputFieldType.Text
+            )
+
+            InputField(
+                value = state.notes ?: "",
+                onValueChange = actions::setNotes,
+                label = "Notes",
                 type = InputFieldType.Text,
                 modifier = Modifier
                     .defaultMinSize(0.dp, 100.dp),
@@ -117,18 +129,17 @@ fun NewTripScreen(
 
             TravelBuddyButton(
                 enabled = state.canSubmit && !state.isLoading,
-                onClick = actions::createTrip,
+                onClick = actions::createTripActivity,
                 label = "Create trip",
                 isLoading = state.isLoading,
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = "Create trip",
+                        contentDescription = "Create activity",
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             )
-            Spacer(Modifier.height(10.dp))
         }
     }
 }

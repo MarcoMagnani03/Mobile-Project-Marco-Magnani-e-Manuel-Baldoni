@@ -25,13 +25,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.travelbuddy.data.database.Trip
+import com.example.travelbuddy.ui.TravelBuddyRoute
 
 @Composable
 fun ActiveTripCard(
     trip: Trip,
     onAddExpenseClick: () -> Unit,
-    onAddEventClick: () -> Unit
+    navController: NavController
 ) {
     Card(
         modifier = Modifier
@@ -43,7 +45,10 @@ fun ActiveTripCard(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp
-        )
+        ),
+        onClick = {
+            navController.navigate(TravelBuddyRoute.TripDetails(trip.id.toString()))
+        }
     ) {
         Column(
             modifier = Modifier
@@ -137,7 +142,9 @@ fun ActiveTripCard(
 
             TravelBuddyButton(
                 label = "Aggiungi evento",
-                onClick = onAddEventClick,
+                onClick = {
+                    navController.navigate(TravelBuddyRoute.NewTripActivity(trip.id.toString()))
+                },
                 style = ButtonStyle.PRIMARY_OUTLINED,
                 leadingIcon = {
                     Icon(

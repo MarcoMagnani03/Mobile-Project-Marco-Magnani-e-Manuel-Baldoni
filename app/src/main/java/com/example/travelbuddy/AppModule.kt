@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.example.travelbuddy.data.database.TravelBuddyDatabase
+import com.example.travelbuddy.data.repositories.TripActivitiesTypesRepository
 import com.example.travelbuddy.data.repositories.GroupsRepository
 import com.example.travelbuddy.data.repositories.SettingPreferenceRepository
+import com.example.travelbuddy.data.repositories.TripActivitiesRepository
 import com.example.travelbuddy.data.repositories.TripsRepository
 import com.example.travelbuddy.data.repositories.UserSessionRepository
 import com.example.travelbuddy.data.repositories.UsersRepository
@@ -14,6 +16,7 @@ import com.example.travelbuddy.ui.screens.code.CodeViewModel
 import com.example.travelbuddy.ui.screens.home.HomeViewModel
 import com.example.travelbuddy.ui.screens.login.LoginViewModel
 import com.example.travelbuddy.ui.screens.newTrip.NewTripViewModel
+import com.example.travelbuddy.ui.screens.newTripActivity.NewTripActivityViewModel
 import com.example.travelbuddy.ui.screens.profile.ProfileViewModel
 import com.example.travelbuddy.ui.screens.setting.SettingViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
@@ -39,12 +42,16 @@ val appModule = module {
     single { get<TravelBuddyDatabase>().usersDAO() }
     single { get<TravelBuddyDatabase>().tripsDAO() }
     single { get<TravelBuddyDatabase>().groupsDAO() }
+    single { get<TravelBuddyDatabase>().activitiesDAO() }
+    single { get<TravelBuddyDatabase>().activitiesTypesDAO() }
 
     single { UsersRepository(get()) }
     single { UserSessionRepository(get()) }
     single { SettingPreferenceRepository(get()) }
     single { TripsRepository(get()) }
     single { GroupsRepository(get()) }
+    single { TripActivitiesRepository(get()) }
+    single { TripActivitiesTypesRepository(get()) }
 
     viewModel { HomeViewModel(get(), get()) }
     viewModel { TravelBuddyViewModel() }
@@ -55,4 +62,5 @@ val appModule = module {
     viewModel { TripDetailsViewModel(get()) }
     viewModel { ProfileViewModel(get(), get()) }
     viewModel { SettingViewModel(get(),get(),get()) }
+    viewModel { NewTripActivityViewModel(get(), get()) }
 }

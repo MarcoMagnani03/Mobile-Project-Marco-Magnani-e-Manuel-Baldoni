@@ -138,7 +138,7 @@ data class TripWithPhotos(
 )
 
 @Entity
-data class ActivityType(
+data class TripActivityType(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
@@ -173,7 +173,7 @@ data class TripActivity(
     var notes: String?,
 
     @ColumnInfo
-    var activityTypeId: Int
+    var tripActivityTypeId: Int?
 )
 
 @Entity

@@ -34,7 +34,7 @@ fun ActiveTripsSection(
             ActiveTripCard(
                 trip = trip,
                 onAddExpenseClick = {  },
-                onAddEventClick = {  }
+                navController = navController
             )
         }
 
