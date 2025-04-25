@@ -2,8 +2,11 @@ package com.example.travelbuddy.ui.screens.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.example.travelbuddy.data.repositories.UserSessionRepository
 import com.example.travelbuddy.data.repositories.UsersRepository
+import com.example.travelbuddy.ui.TravelBuddyRoute
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -26,6 +29,7 @@ interface LoginActions {
     fun setPassword(password: String)
     fun resetNavigation()
     fun loginWithEmail()
+    fun handleGoogleSignIn(account: GoogleSignInAccount)
 }
 
 class LoginViewModel(
@@ -71,18 +75,32 @@ class LoginViewModel(
                 }
             }
         }
+
+        override fun handleGoogleSignIn(account: GoogleSignInAccount) {
+            viewModelScope.launch {
+                println(account)
+                val email = userRepository.handleGoogleSignIn(account)
+                println(email)
+                if (email != null) {
+                    onLoginSuccess(email)
+                } else {
+                    //TODO FARE ERRORE NON TOAST
+                }
+            }
+        }
     }
 
 
     fun onLoginSuccess(email: String) {
         viewModelScope.launch {
-            val hasPin = userRepository.hasPin(_state.value.email)
+            val hasPin = userRepository.hasPin(email)
             appPreferences.saveHasPin(hasPin)
 
             appPreferences.saveUserEmail(email)
 
             _state.value = _state.value.copy(
-                navigateToCode = true
+                navigateToCode = true,
+                email = email
             )
         }
     }

@@ -3,7 +3,9 @@ package com.example.travelbuddy.data.repositories
 import com.example.travelbuddy.data.database.User
 import com.example.travelbuddy.data.database.UserWithTrips
 import com.example.travelbuddy.data.database.UsersDAO
+import com.example.travelbuddy.utils.ImageUtils
 import com.example.travelbuddy.utils.PasswordHasher
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 
 class UsersRepository(
     private val dao: UsersDAO
@@ -183,6 +185,33 @@ class UsersRepository(
         return Result.success(Unit)
     }
 
+    suspend fun handleGoogleSignIn(account: GoogleSignInAccount): String? {
+        val email = account.email ?: return null
+
+        val user = dao.getUserByEmail(email)
+        if (user == null) {
+            val nameParts = account.displayName?.split(" ") ?: listOf("", "")
+            val firstname = nameParts.getOrNull(0) ?: ""
+            val lastname = nameParts.getOrNull(1) ?: ""
+
+            val newUser = User(
+                email = email,
+                password = null,
+                passwordSalt = null,
+                pin = null,
+                pinSalt = null,
+                firstname = firstname,
+                lastname = lastname,
+                phoneNumber = null,
+                location = null,
+                bio = null,
+                profilePicture = null
+            )
+            dao.upsert(newUser)
+        }
+
+        return email
+    }
 
 
 }

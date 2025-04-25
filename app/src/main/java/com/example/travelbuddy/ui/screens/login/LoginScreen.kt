@@ -27,6 +27,7 @@ import com.example.travelbuddy.ui.composables.TravelBuddyButton
 import androidx.compose.foundation.clickable
 import androidx.compose.runtime.LaunchedEffect
 import com.example.travelbuddy.ui.composables.ButtonStyle
+import com.example.travelbuddy.ui.composables.GoogleSignInButton
 
 @Composable
 fun LoginScreen(
@@ -112,14 +113,12 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.size(16.dp))
 
-            TravelBuddyButton(
-                label = "Google",
-                style = ButtonStyle.PRIMARY_OUTLINED,
-                onClick = {
-                    // TODO Aggiugere logica per l'autenticazione con Google
-                },
-                height = 50
-            )
+            GoogleSignInButton { account ->
+                println(account)
+                account?.let {
+                    actions.handleGoogleSignIn(it)
+                }
+            }
 
             Spacer(modifier = Modifier.size(32.dp))
 
