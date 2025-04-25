@@ -19,6 +19,8 @@ import com.example.travelbuddy.ui.screens.code.CodeScreen
 import com.example.travelbuddy.ui.screens.code.CodeViewModel
 import com.example.travelbuddy.ui.screens.home.HomeViewModel
 import com.example.travelbuddy.ui.screens.launch.LaunchScreen
+import com.example.travelbuddy.ui.screens.newExpense.NewExpenseScreen
+import com.example.travelbuddy.ui.screens.newExpense.NewExpenseViewModel
 import com.example.travelbuddy.ui.screens.newTrip.NewTripScreen
 import com.example.travelbuddy.ui.screens.newTrip.NewTripViewModel
 import com.example.travelbuddy.ui.screens.newTripActivity.NewTripActivityViewModel
@@ -56,6 +58,7 @@ sealed interface TravelBuddyRoute {
     @Serializable data object ChangePin: TravelBuddyRoute
     @Serializable data class TripDetails(val tripId: String) : TravelBuddyRoute
     @Serializable data class NewTripActivity(val tripId: String) : TravelBuddyRoute
+    @Serializable data class NewExpense(val tripId: String) : TravelBuddyRoute
 }
 
 @Composable
@@ -238,6 +241,23 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             NewTripActivityScreen(
                 state = state,
                 actions = newTripActivityViewModel.actions,
+                navController = navController
+            )
+        }
+
+        composable<TravelBuddyRoute.NewExpense> { backStackEntry ->
+            val tripId = backStackEntry.arguments?.getString("tripId") ?: ""
+            val tripIdLong = tripId.toLongOrNull() ?: -1L
+            val newExpenseViewModel = koinViewModel<NewExpenseViewModel>()
+            val state by newExpenseViewModel.state.collectAsStateWithLifecycle()
+
+            LaunchedEffect(tripId) {
+                newExpenseViewModel.actions.setTripId(tripIdLong)
+            }
+
+            NewExpenseScreen(
+                state = state,
+                actions = newExpenseViewModel.actions,
                 navController = navController
             )
         }

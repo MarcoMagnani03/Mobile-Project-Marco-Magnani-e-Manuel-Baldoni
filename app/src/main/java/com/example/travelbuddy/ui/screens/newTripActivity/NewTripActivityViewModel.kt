@@ -101,17 +101,20 @@ class NewTripActivityViewModel(
             viewModelScope.launch {
                 _state.value = _state.value.copy(isLoading = true)
                 try {
-                    val newTripActivity = TripActivity(
-                        name = state.value.tripActivityName,
-                        startDate = state.value.startDate,
-                        endDate = state.value.endDate,
-                        pricePerPerson = state.value.pricePerPerson,
-                        position = state.value.position,
-                        notes = state.value.notes,
-                        tripActivityTypeId = state.value.tripActivityTypeId?.toIntOrNull()
-                    )
+                    val newTripActivity = state.value.tripId?.let {
+                        TripActivity(
+                            name = state.value.tripActivityName,
+                            startDate = state.value.startDate,
+                            endDate = state.value.endDate,
+                            pricePerPerson = state.value.pricePerPerson,
+                            position = state.value.position,
+                            notes = state.value.notes,
+                            tripId = it,
+                            tripActivityTypeId = state.value.tripActivityTypeId?.toIntOrNull()
+                        )
+                    }
 
-                    val tripActivityId = tripActivitiesRepository.upsert(newTripActivity)
+                    val tripActivityId = newTripActivity?.let { tripActivitiesRepository.upsert(it) }
 
                     _state.value = _state.value.copy(
                         newTripActivityId = tripActivityId

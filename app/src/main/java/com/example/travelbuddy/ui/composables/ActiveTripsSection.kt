@@ -33,7 +33,6 @@ fun ActiveTripsSection(
         trips.forEachIndexed { index, trip ->
             ActiveTripCard(
                 trip = trip,
-                onAddExpenseClick = {  },
                 navController = navController
             )
         }

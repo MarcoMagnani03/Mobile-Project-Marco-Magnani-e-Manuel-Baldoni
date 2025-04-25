@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.example.travelbuddy.data.database.TravelBuddyDatabase
+import com.example.travelbuddy.data.repositories.ExpensesRepository
 import com.example.travelbuddy.data.repositories.TripActivitiesTypesRepository
 import com.example.travelbuddy.data.repositories.GroupsRepository
 import com.example.travelbuddy.data.repositories.SettingPreferenceRepository
@@ -15,6 +16,7 @@ import com.example.travelbuddy.ui.TravelBuddyViewModel
 import com.example.travelbuddy.ui.screens.code.CodeViewModel
 import com.example.travelbuddy.ui.screens.home.HomeViewModel
 import com.example.travelbuddy.ui.screens.login.LoginViewModel
+import com.example.travelbuddy.ui.screens.newExpense.NewExpenseViewModel
 import com.example.travelbuddy.ui.screens.newTrip.NewTripViewModel
 import com.example.travelbuddy.ui.screens.newTripActivity.NewTripActivityViewModel
 import com.example.travelbuddy.ui.screens.profile.ProfileViewModel
@@ -44,6 +46,7 @@ val appModule = module {
     single { get<TravelBuddyDatabase>().groupsDAO() }
     single { get<TravelBuddyDatabase>().activitiesDAO() }
     single { get<TravelBuddyDatabase>().activitiesTypesDAO() }
+    single { get<TravelBuddyDatabase>().expensesDAO() }
 
     single { UsersRepository(get()) }
     single { UserSessionRepository(get()) }
@@ -52,6 +55,7 @@ val appModule = module {
     single { GroupsRepository(get()) }
     single { TripActivitiesRepository(get()) }
     single { TripActivitiesTypesRepository(get()) }
+    single { ExpensesRepository(get()) }
 
     viewModel { HomeViewModel(get(), get()) }
     viewModel { TravelBuddyViewModel() }
@@ -63,4 +67,5 @@ val appModule = module {
     viewModel { ProfileViewModel(get(), get()) }
     viewModel { SettingViewModel(get(),get(),get()) }
     viewModel { NewTripActivityViewModel(get(), get()) }
+    viewModel { NewExpenseViewModel(get(), get()) }
 }

@@ -32,7 +32,6 @@ import com.example.travelbuddy.ui.TravelBuddyRoute
 @Composable
 fun ActiveTripCard(
     trip: Trip,
-    onAddExpenseClick: () -> Unit,
     navController: NavController
 ) {
     Card(
@@ -127,7 +126,9 @@ fun ActiveTripCard(
 
             TravelBuddyButton(
                 label = "Aggiungi spesa",
-                onClick = onAddExpenseClick,
+                onClick = {
+                    navController.navigate(TravelBuddyRoute.NewExpense(trip.id.toString()))
+                },
                 style = ButtonStyle.PRIMARY,
                 leadingIcon = {
                     Icon(

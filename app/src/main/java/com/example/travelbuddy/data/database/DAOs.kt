@@ -43,6 +43,9 @@ interface TripActivitiesDAO {
 
     @Delete
     suspend fun delete(item: TripActivity)
+
+    @Query("SELECT * FROM TripActivity WHERE tripId = :tripId")
+    suspend fun getAll(tripId: Long): List<TripActivity>
 }
 
 @Dao
@@ -60,7 +63,7 @@ interface TripActivitiesTypesDAO {
 @Dao
 interface ExpensesDAO {
     @Upsert
-    suspend fun upsert(expense: Expense)
+    suspend fun upsert(expense: Expense): Long
 
     @Delete
     suspend fun delete(item: Expense)

@@ -1,6 +1,5 @@
 package com.example.travelbuddy.ui.screens.newTrip
 
-import androidx.compose.ui.graphics.vector.Group
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelbuddy.data.database.Trip

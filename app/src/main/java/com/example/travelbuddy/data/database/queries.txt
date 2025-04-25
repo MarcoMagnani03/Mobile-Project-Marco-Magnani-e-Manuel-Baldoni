@@ -5,12 +5,12 @@ VALUES
     (2, 'Tour delle Alpi', 'Alpi', '01/07/2024', '15/07/2024', 2000.0, 'Escursioni in montagna e relax'),
     (3, 'Weekend a Venezia', 'Venezia', '05/08/2024', '08/08/2024', 800.0, 'Giro in gondola e visita ai musei'),
     (4, 'Mare in Puglia', 'Salento', '20/08/2024', '30/08/2024', 1500.0, 'Relax al mare e buon cibo'),
-    (5, 'Capodanno a New York', 'New York', '28/12/2024', '05/01/2025', 3000.0, 'Capodanno a Times Square e shopping');
+    (5, 'Capodanno a New York', 'New York', '28/12/2024', '05/01/2025', 3000.0, 'Capodanno a Times Square e shopping'),
     (6, 'Safari in Kenya', 'Nairobi', '15/08/2025', '25/08/2025', 4500.0, 'Avventura nella savana con guide esperte'),
     (7, 'Scoperta del Giappone', 'Tokyo', '10/10/2025', '24/10/2025', 5500.0, 'Tour tra Tokyo, Kyoto e Osaka durante il foliage'),
     (8, 'Viaggio in Patagonia', 'Patagonia', '01/12/2025', '15/12/2025', 6000.0, 'Trekking tra ghiacciai e paesaggi incredibili'),
     (9, 'Natale a Vienna', 'Vienna', '22/12/2025', '28/12/2025', 2000.0, 'Mercatini di Natale e atmosfera magica'),
-    (10, 'Capodanno a Sydney', 'Sydney', '29/12/2025', '05/01/2026', 7000.0, 'Fuochi d\'artificio sul porto e spiagge estive');
+    (10, 'Capodanno a Sydney', 'Sydney', '29/12/2025', '05/01/2026', 7000.0, 'Fuochi artificio sul porto e spiagge estive'),
     (11, 'Viaggio nel Tempo', 'Tutte le destinazioni', '01/01/2000', '31/12/2100', 999999.99, 'Un viaggio che attraversa un intero secolo di avventure');
 
 ---------------------------------------------------------------
@@ -33,10 +33,10 @@ VALUES
     ('test@test.it', 2),
     ('test@test.it', 3),
     ('test@test.it', 4),
-    ('test@test.it', 5);
+    ('test@test.it', 5),
     ('test@test.it', 6),
     ('test@test.it', 7),
     ('test@test.it', 8),
     ('test@test.it', 9),
-    ('test@test.it', 10);
+    ('test@test.it', 10),
     ('test@test.it', 11);

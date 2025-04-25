@@ -173,7 +173,10 @@ data class TripActivity(
     var notes: String?,
 
     @ColumnInfo
-    var tripActivityTypeId: Int?
+    var tripActivityTypeId: Int?,
+
+    @ColumnInfo
+    val tripId: Long
 )
 
 @Entity
@@ -256,4 +259,27 @@ data class UserWithFriends(
         entityColumn = "emailFirstUser",
     )
     val friends: List<User>
+)
+
+data class TripWithTripActivities(
+    @Embedded val trip: Trip,
+    @Relation(
+        parentColumn = "tripId",
+        entityColumn = "tripId"
+    )
+    val activities: List<TripActivity>
+)
+
+data class TripWithTripActivitiesAndExpenses(
+    @Embedded val trip: Trip,
+    @Relation(
+        parentColumn = "tripId",
+        entityColumn = "tripId"
+    )
+    val activities: List<TripActivity>,
+    @Relation(
+        parentColumn = "tripId",
+        entityColumn = "tripId"
+    )
+    val expenses: List<Expense>
 )
