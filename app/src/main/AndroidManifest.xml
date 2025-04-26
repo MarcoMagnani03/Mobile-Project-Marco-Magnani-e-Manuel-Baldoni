@@ -19,6 +19,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
     <application
         android:name=".TravelBuddyApplication"
@@ -46,9 +47,13 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
+<!--        <meta-data-->
+<!--            android:name="com.google.android.gms.auth.api.signin.GoogleSignInOptions.clientId"-->
+<!--            android:value="1024318500474-3eljtutd52nbidb8dd4f8k895ia7n8jf.apps.googleusercontent.com"/>-->
         <meta-data
             android:name="com.google.android.gms.auth.api.signin.GoogleSignInOptions.clientId"
-            android:value="1024318500474-3eljtutd52nbidb8dd4f8k895ia7n8jf.apps.googleusercontent.com"/>
+            android:value="1024318500474-mo5g6hovlhqpqhh120cqnvq0t2mhf97c.apps.googleusercontent.com"
+        />
 
     </application>
 

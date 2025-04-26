@@ -20,18 +20,22 @@ import androidx.compose.ui.unit.sp
 fun CustomKeypad(
     onNumberClick: (Int) -> Unit,
     onDelete: () -> Unit,
-    onBiometrics: () -> Unit
+    onBiometrics: () -> Unit,
+    showBiometricButton: Boolean = true,
+    modifier: Modifier = Modifier
 ) {
-    val keys = listOf(
-        Key.Number(1), Key.Number(2), Key.Number(3),
-        Key.Number(4), Key.Number(5), Key.Number(6),
-        Key.Number(7), Key.Number(8), Key.Number(9),
-        Key.Delete,       Key.Number(0), Key.Biometrics
-    )
+    val keys = buildList {
+        addAll((1..9).map { Key.Number(it) })
+        add(Key.Delete)
+        add(Key.Number(0))
+        if (showBiometricButton) {
+            add(Key.Biometrics)
+        }
+    }
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),

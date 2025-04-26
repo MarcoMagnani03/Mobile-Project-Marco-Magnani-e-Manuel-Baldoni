@@ -1,5 +1,6 @@
 package com.example.travelbuddy.ui.screens.code
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,11 +16,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import com.example.travelbuddy.data.repositories.UserSessionRepository
 import com.example.travelbuddy.ui.TravelBuddyRoute
@@ -27,6 +31,9 @@ import com.example.travelbuddy.ui.composables.ButtonStyle
 import com.example.travelbuddy.ui.composables.CustomKeypad
 import com.example.travelbuddy.ui.composables.InputField
 import com.example.travelbuddy.ui.composables.TravelBuddyButton
+import com.example.travelbuddy.utils.BiometricAuthenticator
+import com.example.travelbuddy.utils.BiometricResult
+
 @Composable
 fun CodeScreen(
     state: CodeState,
@@ -41,6 +48,58 @@ fun CodeScreen(
 
     val emailState = appPreferences.userEmail.collectAsState(initial = "")
     val userEmail = emailState.value
+    val activity = (LocalActivity.current as? FragmentActivity) ?: throw IllegalStateException("FragmentActivity not found")
+    val biometricAuthenticator = BiometricAuthenticator(activity)
+
+    val goToHome: () -> Unit = {
+        navController.navigate(TravelBuddyRoute.Home) {
+            popUpTo(0) { inclusive = true }
+            launchSingleTop = true
+        }
+    }
+
+    // Function to handle biometric authentication
+    fun authenticateWithBiometrics() {
+        if (isNewPinSetup) return // Don't allow biometrics for new PIN setup
+
+        biometricAuthenticator.authenticate(
+            title = "Authenticate with Biometrics",
+            subtitle = "Use your fingerprint or face to login",
+            onResult = { result ->
+                when (result) {
+                    is BiometricResult.Success -> {
+                        userEmail?.let { email ->
+                            actions.verifyBiometricAuth() { isValid ->
+                                if (isValid) {
+                                    goToHome()
+                                } else {
+                                    println(email)
+                                    actions.showError("Biometric authentication failed")
+                                }
+                            }
+                        }
+                    }
+                    is BiometricResult.Error -> {
+                        actions.showError(result.errorMessage)
+                    }
+                    BiometricResult.Failed -> {
+                        println("Arriva qui")
+                        actions.showError("Authentication failed")
+                    }
+                    BiometricResult.Cancelled -> {
+                        // User cancelled the operation, no action needed
+                    }
+                }
+            }
+        )
+    }
+
+    // If it's not a new PIN setup and biometric is available, prompt immediately
+    LaunchedEffect(Unit) {
+        if (!isNewPinSetup && biometricAuthenticator.isBiometricAvailable()) {
+            authenticateWithBiometrics()
+        }
+    }
 
     Scaffold { contentPadding ->
         Column(
@@ -83,25 +142,19 @@ fun CodeScreen(
                         actions.setCode(state.code + digit.toString())
                     }
                 },
-                //TODO: Cambiare quello che avviene quando si clicca questo bottone
                 onBiometrics = {
-                    if (state.code.length == 6 && !state.isLoading) {
-                        userEmail?.let { email ->
-                            handlePinAction(
-                                isNewPinSetup = isNewPinSetup,
-                                userEmail = email,
-                                state = state,
-                                actions = actions,
-                                navController = navController
-                            )
-                        }
+                    if (!isNewPinSetup && biometricAuthenticator.isBiometricAvailable()) {
+                        authenticateWithBiometrics()
+                    } else if (!biometricAuthenticator.isBiometricAvailable()) {
+                        actions.showError("Biometric authentication not available")
                     }
                 },
                 onDelete = {
                     if (state.code.isNotEmpty()) {
                         actions.setCode(state.code.dropLast(1))
                     }
-                }
+                },
+                showBiometricButton = !isNewPinSetup && biometricAuthenticator.isBiometricAvailable()
             )
 
             Spacer(modifier = Modifier.size(20.dp))
@@ -124,7 +177,6 @@ fun CodeScreen(
                 enabled = state.code.length == 6 && !state.isLoading
             )
 
-
             if(!isNewPinSetup){
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -141,7 +193,6 @@ fun CodeScreen(
                     }
                 )
             }
-
         }
     }
 }

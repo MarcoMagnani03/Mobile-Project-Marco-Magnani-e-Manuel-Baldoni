@@ -6,6 +6,8 @@ import com.example.travelbuddy.data.database.UsersDAO
 import com.example.travelbuddy.utils.ImageUtils
 import com.example.travelbuddy.utils.PasswordHasher
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class UsersRepository(
     private val dao: UsersDAO
@@ -213,5 +215,9 @@ class UsersRepository(
         return email
     }
 
-
+    suspend fun checkUserExists(email: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            dao.getUserByEmail(email) != null
+        }
+    }
 }

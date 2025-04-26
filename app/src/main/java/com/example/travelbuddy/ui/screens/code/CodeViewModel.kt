@@ -10,6 +10,7 @@ import com.example.travelbuddy.ui.TravelBuddyRoute
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -23,6 +24,7 @@ interface CodeActions {
     fun setCode(code: String)
     fun savePin(email: String, pin: String, onComplete: () -> Unit)
     fun verifyPin(email: String, pin: String, onResult: (Boolean) -> Unit)
+    fun verifyBiometricAuth(onResult: (Boolean) -> Unit)
     fun showError(message: String)
     fun clearError()
     fun logout(navController: NavController)
@@ -98,6 +100,35 @@ class CodeViewModel(
                 appPreferences.clearAllSessionData()
                 navController.navigate(TravelBuddyRoute.Login) {
                     popUpTo(0) { inclusive = true }
+                }
+            }
+        }
+
+        override fun verifyBiometricAuth(onResult: (Boolean) -> Unit) {
+            viewModelScope.launch {
+                try {
+                    val email = appPreferences.userEmail.first();
+                    if (email.isNullOrBlank()) {
+                        _state.update { it.copy(errorMessage = "User not found") }
+                        onResult(false)
+                        return@launch
+                    }
+                    val userExists = userRepository.checkUserExists(email)
+
+                    if (!userExists) {
+                        _state.update { it.copy(errorMessage = "User not found") }
+                        onResult(false)
+                        return@launch
+                    }
+
+                    appPreferences.saveHasPin(true)
+                    onResult(true)
+
+                } catch (e: Exception) {
+                    _state.update { it.copy(
+                        errorMessage = "Biometric verification failed: ${e.localizedMessage}"
+                    )}
+                    onResult(false)
                 }
             }
         }

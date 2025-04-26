@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.google.play.services.auth)
+    implementation(libs.androidx.biometric)
     implementation(libs.androidx.camera.view)
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
