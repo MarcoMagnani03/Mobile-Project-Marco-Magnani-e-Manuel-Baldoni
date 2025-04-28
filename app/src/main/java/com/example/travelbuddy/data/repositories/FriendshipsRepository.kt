@@ -10,4 +10,8 @@ class FriendshipsRepository (
     suspend fun delete(friendship: Friendship) = dao.delete(friendship)
 
     suspend fun getFriendshipsByUser(email: String): List<Friendship> = dao.getFriendshipsByUser(email)
+
+    suspend fun deleteFriendshipBetween(user1: String, user2: String) {
+        dao.deleteFriendshipBetween(user1,user2)
+    }
 }

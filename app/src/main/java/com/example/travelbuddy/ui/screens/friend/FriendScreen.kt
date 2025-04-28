@@ -31,13 +31,14 @@ import com.example.travelbuddy.utils.ImageUtils
 import com.example.travelbuddy.utils.ImageUtils.toImageBitmapOrNull
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import com.example.travelbuddy.ui.composables.TravelBuddySearchBar
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
+import androidx.compose.material.icons.filled.PersonRemove
 import androidx.compose.runtime.remember
+import com.example.travelbuddy.ui.composables.TravelBuddyConfirmDialog
 
 @Composable
 private fun FriendSection(
@@ -45,10 +46,12 @@ private fun FriendSection(
     friends: List<FriendItemData>,
     onAcceptRequest: (FriendItemData) -> Unit,
     onRejectRequest: (FriendItemData) -> Unit,
-    onSendRequest: (FriendItemData) -> Unit
+    onSendRequest: (FriendItemData) -> Unit,
+    onUnfriend: (FriendItemData) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     val friendsToShow = if (expanded) friends else friends.take(5)
+
 
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
         Text(
@@ -68,7 +71,8 @@ private fun FriendSection(
                     onAccept = { onAcceptRequest(friend) },
                     onReject = { onRejectRequest(friend) },
                     onSendRequest = { onSendRequest(friend) },
-                    isAlreadyFriend = friend.isAlreadyFriend
+                    isAlreadyFriend = friend.isAlreadyFriend,
+                    onUnfriend = {onUnfriend(friend)}
                 )
             }
 
@@ -114,6 +118,8 @@ fun FriendScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
+            var searchQuery by remember { mutableStateOf("") }
+
             // My Friends
             FriendSection(
                 title = "My Friends",
@@ -128,7 +134,8 @@ fun FriendScreen(
                 },
                 onAcceptRequest = { },
                 onRejectRequest = { },
-                onSendRequest = { }
+                onSendRequest = { },
+                onUnfriend={actions.unfriend(it)}
             )
 
             // Friend Requests
@@ -144,25 +151,38 @@ fun FriendScreen(
                 },
                 onAcceptRequest = { actions.acceptFriendRequest(it) },
                 onRejectRequest = { actions.rejectFriendRequest(it) },
-                onSendRequest = { /* Non è necessario per le richieste di amicizia */ }
+                onSendRequest = { },
+                onUnfriend = {}
             )
 
-            // Suggested Friends
+            TravelBuddySearchBar(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                placeholder = "Search by email"
+            )
+
             FriendSection(
                 title = "Suggested Friends",
-                friends = state.suggestedFriends.map { user ->
-                    FriendItemData(
-                        name = "${user.firstname} ${user.lastname}",
-                        profileImage = user.profilePicture,
-                        email = user.email,
-                        isRequest = false,
-                        hasAlreadySentRequest = state.sentFriendRequests.contains(user.email)
-                    )
-                },
-                onAcceptRequest = { /* Non è una richiesta, non fare nulla */ },
-                onRejectRequest = { /* Non è una richiesta, non fare nulla */ },
-                onSendRequest = { actions.sendFriendRequest(it) }
+                friends = state.suggestedFriends
+                    .filter { user ->
+                        searchQuery.isBlank() || user.email.contains(searchQuery, ignoreCase = true)
+                    }
+                    .map { user ->
+                        FriendItemData(
+                            name = "${user.firstname} ${user.lastname}",
+                            profileImage = user.profilePicture,
+                            email = user.email,
+                            isRequest = false,
+                            hasAlreadySentRequest = state.sentFriendRequests.contains(user.email),
+                            isAlreadyFriend = state.friends.any { it.email == user.email }
+                        )
+                    },
+                onAcceptRequest = { },
+                onRejectRequest = { },
+                onSendRequest = { actions.sendFriendRequest(it) },
+                onUnfriend = {}
             )
+
         }
     }
 }
@@ -186,8 +206,64 @@ fun FriendItem(
     isAlreadyFriend: Boolean? = false,
     onAccept: () -> Unit,
     onReject: () -> Unit,
-    onSendRequest: () -> Unit
+    onSendRequest: () -> Unit,
+    onUnfriend: () -> Unit
 ) {
+    // Stato per le dialog di conferma
+    var showUnfriendDialog by remember { mutableStateOf(false) }
+    var showAcceptDialog by remember { mutableStateOf(false) }
+    var showRejectDialog by remember { mutableStateOf(false) }
+    var showSendRequestDialog by remember { mutableStateOf(false) }
+
+    if (showUnfriendDialog) {
+        TravelBuddyConfirmDialog(
+            title = "Remove friend",
+            message = "Are you sure you want to remove $name from your friends?",
+            onConfirm = {
+                showUnfriendDialog = false
+                onUnfriend()
+            },
+            onDismiss = { showUnfriendDialog = false }
+        )
+    }
+
+    if (showAcceptDialog) {
+        TravelBuddyConfirmDialog(
+            title = "Accept friend request",
+            message = "Accept friend request from $name?",
+            onConfirm = {
+                showAcceptDialog = false
+                onAccept()
+            },
+            onDismiss = { showAcceptDialog = false }
+        )
+    }
+
+    if (showRejectDialog) {
+        TravelBuddyConfirmDialog(
+            title = "Reject friend request",
+            message = "Reject friend request from $name?",
+            onConfirm = {
+                showRejectDialog = false
+                onReject()
+            },
+            onDismiss = { showRejectDialog = false }
+        )
+    }
+
+    if (showSendRequestDialog) {
+        TravelBuddyConfirmDialog(
+            title = "Send friend request",
+            message = "Send friend request to $name?",
+            onConfirm = {
+                showSendRequestDialog = false
+                onSendRequest()
+            },
+            onDismiss = { showSendRequestDialog = false }
+        )
+    }
+
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -199,7 +275,6 @@ fun FriendItem(
             )
             .padding(8.dp)
     ) {
-        // Immagine a sinistra
         Box(modifier = Modifier.size(80.dp)) {
             ProfileImageSection(
                 profileImageBitmap = profileImage?.let { ImageUtils.byteArrayToBitmap(it).toImageBitmapOrNull() },
@@ -209,7 +284,6 @@ fun FriendItem(
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // Contenuto centrale (nome e email)
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = name,
@@ -224,17 +298,20 @@ fun FriendItem(
 
         if (!isRequest) {
             if (isAlreadyFriend == true) {
-                Row {
-                    Icon(
-                        imageVector = Icons.Filled.Person,
-                        contentDescription = "Already friends",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(
+                        onClick = { showUnfriendDialog = true },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.PersonRemove,
+                            contentDescription = "Unfriend",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             } else {
                 if (!hasAlreadySentRequest) {
-                    IconButton(onClick = onSendRequest) {
+                    IconButton(onClick = { showSendRequestDialog = true }) {
                         Icon(
                             imageVector = Icons.Default.PersonAdd,
                             contentDescription = "Send friend request"
@@ -252,7 +329,7 @@ fun FriendItem(
         } else {
             Row {
                 IconButton(
-                    onClick = onAccept,
+                    onClick = { showAcceptDialog = true },
                     modifier = Modifier.padding(end = 4.dp)
                 ) {
                     Icon(
@@ -262,7 +339,7 @@ fun FriendItem(
                     )
                 }
 
-                IconButton(onClick = onReject) {
+                IconButton(onClick = { showRejectDialog = true }) {
                     Icon(
                         imageVector = Icons.Filled.Close,
                         contentDescription = "Reject",
@@ -273,3 +350,4 @@ fun FriendItem(
         }
     }
 }
+

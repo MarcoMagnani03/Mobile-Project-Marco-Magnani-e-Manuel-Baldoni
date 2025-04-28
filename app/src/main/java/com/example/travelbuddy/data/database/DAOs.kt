@@ -107,10 +107,9 @@ interface UsersDAO {
     @Query("""
     SELECT * FROM User 
     WHERE email NOT IN (:excludeEmails) 
-    ORDER BY RANDOM() 
-    LIMIT :limit
+    ORDER BY RANDOM()
 """)
-    suspend fun getRandomUsersExcluding(excludeEmails: List<String>, limit: Int): List<User>
+    suspend fun getRandomUsersExcluding(excludeEmails: List<String>): List<User>
 }
 
 @Dao
@@ -144,6 +143,13 @@ interface FriendshipsDAO {
         WHERE emailFirstUser = :email OR emailSecondUser = :email
     """)
     suspend fun getFriendshipsByUser(email: String): List<Friendship>
+
+    @Query("""
+        DELETE FROM Friendship
+        WHERE (emailFirstUser = :user1 AND emailSecondUser = :user2)
+        OR (emailFirstUser = :user2 AND emailSecondUser = :user1)
+    """)
+    suspend fun deleteFriendshipBetween(user1: String, user2: String)
 }
 
 @Dao

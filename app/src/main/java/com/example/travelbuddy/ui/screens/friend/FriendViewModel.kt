@@ -3,6 +3,7 @@ package com.example.travelbuddy.ui.screens.friend
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelbuddy.data.database.FriendRequest
+import com.example.travelbuddy.data.database.Friendship
 import com.example.travelbuddy.data.database.User
 import com.example.travelbuddy.data.repositories.FriendRequestsRepository
 import com.example.travelbuddy.data.repositories.FriendshipsRepository
@@ -19,6 +20,7 @@ interface FriendActions {
     fun acceptFriendRequest(friend: FriendItemData)
     fun rejectFriendRequest(friend: FriendItemData)
     fun sendFriendRequest(friend: FriendItemData)
+    fun unfriend (friend: FriendItemData)
 }
 
 data class FriendRequestWithUser(
@@ -72,9 +74,8 @@ class FriendViewModel(
                         val sentRequests = friendRequestsRepository.getSentFriendRequests(email)
                         val sentRequestsEmails = sentRequests.map { it.receiverEmail }
 
-                        val suggestedFriends = usersRepository.getRandomUsersExcluding(
-                            excludeEmails = listOf(email) + friends.map { it.email } + sentRequestsEmails +friendRequestsWithUsers.map{it.sender.email},
-                            limit = 3
+                        val suggestedFriends = usersRepository.getUsersExcluding(
+                            excludeEmails = listOf(email) + friends.map { it.email } + sentRequestsEmails +friendRequestsWithUsers.map{it.sender.email}
                         )
 
                         _state.value = _state.value.copy(
@@ -141,6 +142,23 @@ class FriendViewModel(
                         if (currentUserEmail.isNullOrBlank()) return@collect
 
                         friendRequestsRepository.sendFriendRequest(currentUserEmail, friend.email)
+
+                        loadFriends()
+                    }
+                } catch (e: Exception) {
+                    _state.value = _state.value.copy(error = "Error sending friend request: ${e.message}")
+                }
+            }
+        }
+
+        override fun unfriend(friend: FriendItemData) {
+            viewModelScope.launch {
+                try {
+                    userSessionRepository.userEmail.collect { currentUserEmail ->
+                        if (currentUserEmail.isNullOrBlank()) return@collect
+                        println(currentUserEmail)
+                        println(friend.email)
+                        friendshipsRepository.deleteFriendshipBetween(currentUserEmail,friend.email)
 
                         loadFriends()
                     }

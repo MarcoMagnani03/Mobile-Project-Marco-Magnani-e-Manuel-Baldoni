@@ -221,7 +221,7 @@ class UsersRepository(
         }
     }
 
-    suspend fun getRandomUsersExcluding(excludeEmails: List<String>, limit: Int): List<User> {
-        return dao.getRandomUsersExcluding(excludeEmails, limit)
+    suspend fun getUsersExcluding(excludeEmails: List<String>): List<User> {
+        return dao.getRandomUsersExcluding(excludeEmails)
     }
 }
