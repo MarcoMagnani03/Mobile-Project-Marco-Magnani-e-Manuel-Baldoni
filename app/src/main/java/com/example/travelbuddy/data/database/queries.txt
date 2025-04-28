@@ -40,3 +40,18 @@ VALUES
     ('test@test.it', 9),
     ('test@test.it', 10),
     ('test@test.it', 11);
+
+    -- USER INSERTS
+    INSERT INTO User (email, password, passwordSalt, pin, pinSalt, firstname, lastname, phoneNumber, location, bio, profilePicture)
+    VALUES
+        ('test@test.it', 'testPassword123', 'testSalt123', '1234', 'testPinSalt', 'Test', 'User', '0123456789', 'Test City, Italy', 'Bio di esempio per l\'utente di test', NULL),
+        ('user1@example.com', 'password123', 'salt123', '1234', 'pinSalt1', 'Mario', 'Rossi', '1234567890', 'Roma, Italia', 'Viaggiatore appassionato di cultura', NULL),
+        ('user2@example.com', 'password123', 'salt123', '5678', 'pinSalt2', 'Luigi', 'Bianchi', '2345678901', 'Milano, Italia', 'Adoro le escursioni in montagna', NULL),
+        ('user3@example.com', 'password123', 'salt123', '9101', 'pinSalt3', 'Giulia', 'Verdi', '3456789012', 'Firenze, Italia', 'Appassionata di arte e storia', NULL),
+        ('user4@example.com', 'password123', 'salt123', '1122', 'pinSalt4', 'Anna', 'Gialli', '4567890123', 'Napoli, Italia', 'Amo il mare e il buon cibo', NULL),
+        ('user5@example.com', 'password123', 'salt123', '3344', 'pinSalt5', 'Francesco', 'Blu', '5678901234', 'Torino, Italia', 'Avventuriero, sempre in viaggio', NULL),
+        ('user6@example.com', 'password123', 'salt123', '5566', 'pinSalt6', 'Luca', 'Marroni', '6789012345', 'Bologna, Italia', 'Mi piacciono le vacanze al sole', NULL),
+        ('user7@example.com', 'password123', 'salt123', '7788', 'pinSalt7', 'Federica', 'Neri', '7890123456', 'Venezia, Italia', 'Innamorata della natura', NULL),
+        ('user8@example.com', 'password123', 'salt123', '9900', 'pinSalt8', 'Alessandro', 'Giorgi', '8901234567', 'Genova, Italia', 'Viaggio per esplorare il mondo', NULL),
+        ('user9@example.com', 'password123', 'salt123', '2233', 'pinSalt9', 'Sara', 'Tauri', '9012345678', 'Verona, Italia', 'Adoro la fotografia e i viaggi', NULL),
+        ('user10@example.com', 'password123', 'salt123', '4455', 'pinSalt10', 'Davide', 'Galli', '1023456789', 'Palermo, Italia', 'Alla ricerca di avventure uniche', NULL);

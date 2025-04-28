@@ -8,4 +8,6 @@ class FriendshipsRepository (
 ) {
     suspend fun upsert(friendship: Friendship) = dao.upsert(friendship)
     suspend fun delete(friendship: Friendship) = dao.delete(friendship)
+
+    suspend fun getFriendshipsByUser(email: String): List<Friendship> = dao.getFriendshipsByUser(email)
 }

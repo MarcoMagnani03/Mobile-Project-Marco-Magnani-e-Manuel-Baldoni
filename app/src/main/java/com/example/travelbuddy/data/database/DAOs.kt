@@ -103,6 +103,14 @@ interface UsersDAO {
     @Transaction
     @Query("SELECT * FROM User WHERE email = :email")
     suspend fun getUserWithTrips(email: String): UserWithTrips?
+
+    @Query("""
+    SELECT * FROM User 
+    WHERE email NOT IN (:excludeEmails) 
+    ORDER BY RANDOM() 
+    LIMIT :limit
+""")
+    suspend fun getRandomUsersExcluding(excludeEmails: List<String>, limit: Int): List<User>
 }
 
 @Dao
@@ -130,4 +138,31 @@ interface FriendshipsDAO {
 
     @Delete
     suspend fun delete(item: Friendship)
+
+    @Query("""
+        SELECT * FROM Friendship
+        WHERE emailFirstUser = :email OR emailSecondUser = :email
+    """)
+    suspend fun getFriendshipsByUser(email: String): List<Friendship>
+}
+
+@Dao
+interface FriendRequestsDAO {
+    @Upsert
+    suspend fun upsert(request: FriendRequest)
+
+    @Delete
+    suspend fun delete(request: FriendRequest)
+
+    @Query("SELECT * FROM FriendRequest WHERE receiverEmail = :email")
+    suspend fun getFriendRequests(email: String): List<FriendRequest>
+
+    @Query("SELECT * FROM FriendRequest WHERE senderEmail = :senderEmail AND receiverEmail = :receiverEmail")
+    suspend fun getRequestByEmails(senderEmail: String, receiverEmail: String): FriendRequest?
+
+    @Query("DELETE FROM FriendRequest WHERE senderEmail = :senderEmail AND receiverEmail = :receiverEmail")
+    suspend fun refuseFriendRequest(receiverEmail: String, senderEmail: String)
+
+    @Query("SELECT * FROM FriendRequest WHERE senderEmail = :email")
+    suspend fun getSentFriendRequests(email: String): List<FriendRequest>
 }

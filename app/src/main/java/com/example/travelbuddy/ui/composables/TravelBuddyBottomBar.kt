@@ -43,7 +43,7 @@ sealed class BottomNavItem(
     )
 
     object Friends : BottomNavItem(
-        route = TravelBuddyRoute.Home,
+        route = TravelBuddyRoute.Friend,
         title = "Friends",
         icon = Icons.Default.People
     )
@@ -93,9 +93,9 @@ fun RowScope.AddBottomNavItem(
     val selected =
         navItem.route == TravelBuddyRoute.Home && backStackEntry?.destination?.hasRoute<TravelBuddyRoute.Home>() == true ||
         navItem.route == TravelBuddyRoute.NewTrip && backStackEntry?.destination?.hasRoute<TravelBuddyRoute.NewTrip>() == true ||
-        navItem.route == TravelBuddyRoute.Home && backStackEntry?.destination?.hasRoute<TravelBuddyRoute.Home>() == true ||
-        navItem.route == TravelBuddyRoute.Home && backStackEntry?.destination?.hasRoute<TravelBuddyRoute.Home>() == true ||
-        navItem.route == TravelBuddyRoute.Home && backStackEntry?.destination?.hasRoute<TravelBuddyRoute.Home>() == true
+        navItem.route == TravelBuddyRoute.Friend && backStackEntry?.destination?.hasRoute<TravelBuddyRoute.Friend>() == true ||
+        navItem.route == TravelBuddyRoute.Profile && backStackEntry?.destination?.hasRoute<TravelBuddyRoute.Profile>() == true ||
+        navItem.route == TravelBuddyRoute.Setting && backStackEntry?.destination?.hasRoute<TravelBuddyRoute.Setting>() == true
 
     NavigationBarItem(
         selected = selected,

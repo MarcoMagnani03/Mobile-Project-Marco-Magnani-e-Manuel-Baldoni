@@ -17,6 +17,8 @@ import com.example.travelbuddy.ui.screens.camera.CameraCaptureScreen
 import com.example.travelbuddy.ui.screens.camera.ImagePreviewScreen
 import com.example.travelbuddy.ui.screens.code.CodeScreen
 import com.example.travelbuddy.ui.screens.code.CodeViewModel
+import com.example.travelbuddy.ui.screens.friend.FriendScreen
+import com.example.travelbuddy.ui.screens.friend.FriendViewModel
 import com.example.travelbuddy.ui.screens.home.HomeViewModel
 import com.example.travelbuddy.ui.screens.launch.LaunchScreen
 import com.example.travelbuddy.ui.screens.newExpense.NewExpenseScreen
@@ -54,6 +56,7 @@ sealed interface TravelBuddyRoute {
     @Serializable data object Profile : TravelBuddyRoute
     @Serializable data object EditProfile : TravelBuddyRoute
     @Serializable data object Setting:TravelBuddyRoute
+    @Serializable data object Friend:TravelBuddyRoute
     @Serializable data object ChangePassword: TravelBuddyRoute
     @Serializable data object ChangePin: TravelBuddyRoute
     @Serializable data class TripDetails(val tripId: String) : TravelBuddyRoute
@@ -83,6 +86,17 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             }
 
             HomeScreen(state, homeViewModel.actions, navController)
+        }
+
+        composable<TravelBuddyRoute.Friend> {
+            val friendViewModel = koinViewModel<FriendViewModel>()
+            val state by friendViewModel.state.collectAsStateWithLifecycle()
+
+            LaunchedEffect(Unit) {
+                friendViewModel.actions.loadFriends()
+            }
+
+            FriendScreen(state, friendViewModel.actions, navController)
         }
 
         composable<TravelBuddyRoute.Login> {

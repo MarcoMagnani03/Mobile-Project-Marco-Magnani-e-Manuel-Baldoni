@@ -5,6 +5,8 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.example.travelbuddy.data.database.TravelBuddyDatabase
 import com.example.travelbuddy.data.repositories.ExpensesRepository
+import com.example.travelbuddy.data.repositories.FriendRequestsRepository
+import com.example.travelbuddy.data.repositories.FriendshipsRepository
 import com.example.travelbuddy.data.repositories.TripActivitiesTypesRepository
 import com.example.travelbuddy.data.repositories.GroupsRepository
 import com.example.travelbuddy.data.repositories.SettingPreferenceRepository
@@ -14,6 +16,7 @@ import com.example.travelbuddy.data.repositories.UserSessionRepository
 import com.example.travelbuddy.data.repositories.UsersRepository
 import com.example.travelbuddy.ui.TravelBuddyViewModel
 import com.example.travelbuddy.ui.screens.code.CodeViewModel
+import com.example.travelbuddy.ui.screens.friend.FriendViewModel
 import com.example.travelbuddy.ui.screens.home.HomeViewModel
 import com.example.travelbuddy.ui.screens.login.LoginViewModel
 import com.example.travelbuddy.ui.screens.newExpense.NewExpenseViewModel
@@ -47,6 +50,8 @@ val appModule = module {
     single { get<TravelBuddyDatabase>().activitiesDAO() }
     single { get<TravelBuddyDatabase>().activitiesTypesDAO() }
     single { get<TravelBuddyDatabase>().expensesDAO() }
+    single { get<TravelBuddyDatabase>().friendRequestDAO() }
+    single { get<TravelBuddyDatabase>().friendshipsDAO() }
 
     single { UsersRepository(get()) }
     single { UserSessionRepository(get()) }
@@ -56,6 +61,9 @@ val appModule = module {
     single { TripActivitiesRepository(get()) }
     single { TripActivitiesTypesRepository(get()) }
     single { ExpensesRepository(get()) }
+    single { FriendRequestsRepository(get(),get())}
+    single { FriendshipsRepository(get())}
+
 
     viewModel { HomeViewModel(get(), get()) }
     viewModel { TravelBuddyViewModel() }
@@ -68,4 +76,5 @@ val appModule = module {
     viewModel { SettingViewModel(get(),get(),get()) }
     viewModel { NewTripActivityViewModel(get(), get()) }
     viewModel { NewExpenseViewModel(get(), get()) }
+    viewModel { FriendViewModel(get(),get(),get(),get()) }
 }

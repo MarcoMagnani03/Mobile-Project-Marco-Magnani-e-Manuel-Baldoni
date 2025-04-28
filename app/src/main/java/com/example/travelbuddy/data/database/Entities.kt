@@ -232,6 +232,8 @@ data class UserWithTrips(
     val trips: List<Trip>
 )
 
+
+
 data class TripWithUsers(
     @Embedded val trip: Trip,
     @Relation(
@@ -259,6 +261,13 @@ data class UserWithFriends(
         entityColumn = "emailFirstUser",
     )
     val friends: List<User>
+)
+
+@Entity(primaryKeys = ["senderEmail", "receiverEmail"])
+data class FriendRequest(
+    val senderEmail: String,
+    val receiverEmail: String,
+    val createdAt: Long = System.currentTimeMillis()
 )
 
 data class TripWithTripActivities(
