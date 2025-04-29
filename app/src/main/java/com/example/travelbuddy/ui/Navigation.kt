@@ -27,6 +27,8 @@ import com.example.travelbuddy.ui.screens.newTrip.NewTripScreen
 import com.example.travelbuddy.ui.screens.newTrip.NewTripViewModel
 import com.example.travelbuddy.ui.screens.newTripActivity.NewTripActivityViewModel
 import com.example.travelbuddy.ui.screens.newTripActivity.NewTripActivityScreen
+import com.example.travelbuddy.ui.screens.notifications.NotificationsScreen
+import com.example.travelbuddy.ui.screens.notifications.NotificationsViewModel
 import com.example.travelbuddy.ui.screens.profile.EditProfileScreen
 import com.example.travelbuddy.ui.screens.profile.ProfileScreen
 import com.example.travelbuddy.ui.screens.profile.ProfileViewModel
@@ -57,6 +59,7 @@ sealed interface TravelBuddyRoute {
     @Serializable data object EditProfile : TravelBuddyRoute
     @Serializable data object Setting:TravelBuddyRoute
     @Serializable data object Friend:TravelBuddyRoute
+    @Serializable data object Notification:TravelBuddyRoute
     @Serializable data object ChangePassword: TravelBuddyRoute
     @Serializable data object ChangePin: TravelBuddyRoute
     @Serializable data class TripDetails(val tripId: String) : TravelBuddyRoute
@@ -97,6 +100,13 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             }
 
             FriendScreen(state, friendViewModel.actions, navController)
+        }
+
+        composable<TravelBuddyRoute.Notification> {
+            val notificationsViewModel = koinViewModel<NotificationsViewModel>()
+            val state by notificationsViewModel.state.collectAsStateWithLifecycle()
+
+            NotificationsScreen(state, notificationsViewModel.actions, navController)
         }
 
         composable<TravelBuddyRoute.Login> {

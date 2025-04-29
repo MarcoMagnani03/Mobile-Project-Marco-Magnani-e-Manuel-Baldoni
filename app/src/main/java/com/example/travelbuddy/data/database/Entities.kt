@@ -83,7 +83,7 @@ data class NotificationType(
     var label: String,
 
     @ColumnInfo
-    var icon: ByteArray?
+    var icon: String?
 )
 
 @Entity

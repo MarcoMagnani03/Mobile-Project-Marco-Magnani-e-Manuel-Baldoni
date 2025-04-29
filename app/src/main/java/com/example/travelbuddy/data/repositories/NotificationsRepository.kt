@@ -3,9 +3,19 @@ package com.example.travelbuddy.data.repositories
 import com.example.travelbuddy.data.database.Notification
 import com.example.travelbuddy.data.database.NotificationsDAO
 
-class NotificationsRepository (
-    private val dao: NotificationsDAO
+class NotificationsRepository(
+    val dao: NotificationsDAO
 ) {
-    suspend fun upsert(notification: Notification) = dao.upsert(notification)
-    suspend fun delete(notification: Notification) = dao.delete(notification)
+    suspend fun getNotificationsForUser(userEmail: String): List<Notification> {
+        return dao.getNotificationsForUser(userEmail)
+    }
+
+    suspend fun addOrUpdateNotification(notification: Notification) {
+        dao.updateNotification(notification)
+    }
+
+
+    suspend fun deleteNotification(notificationId: Long) {
+        dao.deleteNotification(notificationId)
+    }
 }

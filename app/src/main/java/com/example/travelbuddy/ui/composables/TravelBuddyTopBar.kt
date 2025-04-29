@@ -62,10 +62,10 @@ fun TravelBuddyTopBar(
         },
         actions = {
             // TODO: Cambiare con notifica
-            IconButton(onClick = { navController.navigate(TravelBuddyRoute.Home) }) {
+            IconButton(onClick = { navController.navigate(TravelBuddyRoute.Notification) }) {
                 Icon(
                     imageVector = Icons.Default.Notifications,
-                    contentDescription = "Notifiche",
+                    contentDescription = "Notifications",
                     tint = MaterialTheme.colorScheme.primary
                 )
             }

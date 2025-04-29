@@ -3,12 +3,15 @@ package com.example.travelbuddy
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
+import com.example.travelbuddy.data.database.NotificationsTypesDAO
 import com.example.travelbuddy.data.database.TravelBuddyDatabase
 import com.example.travelbuddy.data.repositories.ExpensesRepository
 import com.example.travelbuddy.data.repositories.FriendRequestsRepository
 import com.example.travelbuddy.data.repositories.FriendshipsRepository
 import com.example.travelbuddy.data.repositories.TripActivitiesTypesRepository
 import com.example.travelbuddy.data.repositories.GroupsRepository
+import com.example.travelbuddy.data.repositories.NotificationsRepository
+import com.example.travelbuddy.data.repositories.NotificationsTypeRepository
 import com.example.travelbuddy.data.repositories.SettingPreferenceRepository
 import com.example.travelbuddy.data.repositories.TripActivitiesRepository
 import com.example.travelbuddy.data.repositories.TripsRepository
@@ -22,6 +25,7 @@ import com.example.travelbuddy.ui.screens.login.LoginViewModel
 import com.example.travelbuddy.ui.screens.newExpense.NewExpenseViewModel
 import com.example.travelbuddy.ui.screens.newTrip.NewTripViewModel
 import com.example.travelbuddy.ui.screens.newTripActivity.NewTripActivityViewModel
+import com.example.travelbuddy.ui.screens.notifications.NotificationsViewModel
 import com.example.travelbuddy.ui.screens.profile.ProfileViewModel
 import com.example.travelbuddy.ui.screens.setting.SettingViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
@@ -52,6 +56,8 @@ val appModule = module {
     single { get<TravelBuddyDatabase>().expensesDAO() }
     single { get<TravelBuddyDatabase>().friendRequestDAO() }
     single { get<TravelBuddyDatabase>().friendshipsDAO() }
+    single { get<TravelBuddyDatabase>().notificationsDAO() }
+    single { get<TravelBuddyDatabase>().notificationsTypesDAO() }
 
     single { UsersRepository(get()) }
     single { UserSessionRepository(get()) }
@@ -63,6 +69,8 @@ val appModule = module {
     single { ExpensesRepository(get()) }
     single { FriendRequestsRepository(get(),get())}
     single { FriendshipsRepository(get())}
+    single { NotificationsRepository(get())}
+    single { NotificationsTypeRepository(get())}
 
 
     viewModel { HomeViewModel(get(), get()) }
@@ -77,4 +85,5 @@ val appModule = module {
     viewModel { NewTripActivityViewModel(get(), get()) }
     viewModel { NewExpenseViewModel(get(), get()) }
     viewModel { FriendViewModel(get(),get(),get(),get()) }
+    viewModel { NotificationsViewModel(get(),get(),get())}
 }

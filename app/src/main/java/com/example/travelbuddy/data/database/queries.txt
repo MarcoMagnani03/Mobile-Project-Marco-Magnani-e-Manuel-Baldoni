@@ -55,3 +55,17 @@ VALUES
         ('user8@example.com', 'password123', 'salt123', '9900', 'pinSalt8', 'Alessandro', 'Giorgi', '8901234567', 'Genova, Italia', 'Viaggio per esplorare il mondo', NULL),
         ('user9@example.com', 'password123', 'salt123', '2233', 'pinSalt9', 'Sara', 'Tauri', '9012345678', 'Verona, Italia', 'Adoro la fotografia e i viaggi', NULL),
         ('user10@example.com', 'password123', 'salt123', '4455', 'pinSalt10', 'Davide', 'Galli', '1023456789', 'Palermo, Italia', 'Alla ricerca di avventure uniche', NULL);
+
+
+INSERT INTO NotificationType (id, label, icon)
+VALUES
+    (1, 'Info', 'info'),
+    (2, 'Error', 'error');
+
+-- NOTIFICATIONS (utente: "ca")
+INSERT INTO Notification (id, title, description, notificationTypeId, userEmail)
+VALUES
+    ('Benvenuto in TravelBuddy', 'La tua avventura inizia qui!', 1, 'ca'),
+    (2, 'Nuova attività disponibile', 'È stata aggiunta una nuova escursione per il tuo viaggio.', 1, 'ca'),
+    (3, 'Errore di sincronizzazione', 'Impossibile aggiornare le notifiche. Riprova più tardi.', 2, 'ca'),
+    (4, 'Problema di connessione', 'Controlla la tua rete internet e riprova.', 2, 'ca');

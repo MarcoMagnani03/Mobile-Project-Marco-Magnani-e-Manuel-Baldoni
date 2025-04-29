@@ -20,11 +20,14 @@ interface TripsDAO {
 
 @Dao
 interface NotificationsDAO {
-    @Upsert
-    suspend fun upsert(notification: Notification)
+    @Query("SELECT * FROM Notification WHERE userEmail = :userEmail ORDER BY id DESC")
+    suspend fun getNotificationsForUser(userEmail: String): List<Notification>
 
-    @Delete
-    suspend fun delete(item: Notification)
+    @Upsert
+    suspend fun updateNotification(notification: Notification)
+
+    @Query("DELETE FROM Notification WHERE id = :notificationId")
+    suspend fun deleteNotification(notificationId: Long)
 }
 
 @Dao
@@ -34,6 +37,12 @@ interface NotificationsTypesDAO {
 
     @Delete
     suspend fun delete(item: NotificationType)
+
+    @Query("SELECT * FROM NotificationType")
+    suspend fun getAllNotificationTypes(): List<NotificationType>
+
+    @Query("SELECT * FROM NotificationType WHERE id = :typeId")
+    suspend fun getNotificationTypeById(typeId: Int): NotificationType
 }
 
 @Dao
