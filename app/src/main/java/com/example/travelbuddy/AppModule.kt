@@ -80,7 +80,7 @@ val appModule = module {
     viewModel { CodeViewModel(get(),get()) }
     viewModel { SignUpViewModel(get())}
     viewModel { NewTripViewModel(get(), get(), get()) }
-    viewModel { TripDetailsViewModel(get()) }
+    viewModel { TripDetailsViewModel(get(), get()) }
     viewModel { ProfileViewModel(get(), get()) }
     viewModel { SettingViewModel(get(),get(),get()) }
     viewModel { NewTripActivityViewModel(get(), get()) }

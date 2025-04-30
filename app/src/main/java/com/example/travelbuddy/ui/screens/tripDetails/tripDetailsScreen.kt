@@ -1,32 +1,28 @@
 package com.example.travelbuddy.ui.screens.tripDetails
 
+import TripDetailsCalendar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.travelbuddy.ui.composables.ButtonStyle
-import com.example.travelbuddy.ui.composables.InputField
-import com.example.travelbuddy.ui.composables.InputFieldType
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
 import com.example.travelbuddy.ui.composables.TravelBuddyButton
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun TripDetailsScreen(
@@ -36,12 +32,16 @@ fun TripDetailsScreen(
 ){
     val scrollState = rememberScrollState()
 
+    val activityTypesMap = remember(state.tripActivityTypes) {
+        state.tripActivityTypes.associateBy { it.id }
+    }
+
     Scaffold(
         topBar = {
             TravelBuddyTopBar(
                 navController = navController,
-                title = state.trip?.name ?: "Trip title",
-                subtitle = "Apr 16 - Apr 20",
+                title = state.trip?.trip?.name ?: "Trip title",
+                subtitle = formatTimeRange(state.trip?.trip?.startDate ?: "", state.trip?.trip?.endDate ?: ""),
                 canNavigateBack = true,
             )
         },
@@ -56,6 +56,20 @@ fun TripDetailsScreen(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
+            state.trip?.let { trip ->
+                TripDetailsCalendar(
+                    activities = trip.activities.filter { activity ->
+                        parseDate(activity.endDate).after(Date())
+                    },
+                    activityTypes = activityTypesMap,
+                    onViewAllClick = {
+
+                    }
+                )
+            }
+
+            Spacer(Modifier.height(10.dp))
+
             TravelBuddyButton(
                 style = ButtonStyle.ERROR,
                 label = "Delete trip",
@@ -64,7 +78,30 @@ fun TripDetailsScreen(
 
                 }
             )
+
             Spacer(Modifier.height(10.dp))
         }
     }
+}
+
+private fun parseDate(dateString: String): Date {
+    val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    return try {
+        format.parse(dateString) ?: Date()
+    } catch (e: Exception) {
+        Date()
+    }
+}
+
+private fun formatDateToMonthDay(dateString: String): String {
+    val date = parseDate(dateString)
+    val format = SimpleDateFormat("MMM dd", Locale.getDefault())
+    return format.format(date)
+}
+
+private fun formatTimeRange(startDate: String, endDate: String): String {
+    val start = parseDate(startDate)
+    val end = parseDate(endDate)
+    val timeFormat = SimpleDateFormat("MMM dd", Locale.getDefault())
+    return "${timeFormat.format(start)} - ${timeFormat.format(end)}"
 }

@@ -263,6 +263,7 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
 
             LaunchedEffect(tripId) {
                 tripDetailsViewModel.actions.loadTrip(tripIdLong)
+                tripDetailsViewModel.actions.loadTripActivityTypes()
             }
 
             TripDetailsScreen(

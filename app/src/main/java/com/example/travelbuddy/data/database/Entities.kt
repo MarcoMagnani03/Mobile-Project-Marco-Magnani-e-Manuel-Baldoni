@@ -222,7 +222,7 @@ data class UserWithTrips(
     @Embedded val user: User,
     @Relation(
         parentColumn = "email",
-        entityColumn = "id", // This is Trip.id
+        entityColumn = "id",
         associateBy = Junction(
             value = Group::class,
             parentColumn = "userEmail",
@@ -231,8 +231,6 @@ data class UserWithTrips(
     )
     val trips: List<Trip>
 )
-
-
 
 data class TripWithUsers(
     @Embedded val trip: Trip,
@@ -279,7 +277,7 @@ data class FriendshipStatus(
 data class TripWithTripActivities(
     @Embedded val trip: Trip,
     @Relation(
-        parentColumn = "tripId",
+        parentColumn = "id",
         entityColumn = "tripId"
     )
     val activities: List<TripActivity>
@@ -288,13 +286,46 @@ data class TripWithTripActivities(
 data class TripWithTripActivitiesAndExpenses(
     @Embedded val trip: Trip,
     @Relation(
-        parentColumn = "tripId",
+        parentColumn = "id",
         entityColumn = "tripId"
     )
     val activities: List<TripActivity>,
     @Relation(
-        parentColumn = "tripId",
+        parentColumn = "id",
         entityColumn = "tripId"
     )
     val expenses: List<Expense>
+)
+
+data class TripWithActivitiesAndExpensesAndPhotosAndUsers(
+    @Embedded val trip: Trip,
+
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "tripId"
+    )
+    val activities: List<TripActivity>,
+
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "tripId"
+    )
+    val expenses: List<Expense>,
+
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "tripId"
+    )
+    val photos: List<Photo>,
+
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "email",
+        associateBy = Junction(
+            value = Group::class,
+            parentColumn = "tripId",
+            entityColumn = "userEmail"
+        )
+    )
+    val users: List<User>
 )

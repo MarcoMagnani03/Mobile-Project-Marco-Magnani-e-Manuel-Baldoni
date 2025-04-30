@@ -26,7 +26,7 @@ VALUES
 
 ---------------------------------------------------------------
 
--- Associazione dei viaggi all’utente
+-- ASSOCIAZIONE VIAGGI UTENTE
 INSERT INTO `Group` (userEmail, tripId)
 VALUES
     ('test@test.it', 1),
@@ -41,20 +41,87 @@ VALUES
     ('test@test.it', 10),
     ('test@test.it', 11);
 
-    -- USER INSERTS
-    INSERT INTO User (email, password, passwordSalt, pin, pinSalt, firstname, lastname, phoneNumber, location, bio, profilePicture)
-    VALUES
-        ('test@test.it', 'testPassword123', 'testSalt123', '1234', 'testPinSalt', 'Test', 'User', '0123456789', 'Test City, Italy', 'Bio di esempio per l\'utente di test', NULL),
-        ('user1@example.com', 'password123', 'salt123', '1234', 'pinSalt1', 'Mario', 'Rossi', '1234567890', 'Roma, Italia', 'Viaggiatore appassionato di cultura', NULL),
-        ('user2@example.com', 'password123', 'salt123', '5678', 'pinSalt2', 'Luigi', 'Bianchi', '2345678901', 'Milano, Italia', 'Adoro le escursioni in montagna', NULL),
-        ('user3@example.com', 'password123', 'salt123', '9101', 'pinSalt3', 'Giulia', 'Verdi', '3456789012', 'Firenze, Italia', 'Appassionata di arte e storia', NULL),
-        ('user4@example.com', 'password123', 'salt123', '1122', 'pinSalt4', 'Anna', 'Gialli', '4567890123', 'Napoli, Italia', 'Amo il mare e il buon cibo', NULL),
-        ('user5@example.com', 'password123', 'salt123', '3344', 'pinSalt5', 'Francesco', 'Blu', '5678901234', 'Torino, Italia', 'Avventuriero, sempre in viaggio', NULL),
-        ('user6@example.com', 'password123', 'salt123', '5566', 'pinSalt6', 'Luca', 'Marroni', '6789012345', 'Bologna, Italia', 'Mi piacciono le vacanze al sole', NULL),
-        ('user7@example.com', 'password123', 'salt123', '7788', 'pinSalt7', 'Federica', 'Neri', '7890123456', 'Venezia, Italia', 'Innamorata della natura', NULL),
-        ('user8@example.com', 'password123', 'salt123', '9900', 'pinSalt8', 'Alessandro', 'Giorgi', '8901234567', 'Genova, Italia', 'Viaggio per esplorare il mondo', NULL),
-        ('user9@example.com', 'password123', 'salt123', '2233', 'pinSalt9', 'Sara', 'Tauri', '9012345678', 'Verona, Italia', 'Adoro la fotografia e i viaggi', NULL),
-        ('user10@example.com', 'password123', 'salt123', '4455', 'pinSalt10', 'Davide', 'Galli', '1023456789', 'Palermo, Italia', 'Alla ricerca di avventure uniche', NULL);
+---------------------------------------------------------------
+
+-- CREAZIONE ATTIVITA
+INSERT INTO TripActivity (name, startDate, endDate, pricePerPerson, position, notes, tripActivityTypeId, tripId)
+VALUES
+    -- Trip 1: Weekend a Roma
+    ('Visita al Colosseo', '10/04/2024 09:00', '10/04/2024 11:00', 18.0, 'Roma', 'Biglietto d ingresso incluso', 2, 1),
+    ('Passeggiata a Trastevere', '10/04/2024 17:00', '10/04/2024 19:00', NULL, 'Trastevere', 'Quartiere storico', 3, 1),
+    ('Cena tipica romana', '10/04/2024 20:30', '10/04/2024 22:00', 25.0, 'Trattoria Romana', 'Carbonara + vino', 3, 1),
+    ('Musei Vaticani', '11/04/2024 10:00', '11/04/2024 13:00', 17.0, 'Città del Vaticano', 'Cappella Sistina inclusa', 2, 1),
+
+    -- Trip 2: Vacanza a Barcellona
+    ('Tour alla Sagrada Familia', '15/06/2024 09:30', '15/06/2024 11:30', 26.0, 'Barcellona', 'Ingresso prioritario', 2, 2),
+    ('Tapas in centro', '15/06/2024 13:00', '15/06/2024 14:30', 20.0, 'Barri Gòtic', 'Menù degustazione', 3, 2),
+    ('Passeggiata sulla Rambla', '15/06/2024 18:00', '15/06/2024 19:00', NULL, 'La Rambla', 'Shopping e artisti di strada', 3, 2),
+    ('Spiaggia Barceloneta', '16/06/2024 11:00', '16/06/2024 15:00', NULL, 'Barceloneta', 'Relax e sole', 5, 2),
+
+    -- Trip 3: Avventura in Islanda
+    ('Escursione cascata Gullfoss', '02/07/2024 10:00', '02/07/2024 12:00', NULL, 'Gullfoss', 'Vista spettacolare', 1, 3),
+    ('Bagni nella Laguna Blu', '02/07/2024 17:00', '02/07/2024 19:00', 50.0, 'Grindavík', 'Spa naturale', 3, 3),
+    ('Trekking in Landmannalaugar', '03/07/2024 08:00', '03/07/2024 16:00', 80.0, 'Highlands', 'Percorso vulcanico', 1, 3),
+    ('Aurora boreale', '03/07/2024 22:00', '03/07/2024 23:30', NULL, 'Hella', 'Esperienza guidata', 3, 3),
+
+    -- Trip 4: Tour gastronomico a Napoli
+    ('Pizza in Via dei Tribunali', '20/05/2024 12:30', '20/05/2024 14:00', 10.0, 'Napoli', 'Margherita D.O.C.', 3, 4),
+    ('Visita a Spaccanapoli', '20/05/2024 15:00', '20/05/2024 16:30', NULL, 'Centro storico', 'Percorso pedonale', 2, 4),
+    ('Sfogliatella e caffè', '20/05/2024 17:00', '20/05/2024 17:30', 4.0, 'Via Toledo', 'Break pomeridiano', 3, 4),
+    ('Museo Archeologico Nazionale', '21/05/2024 10:00', '21/05/2024 12:00', 12.0, 'Napoli', 'Collezione pompeiana', 2, 4),
+
+    -- Trip 5: Trekking sulle Dolomiti
+    ('Rifugio Auronzo', '01/08/2024 08:30', '01/08/2024 10:30', NULL, 'Tre Cime di Lavaredo', 'Inizio percorso', 1, 5),
+    ('Trekking alle Tre Cime', '01/08/2024 11:00', '01/08/2024 15:00', NULL, 'Dolomiti', 'Panorami mozzafiato', 1, 5),
+    ('Cena in rifugio', '01/08/2024 19:00', '01/08/2024 21:00', 30.0, 'Rifugio Locatelli', 'Specialità locali', 3, 5),
+    ('Discesa e relax', '02/08/2024 09:00', '02/08/2024 12:00', NULL, 'Auronzo', 'Fine escursione', 3, 5),
+
+    -- Trip 6: Safari in Kenya
+    ('Safari nel Masai Mara', '16/08/2025 06:00', '16/08/2025 12:00', 150.0, 'Masai Mara', 'Avvistamento Big Five', 1, 6),
+    ('Visita a villaggio Masai', '17/08/2025 10:00', '17/08/2025 13:00', 30.0, 'Narok', 'Esperienza culturale', 2, 6),
+    ('Tramonto in savana', '18/08/2025 17:30', '18/08/2025 19:00', NULL, 'Riserva naturale', 'Relax con vista', 3, 6),
+    ('Cena sotto le stelle', '19/08/2025 20:00', '19/08/2025 22:00', 60.0, 'Camp Safari', 'Cena tradizionale kenyota', 3, 6),
+
+    -- Trip 7: Scoperta del Giappone
+    ('Tour a Shibuya', '11/10/2025 15:00', '11/10/2025 17:00', NULL, 'Tokyo', 'Attraversamento pedonale più affollato', 2, 7),
+    ('Tempio Senso-ji', '12/10/2025 10:00', '12/10/2025 11:30', 5.0, 'Asakusa', 'Ingresso al tempio', 2, 7),
+    ('Cerimonia del tè', '13/10/2025 14:00', '13/10/2025 15:30', 25.0, 'Kyoto', 'Esperienza tradizionale', 3, 7),
+    ('Escursione sul Monte Fuji', '14/10/2025 07:00', '14/10/2025 18:00', 100.0, 'Fuji-san', 'Salita e vista panoramica', 1, 7),
+
+    -- Trip 8: Viaggio in Patagonia
+    ('Trekking al Perito Moreno', '02/12/2025 08:00', '02/12/2025 14:00', 120.0, 'El Calafate', 'Ghiacciai spettacolari', 1, 8),
+    ('Giro in barca tra gli iceberg', '03/12/2025 10:00', '03/12/2025 12:00', 90.0, 'Lago Argentino', 'Navigazione guidata', 1, 8),
+    ('Notte in rifugio', '04/12/2025 18:00', '05/12/2025 08:00', 70.0, 'Rifugio Patagonia', 'Esperienza wild', 3, 8),
+    ('Relax e foto panoramiche', '06/12/2025 10:00', '06/12/2025 12:30', NULL, 'Torres del Paine', 'Natura incontaminata', 3, 8),
+
+    -- Trip 9: Natale a Vienna
+    ('Mercatini di Natale', '23/12/2025 16:00', '23/12/2025 19:00', NULL, 'Rathausplatz', 'Shopping natalizio', 5, 9),
+    ('Concerto di musica classica', '24/12/2025 18:00', '24/12/2025 20:00', 40.0, 'Wiener Musikverein', 'Concerto di Natale', 2, 9),
+    ('Cena della Vigilia', '24/12/2025 20:30', '24/12/2025 22:30', 55.0, 'Centro città', 'Menù a base di anatra', 3, 9),
+    ('Passeggiata serale', '25/12/2025 21:00', '25/12/2025 22:00', NULL, 'Prater', 'Giro sulla ruota panoramica', 3, 9),
+
+    -- Trip 10: Capodanno a Sydney
+    ('Opera House Tour', '30/12/2025 10:00', '30/12/2025 12:00', 35.0, 'Sydney Opera House', 'Visita guidata', 2, 10),
+    ('Capodanno sul porto', '31/12/2025 22:00', '01/01/2026 01:00', NULL, 'Circular Quay', 'Fuochi d artificio', 3, 10),
+    ('Giornata a Bondi Beach', '02/01/2026 09:00', '02/01/2026 16:00', NULL, 'Bondi', 'Sole e surf', 3, 10),
+    ('Escursione alle Blue Mountains', '03/01/2026 07:30', '03/01/2026 18:00', 90.0, 'Katoomba', 'Three Sisters e cascate', 1, 10);
+
+---------------------------------------------------------------
+
+-- USER INSERTS
+INSERT INTO User (email, password, passwordSalt, pin, pinSalt, firstname, lastname, phoneNumber, location, bio, profilePicture)
+VALUES
+    ('test@test.it', 'testPassword123', 'testSalt123', '1234', 'testPinSalt', 'Test', 'User', '0123456789', 'Test City, Italy', 'Bio di esempio per l\'utente di test', NULL),
+    ('user1@example.com', 'password123', 'salt123', '1234', 'pinSalt1', 'Mario', 'Rossi', '1234567890', 'Roma, Italia', 'Viaggiatore appassionato di cultura', NULL),
+    ('user2@example.com', 'password123', 'salt123', '5678', 'pinSalt2', 'Luigi', 'Bianchi', '2345678901', 'Milano, Italia', 'Adoro le escursioni in montagna', NULL),
+    ('user3@example.com', 'password123', 'salt123', '9101', 'pinSalt3', 'Giulia', 'Verdi', '3456789012', 'Firenze, Italia', 'Appassionata di arte e storia', NULL),
+    ('user4@example.com', 'password123', 'salt123', '1122', 'pinSalt4', 'Anna', 'Gialli', '4567890123', 'Napoli, Italia', 'Amo il mare e il buon cibo', NULL),
+    ('user5@example.com', 'password123', 'salt123', '3344', 'pinSalt5', 'Francesco', 'Blu', '5678901234', 'Torino, Italia', 'Avventuriero, sempre in viaggio', NULL),
+    ('user6@example.com', 'password123', 'salt123', '5566', 'pinSalt6', 'Luca', 'Marroni', '6789012345', 'Bologna, Italia', 'Mi piacciono le vacanze al sole', NULL),
+    ('user7@example.com', 'password123', 'salt123', '7788', 'pinSalt7', 'Federica', 'Neri', '7890123456', 'Venezia, Italia', 'Innamorata della natura', NULL),
+    ('user8@example.com', 'password123', 'salt123', '9900', 'pinSalt8', 'Alessandro', 'Giorgi', '8901234567', 'Genova, Italia', 'Viaggio per esplorare il mondo', NULL),
+    ('user9@example.com', 'password123', 'salt123', '2233', 'pinSalt9', 'Sara', 'Tauri', '9012345678', 'Verona, Italia', 'Adoro la fotografia e i viaggi', NULL),
+    ('user10@example.com', 'password123', 'salt123', '4455', 'pinSalt10', 'Davide', 'Galli', '1023456789', 'Palermo, Italia', 'Alla ricerca di avventure uniche', NULL);
 
 
 INSERT INTO NotificationType (id, label, icon)
