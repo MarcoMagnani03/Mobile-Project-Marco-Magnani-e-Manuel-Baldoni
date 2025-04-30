@@ -12,10 +12,45 @@ interface TripsDAO {
     suspend fun upsert(trip: Trip): Long
 
     @Delete
-    suspend fun delete(item: Trip)
+    suspend fun delete(trip: Trip)
 
     @Query("SELECT * FROM Trip WHERE id = :tripId")
     suspend fun getTripById(tripId: Long): Trip?
+
+    @Query("SELECT * FROM Trip")
+    suspend fun getAllTrips(): List<Trip>
+
+    @Transaction
+    @Query("SELECT * FROM Trip WHERE id = :tripId")
+    suspend fun getTripWithActivitiesById(tripId: Long): TripWithTripActivities?
+
+    @Transaction
+    @Query("SELECT * FROM Trip WHERE id = :tripId")
+    suspend fun getTripWithActivitiesAndExpensesById(tripId: Long): TripWithTripActivitiesAndExpenses?
+
+    @Transaction
+    @Query("SELECT * FROM Trip WHERE id = :tripId")
+    suspend fun getTripWithAllRelationsById(tripId: Long): TripWithActivitiesAndExpensesAndPhotosAndUsers?
+
+    @Transaction
+    @Query("SELECT * FROM Trip")
+    suspend fun getAllTripsWithAllRelations(): List<TripWithActivitiesAndExpensesAndPhotosAndUsers>
+
+    @Transaction
+    @Query("""
+        SELECT t.* FROM Trip t 
+        INNER JOIN `Group` g ON t.id = g.tripId 
+        WHERE g.userEmail = :userEmail
+    """)
+    suspend fun getTripsForUser(userEmail: String): List<Trip>
+
+    @Transaction
+    @Query("""
+        SELECT t.* FROM Trip t 
+        INNER JOIN `Group` g ON t.id = g.tripId 
+        WHERE g.userEmail = :userEmail
+    """)
+    suspend fun getTripsWithAllRelationsForUser(userEmail: String): List<TripWithActivitiesAndExpensesAndPhotosAndUsers>
 }
 
 @Dao
