@@ -1,6 +1,7 @@
 package com.example.travelbuddy.ui.screens.friend
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.PersonRemove
 import androidx.compose.runtime.remember
+import com.example.travelbuddy.ui.TravelBuddyRoute
 import com.example.travelbuddy.ui.composables.TravelBuddyConfirmDialog
 
 @Composable
@@ -47,7 +49,8 @@ private fun FriendSection(
     onAcceptRequest: (FriendItemData) -> Unit,
     onRejectRequest: (FriendItemData) -> Unit,
     onSendRequest: (FriendItemData) -> Unit,
-    onUnfriend: (FriendItemData) -> Unit
+    onUnfriend: (FriendItemData) -> Unit,
+    navController: NavController
 ) {
     var expanded by remember { mutableStateOf(false) }
     val friendsToShow = if (expanded) friends else friends.take(5)
@@ -72,7 +75,8 @@ private fun FriendSection(
                     onReject = { onRejectRequest(friend) },
                     onSendRequest = { onSendRequest(friend) },
                     isAlreadyFriend = friend.isAlreadyFriend,
-                    onUnfriend = {onUnfriend(friend)}
+                    onUnfriend = {onUnfriend(friend)},
+                    navController = navController
                 )
             }
 
@@ -135,7 +139,8 @@ fun FriendScreen(
                 onAcceptRequest = { },
                 onRejectRequest = { },
                 onSendRequest = { },
-                onUnfriend={actions.unfriend(it)}
+                onUnfriend={actions.unfriend(it)},
+                navController = navController
             )
 
             // Friend Requests
@@ -152,7 +157,8 @@ fun FriendScreen(
                 onAcceptRequest = { actions.acceptFriendRequest(it) },
                 onRejectRequest = { actions.rejectFriendRequest(it) },
                 onSendRequest = { },
-                onUnfriend = {}
+                onUnfriend = {},
+                navController = navController
             )
 
             TravelBuddySearchBar(
@@ -180,7 +186,8 @@ fun FriendScreen(
                 onAcceptRequest = { },
                 onRejectRequest = { },
                 onSendRequest = { actions.sendFriendRequest(it) },
-                onUnfriend = {}
+                onUnfriend = {},
+                navController = navController
             )
 
         }
@@ -207,7 +214,8 @@ fun FriendItem(
     onAccept: () -> Unit,
     onReject: () -> Unit,
     onSendRequest: () -> Unit,
-    onUnfriend: () -> Unit
+    onUnfriend: () -> Unit,
+    navController: NavController
 ) {
     // Stato per le dialog di conferma
     var showUnfriendDialog by remember { mutableStateOf(false) }
@@ -274,6 +282,9 @@ fun FriendItem(
                 shape = MaterialTheme.shapes.medium
             )
             .padding(8.dp)
+            .clickable {
+                navController.navigate(TravelBuddyRoute.ViewProfile(userEmail = email))
+            }
     ) {
         Box(modifier = Modifier.size(80.dp)) {
             ProfileImageSection(

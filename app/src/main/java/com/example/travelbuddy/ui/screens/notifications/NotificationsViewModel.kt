@@ -27,7 +27,6 @@ data class NotificationsState(
 
 interface NotificationsActions {
     fun loadNotifications()
-    fun markAsRead(notificationId: Long)
     fun deleteNotification(notificationId: Long)
 }
 
@@ -79,26 +78,6 @@ class NotificationsViewModel(
                             isLoading = false
                         )
                     }
-                }
-            }
-        }
-
-        override fun markAsRead(notificationId: Long) {
-            // This would be implemented if you have a read/unread field in your notification model
-            // For now, it's just a placeholder for future implementation
-            viewModelScope.launch {
-                try {
-                    // Esempio di implementazione:
-                    // 1. Recuperare la notifica dal repository
-                    // val notification = notificationRepository.getNotificationById(notificationId)
-                    // 2. Aggiornare lo stato di lettura
-                    // notification.isRead = true
-                    // 3. Salvare la notifica aggiornata
-                    // notificationRepository.updateNotification(notification)
-                    // 4. Ricaricare le notifiche per aggiornare l'UI
-                    // loadNotifications()
-                } catch (e: Exception) {
-                    _state.update { it.copy(errorMessage = e.message) }
                 }
             }
         }

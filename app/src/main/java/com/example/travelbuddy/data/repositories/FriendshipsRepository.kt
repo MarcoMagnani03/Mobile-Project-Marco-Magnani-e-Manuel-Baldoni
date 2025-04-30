@@ -1,6 +1,7 @@
 package com.example.travelbuddy.data.repositories
 
 import com.example.travelbuddy.data.database.Friendship
+import com.example.travelbuddy.data.database.FriendshipStatus
 import com.example.travelbuddy.data.database.FriendshipsDAO
 
 class FriendshipsRepository (

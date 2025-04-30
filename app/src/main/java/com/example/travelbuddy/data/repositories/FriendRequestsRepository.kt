@@ -3,6 +3,7 @@ package com.example.travelbuddy.data.repositories
 import com.example.travelbuddy.data.database.FriendRequest
 import com.example.travelbuddy.data.database.FriendRequestsDAO
 import com.example.travelbuddy.data.database.Friendship
+import com.example.travelbuddy.data.database.FriendshipStatus
 import com.example.travelbuddy.data.database.FriendshipsDAO
 
 class FriendRequestsRepository(
@@ -47,5 +48,13 @@ class FriendRequestsRepository(
 
     suspend fun getSentFriendRequests(email: String): List<FriendRequest> {
         return friendRequestsDao.getSentFriendRequests(email)
+    }
+
+    suspend fun getFriendshipStatus(user1: String, user2: String): FriendshipStatus {
+        return FriendshipStatus(
+            isFriend = friendshipsDao.areFriends(user1, user2),
+            sentRequest = friendRequestsDao.hasSentRequest(user1, user2),
+            receivedRequest = friendRequestsDao.hasSentRequest(user2, user1)
+        )
     }
 }

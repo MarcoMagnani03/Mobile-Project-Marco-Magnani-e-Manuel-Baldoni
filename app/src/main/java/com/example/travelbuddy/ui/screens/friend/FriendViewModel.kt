@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelbuddy.data.database.FriendRequest
 import com.example.travelbuddy.data.database.Friendship
+import com.example.travelbuddy.data.database.Notification
 import com.example.travelbuddy.data.database.User
 import com.example.travelbuddy.data.repositories.FriendRequestsRepository
 import com.example.travelbuddy.data.repositories.FriendshipsRepository
+import com.example.travelbuddy.data.repositories.NotificationsRepository
 import com.example.travelbuddy.data.repositories.UserSessionRepository
 import com.example.travelbuddy.data.repositories.UsersRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +35,7 @@ class FriendViewModel(
     private val friendshipsRepository: FriendshipsRepository,
     private val friendRequestsRepository: FriendRequestsRepository,
     private val userSessionRepository: UserSessionRepository,
+    private val notificationRepository: NotificationsRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(FriendState())
@@ -111,6 +114,10 @@ class FriendViewModel(
 
                         friendRequestsRepository.acceptFriendRequest(friend.email, currentUserEmail)
 
+                        val notification = Notification(description = "$currentUserEmail accepted your friend request", title = "Friend request status changed", notificationTypeId = 0, userEmail = friend.email)
+
+                        notificationRepository.addOrUpdateNotification(notification)
+
                         loadFriends()
                     }
                 } catch (e: Exception) {
@@ -127,6 +134,10 @@ class FriendViewModel(
 
                         friendRequestsRepository.refuseFriendRequest(friend.email, currentUserEmail)
 
+                        val notification = Notification(description = "$currentUserEmail rejected your friend request", title = "Friend request status changed", notificationTypeId = 0, userEmail = friend.email)
+
+                        notificationRepository.addOrUpdateNotification(notification)
+
                         loadFriends()
                     }
                 } catch (e: Exception) {
@@ -142,6 +153,10 @@ class FriendViewModel(
                         if (currentUserEmail.isNullOrBlank()) return@collect
 
                         friendRequestsRepository.sendFriendRequest(currentUserEmail, friend.email)
+
+                        val notification = Notification(description = "$currentUserEmail sent you a friend request", title = "Received a friend request", notificationTypeId = 0, userEmail = friend.email)
+
+                        notificationRepository.addOrUpdateNotification(notification)
 
                         loadFriends()
                     }

@@ -270,6 +270,12 @@ data class FriendRequest(
     val createdAt: Long = System.currentTimeMillis()
 )
 
+data class FriendshipStatus(
+    val isFriend: Boolean,
+    val sentRequest: Boolean,
+    val receivedRequest: Boolean
+)
+
 data class TripWithTripActivities(
     @Embedded val trip: Trip,
     @Relation(

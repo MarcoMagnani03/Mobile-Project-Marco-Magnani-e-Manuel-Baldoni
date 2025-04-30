@@ -159,6 +159,15 @@ interface FriendshipsDAO {
         OR (emailFirstUser = :user2 AND emailSecondUser = :user1)
     """)
     suspend fun deleteFriendshipBetween(user1: String, user2: String)
+
+    @Query("""
+        SELECT EXISTS(
+            SELECT 1 FROM Friendship 
+            WHERE (emailFirstUser = :user1 AND emailSecondUser = :user2) 
+               OR (emailFirstUser = :user2 AND emailSecondUser = :user1)
+        )
+    """)
+    suspend fun areFriends(user1: String, user2: String): Boolean
 }
 
 @Dao
@@ -180,4 +189,12 @@ interface FriendRequestsDAO {
 
     @Query("SELECT * FROM FriendRequest WHERE senderEmail = :email")
     suspend fun getSentFriendRequests(email: String): List<FriendRequest>
+
+    @Query("""
+        SELECT EXISTS(
+            SELECT 1 FROM FriendRequest 
+            WHERE senderEmail = :sender AND receiverEmail = :receiver
+        )
+    """)
+    suspend fun hasSentRequest(sender: String, receiver: String): Boolean
 }

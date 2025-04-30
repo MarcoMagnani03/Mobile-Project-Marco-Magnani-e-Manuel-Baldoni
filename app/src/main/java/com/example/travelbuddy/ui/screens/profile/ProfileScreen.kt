@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.travelbuddy.ui.composables.ButtonStyle
+import com.example.travelbuddy.ui.composables.ProfileDetailItem
 import com.example.travelbuddy.ui.composables.ProfileImageSection
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
 import com.example.travelbuddy.ui.composables.TravelBuddyButton
@@ -134,18 +135,3 @@ fun ProfileScreen(
 }
 
 
-@Composable
-fun ProfileDetailItem(label: String, value: String?) {
-    Column(modifier = Modifier.padding(vertical = 8.dp)) {
-        Text(
-            text = label,
-            fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
-        )
-        Text(
-            text = if (!value.isNullOrBlank()) value else "not defined",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium
-        )
-    }
-}

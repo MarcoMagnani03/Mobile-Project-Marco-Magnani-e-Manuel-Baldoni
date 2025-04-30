@@ -32,6 +32,8 @@ import com.example.travelbuddy.ui.screens.notifications.NotificationsViewModel
 import com.example.travelbuddy.ui.screens.profile.EditProfileScreen
 import com.example.travelbuddy.ui.screens.profile.ProfileScreen
 import com.example.travelbuddy.ui.screens.profile.ProfileViewModel
+import com.example.travelbuddy.ui.screens.profile.ViewProfileScreen
+import com.example.travelbuddy.ui.screens.profile.ViewProfileViewModel
 import com.example.travelbuddy.ui.screens.setting.ChangePasswordScreen
 import com.example.travelbuddy.ui.screens.setting.ChangePinScreen
 import com.example.travelbuddy.ui.screens.setting.SettingScreen
@@ -65,6 +67,7 @@ sealed interface TravelBuddyRoute {
     @Serializable data class TripDetails(val tripId: String) : TravelBuddyRoute
     @Serializable data class NewTripActivity(val tripId: String) : TravelBuddyRoute
     @Serializable data class NewExpense(val tripId: String) : TravelBuddyRoute
+    @Serializable data class ViewProfile(val userEmail: String) : TravelBuddyRoute
 }
 
 @Composable
@@ -100,6 +103,24 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             }
 
             FriendScreen(state, friendViewModel.actions, navController)
+        }
+
+        composable<TravelBuddyRoute.ViewProfile> { backStackEntry ->
+            val userEmail = backStackEntry.arguments?.getString("userEmail") ?: ""
+            val viewProfileViewModel = koinViewModel<ViewProfileViewModel>()
+
+            val state by viewProfileViewModel.state.collectAsStateWithLifecycle()
+
+            LaunchedEffect(userEmail) {
+                viewProfileViewModel.actions.loadUserData(userEmail)
+            }
+
+            ViewProfileScreen(
+                state = state,
+                actions = viewProfileViewModel.actions,
+                navController = navController,
+                email = userEmail
+            )
         }
 
         composable<TravelBuddyRoute.Notification> {

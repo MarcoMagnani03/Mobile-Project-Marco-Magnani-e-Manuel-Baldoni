@@ -33,7 +33,7 @@ fun NotificationsScreen(
             TravelBuddyTopBar(
                 navController = navController,
                 title = "Notifications",
-                subtitle = "I tuoi aggiornamenti e avvisi",
+                subtitle = "Your update and alerts",
                 canNavigateBack = true
             )
         },
