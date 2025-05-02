@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelbuddy.data.database.TripActivityType
 import com.example.travelbuddy.data.database.TripWithActivitiesAndExpensesAndPhotosAndUsers
-import com.example.travelbuddy.data.database.TripWithTripActivitiesAndExpenses
 import com.example.travelbuddy.data.repositories.TripActivitiesTypesRepository
 import com.example.travelbuddy.data.repositories.TripsRepository
 import kotlinx.coroutines.flow.MutableStateFlow

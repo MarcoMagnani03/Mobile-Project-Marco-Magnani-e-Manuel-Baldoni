@@ -16,7 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.travelbuddy.data.database.Expense
+import com.example.travelbuddy.ui.TravelBuddyRoute
 import com.example.travelbuddy.ui.composables.BalanceEntry
 import com.example.travelbuddy.ui.composables.ButtonStyle
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
@@ -82,7 +82,7 @@ fun TripDetailsScreen(
                 }?.take(3) ?: emptyList(),
                 totalExpenses = state.trip?.expenses?.sumOf { expense -> expense.amount } ?: 0.0,
                 onViewAllExpensesClick = {
-
+                    navController.navigate(TravelBuddyRoute.BudgetOverview(tripId = state.trip?.trip?.id.toString()))
                 }
             )
 

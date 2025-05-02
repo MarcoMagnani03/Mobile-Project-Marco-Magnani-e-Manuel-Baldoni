@@ -13,6 +13,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.travelbuddy.data.repositories.UserSessionRepository
+import com.example.travelbuddy.ui.screens.budgetOverview.BudgetOverviewScreen
+import com.example.travelbuddy.ui.screens.budgetOverview.BudgetOverviewViewModel
 import com.example.travelbuddy.ui.screens.camera.CameraCaptureScreen
 import com.example.travelbuddy.ui.screens.camera.ImagePreviewScreen
 import com.example.travelbuddy.ui.screens.code.CodeScreen
@@ -68,6 +70,7 @@ sealed interface TravelBuddyRoute {
     @Serializable data class NewTripActivity(val tripId: String) : TravelBuddyRoute
     @Serializable data class NewExpense(val tripId: String) : TravelBuddyRoute
     @Serializable data class ViewProfile(val userEmail: String) : TravelBuddyRoute
+    @Serializable data class BudgetOverview(val tripId: String) : TravelBuddyRoute
 }
 
 @Composable
@@ -304,6 +307,23 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             NewExpenseScreen(
                 state = state,
                 actions = newExpenseViewModel.actions,
+                navController = navController
+            )
+        }
+
+        composable<TravelBuddyRoute.BudgetOverview> { backStackEntry ->
+            val tripId = backStackEntry.arguments?.getString("tripId") ?: ""
+            val tripIdLong = tripId.toLongOrNull() ?: -1L
+            val budgetOverviewViewModel = koinViewModel<BudgetOverviewViewModel>()
+            val state by budgetOverviewViewModel.state.collectAsStateWithLifecycle()
+
+            LaunchedEffect(tripId) {
+                budgetOverviewViewModel.actions.loadBudgetData(tripIdLong)
+            }
+
+            BudgetOverviewScreen(
+                state = state,
+                actions = budgetOverviewViewModel.actions,
                 navController = navController
             )
         }
