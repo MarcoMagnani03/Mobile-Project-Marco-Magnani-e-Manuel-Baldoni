@@ -16,10 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.travelbuddy.data.database.Expense
+import com.example.travelbuddy.ui.composables.BalanceEntry
 import com.example.travelbuddy.ui.composables.ButtonStyle
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
 import com.example.travelbuddy.ui.composables.TravelBuddyButton
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
+import com.example.travelbuddy.ui.composables.TripDetailsQuickBalance
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -56,17 +59,32 @@ fun TripDetailsScreen(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
-            state.trip?.let { trip ->
-                TripDetailsCalendar(
-                    activities = trip.activities.filter { activity ->
-                        parseDate(activity.endDate).after(Date())
-                    },
-                    activityTypes = activityTypesMap,
-                    onViewAllClick = {
+            TripDetailsCalendar(
+                activities =
+                    state.trip?.activities
+                        ?.filter { activity -> parseDate(activity.endDate).after(Date()) }
+                        ?.sortedBy { activity -> parseDate(activity.startDate) }
+                        ?.take(3) ?: emptyList(),
+                activityTypes = activityTypesMap,
+                onViewAllClick = {
 
-                    }
-                )
-            }
+                }
+            )
+
+            Spacer(Modifier.height(10.dp))
+
+            TripDetailsQuickBalance(
+                balanceEntries = state.trip?.expenses?.map { expense ->
+                    BalanceEntry(
+                        name = expense.title,
+                        amount = expense.amount
+                    )
+                }?.take(3) ?: emptyList(),
+                totalExpenses = state.trip?.expenses?.sumOf { expense -> expense.amount } ?: 0.0,
+                onViewAllExpensesClick = {
+
+                }
+            )
 
             Spacer(Modifier.height(10.dp))
 

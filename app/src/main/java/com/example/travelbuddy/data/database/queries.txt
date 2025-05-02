@@ -136,3 +136,83 @@ VALUES
     (2, 'Nuova attività disponibile', 'È stata aggiunta una nuova escursione per il tuo viaggio.', 1, 'ca'),
     (3, 'Errore di sincronizzazione', 'Impossibile aggiornare le notifiche. Riprova più tardi.', 2, 'ca'),
     (4, 'Problema di connessione', 'Controlla la tua rete internet e riprova.', 2, 'ca');
+
+
+INSERT INTO Expense (title, amount, date, description, cretedByUserEmail, tripId)
+VALUES
+    -- Trip 1: Roma
+    ('Biglietto Colosseo', 18.0, '10/04/2024', 'Ingresso al Colosseo', 'test@test.it', 1),
+    ('Cena Trastevere', 25.0, '10/04/2024', 'Cena tipica romana', 'test@test.it', 1),
+    ('Musei Vaticani', 17.0, '11/04/2024', 'Biglietto musei e Cappella Sistina', 'test@test.it', 1),
+    ('Gelato a Fontana di Trevi', 4.5, '11/04/2024', 'Gelateria storica', 'test@test.it', 1),
+    ('Trasporto pubblico', 10.0, '10/04/2024', 'Metro e autobus', 'test@test.it', 1),
+
+    -- Trip 2: Barcellona
+    ('Sagrada Familia', 26.0, '15/06/2024', 'Ingresso chiesa', 'test@test.it', 2),
+    ('Tapas cena', 20.0, '15/06/2024', 'Tapas e sangria', 'test@test.it', 2),
+    ('Museo Picasso', 12.0, '16/06/2024', 'Ingresso intero', 'test@test.it', 2),
+    ('Biglietto metro', 8.0, '16/06/2024', 'Titolo viaggio T10', 'test@test.it', 2),
+    ('Souvenir Ramblas', 15.0, '17/06/2024', 'Cartoline e calamite', 'test@test.it', 2),
+
+    -- Trip 3: Islanda
+    ('Laguna Blu', 50.0, '02/07/2024', 'Spa termale', 'test@test.it', 3),
+    ('Cena Reykjavik', 40.0, '02/07/2024', 'Cena tipica islandese', 'test@test.it', 3),
+    ('Tour ghiacciaio', 80.0, '03/07/2024', 'Escursione con guida', 'test@test.it', 3),
+    ('Noleggio auto', 100.0, '01/07/2024', '4x4 per 3 giorni', 'test@test.it', 3),
+    ('Snack e market', 15.0, '03/07/2024', 'Acqua, barrette, frutta', 'test@test.it', 3),
+
+    -- Trip 4: Napoli
+    ('Pizza da Sorbillo', 10.0, '20/05/2024', 'Pranzo', 'test@test.it', 4),
+    ('Museo Archeologico', 12.0, '21/05/2024', 'Ingresso intero', 'test@test.it', 4),
+    ('Caffè + sfogliatella', 4.0, '20/05/2024', 'Pasticceria storica', 'test@test.it', 4),
+    ('Trasporto Circumvesuviana', 6.0, '22/05/2024', 'Verso Pompei', 'test@test.it', 4),
+    ('Ingresso Pompei', 16.0, '22/05/2024', 'Scavi archeologici', 'test@test.it', 4),
+
+    -- Trip 5: Dolomiti
+    ('Noleggio ciaspole', 20.0, '01/08/2024', 'Ciaspole per escursione', 'test@test.it', 5),
+    ('Alloggio rifugio', 35.0, '01/08/2024', 'Pernottamento + cena', 'test@test.it', 5),
+    ('Colazione rifugio', 7.0, '02/08/2024', 'Pane e marmellata', 'test@test.it', 5),
+    ('Impianto risalita', 10.0, '02/08/2024', 'Seggiovia Auronzo', 'test@test.it', 5),
+    ('Snack in baita', 12.0, '02/08/2024', 'Torta e tisana', 'test@test.it', 5),
+
+    -- Trip 6: Safari Kenya
+    ('Safari mezza giornata', 150.0, '16/08/2025', 'Tour riserva naturale', 'test@test.it', 6),
+    ('Guida locale', 25.0, '16/08/2025', 'Mancia', 'test@test.it', 6),
+    ('Cena tipica', 60.0, '19/08/2025', 'Buffet africano', 'test@test.it', 6),
+    ('Souvenir artigianato', 20.0, '18/08/2025', 'Braccialetti e sculture', 'test@test.it', 6),
+    ('Acqua e snack', 8.0, '17/08/2025', 'Bottiglie e frutta secca', 'test@test.it', 6),
+
+    -- Trip 7: Giappone
+    ('Cerimonia del tè', 25.0, '13/10/2025', 'Kyoto - esperienza culturale', 'test@test.it', 7),
+    ('Treno Shinkansen', 100.0, '11/10/2025', 'Tokyo-Kyoto andata', 'test@test.it', 7),
+    ('Cena ramen', 15.0, '12/10/2025', 'Ramen artigianale', 'test@test.it', 7),
+    ('Biglietto tempio', 10.0, '14/10/2025', 'Fushimi Inari', 'test@test.it', 7),
+    ('Tokyo Skytree', 18.0, '15/10/2025', 'Panorama notturno', 'test@test.it', 7),
+
+    -- Trip 8: Patagonia
+    ('Escursione ghiacciaio', 120.0, '02/12/2025', 'Tour Perito Moreno', 'test@test.it', 8),
+    ('Noleggio attrezzatura', 30.0, '01/12/2025', 'Ramponi e zaino', 'test@test.it', 8),
+    ('Notte rifugio', 70.0, '04/12/2025', 'Pernottamento', 'test@test.it', 8),
+    ('Pasti trekking', 25.0, '03/12/2025', 'Pranzo al sacco', 'test@test.it', 8),
+    ('Trasporto bus', 15.0, '01/12/2025', 'Da El Calafate', 'test@test.it', 8),
+
+    -- Trip 9: Natale a Vienna
+    ('Concerto di Natale', 40.0, '24/12/2025', 'Musica classica', 'test@test.it', 9),
+    ('Cena Vigilia', 55.0, '24/12/2025', 'Ristorante tradizionale', 'test@test.it', 9),
+    ('Visita Palazzo Schönbrunn', 20.0, '25/12/2025', 'Tour natalizio', 'test@test.it', 9),
+    ('Cappuccino + torta Sacher', 9.0, '25/12/2025', 'Café centrale', 'test@test.it', 9),
+    ('Mercatini di Natale', 18.0, '23/12/2025', 'Vin brulé e dolci', 'test@test.it', 9),
+
+    -- Trip 10: Capodanno Sydney
+    ('Tour Opera House', 35.0, '30/12/2025', 'Visita guidata', 'test@test.it', 10),
+    ('Crociera Capodanno', 200.0, '31/12/2025', 'Fuochi d’artificio in baia', 'test@test.it', 10),
+    ('Zoo Taronga', 45.0, '02/01/2026', 'Biglietto intero', 'test@test.it', 10),
+    ('Pranzo Darling Harbour', 30.0, '01/01/2026', 'Ristorante sul mare', 'test@test.it', 10),
+    ('Biglietto metro', 8.0, '01/01/2026', 'Trasporti urbani', 'test@test.it', 10),
+
+    ('Carrozza del 1800', 120.0, '15/03/1901', 'Noleggio carrozza a cavalli in Vienna imperiale', 'test@test.it', 11),
+    ('Panino futuristico', 45.5, '12/11/2099', 'Esperienza gastronomica nel 2100 con cibo sintetico', 'test@test.it', 11),
+    ('Monete romane', 78.0, '01/08/2001', 'Acquisto di monete storiche in un museo archeologico', 'test@test.it', 11),
+    ('Biglietto dirigibile', 150.0, '03/05/1930', 'Viaggio in dirigibile Zeppelin', 'test@test.it', 11),
+    ('Visore VR temporale', 299.0, '10/07/2085', 'Simulazione immersiva di eventi storici', 'test@test.it', 11),
+    ('Tè con Einstein', 60.0, '14/03/1921', 'Esperienza interattiva con attore storico', 'test@test.it', 11);
