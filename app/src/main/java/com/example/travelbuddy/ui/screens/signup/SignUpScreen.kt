@@ -75,7 +75,14 @@ fun SignUpScreen(
 
     val scrollState = rememberScrollState()
 
-    Scaffold { contentPadding ->
+    Scaffold(
+        topBar = {
+        TravelBuddyTopBar(
+            navController = navController,
+            title = "Sign up",
+            canNavigateBack = true
+        )
+    }) { contentPadding ->
         Column(
             modifier = Modifier
                 .padding(contentPadding)
@@ -84,24 +91,11 @@ fun SignUpScreen(
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = "Sign up",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.primary ,
-                        modifier = Modifier.padding(top = 5.dp, bottom = 25.dp)
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Go back",
-                            modifier = Modifier.size(32.dp)
-                        )
-                    }
-                }
+            Text(
+                text = "Fields marked with * are required",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                modifier = Modifier.align(Alignment.Start)
             )
 
             Spacer(modifier = Modifier.size(16.dp))
@@ -142,7 +136,7 @@ fun SignUpScreen(
 
             InputField(
                 value = state.firstName,
-                label = "First Name",
+                label = "First Name*",
                 onValueChange = actions::setFirstName,
                 leadingIcon = { Icon(Icons.Outlined.Person, "Name") }
             )
@@ -151,7 +145,7 @@ fun SignUpScreen(
 
             InputField(
                 value = state.lastName,
-                label = "Surname",
+                label = "Surname*",
                 onValueChange = actions::setLastName,
                 leadingIcon = { Icon(Icons.Outlined.PersonOutline, "Surname") }
             )
@@ -188,7 +182,7 @@ fun SignUpScreen(
 
             InputField(
                 value = state.email,
-                label = "Email",
+                label = "Email*",
                 onValueChange = actions::setEmail,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 leadingIcon = { Icon(Icons.Outlined.Email, "mail") }
@@ -198,7 +192,7 @@ fun SignUpScreen(
 
             InputField(
                 value = state.password,
-                label = "Password",
+                label = "Password*",
                 onValueChange = actions::setPassword,
                 type = InputFieldType.Password,
                 leadingIcon = { Icon(Icons.Outlined.Lock, "Password") }
@@ -208,7 +202,7 @@ fun SignUpScreen(
 
             InputField(
                 value = state.confirmPassword,
-                label = "Confirm password",
+                label = "Confirm password*",
                 onValueChange = actions::setConfirmPassword,
                 type = InputFieldType.Password,
                 leadingIcon = { Icon(Icons.Outlined.Lock, "Confirm password") }

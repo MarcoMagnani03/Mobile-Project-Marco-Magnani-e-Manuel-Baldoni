@@ -114,9 +114,7 @@ class FriendViewModel(
 
                         friendRequestsRepository.acceptFriendRequest(friend.email, currentUserEmail)
 
-                        val notification = Notification(description = "$currentUserEmail accepted your friend request", title = "Friend request status changed", notificationTypeId = 0, userEmail = friend.email)
-
-                        notificationRepository.addOrUpdateNotification(notification)
+                        notificationRepository.addInfoNotification(description = "$currentUserEmail accepted your friend request", title = "Friend request status changed", userEmail = friend.email)
 
                         loadFriends()
                     }
@@ -134,9 +132,7 @@ class FriendViewModel(
 
                         friendRequestsRepository.refuseFriendRequest(friend.email, currentUserEmail)
 
-                        val notification = Notification(description = "$currentUserEmail rejected your friend request", title = "Friend request status changed", notificationTypeId = 0, userEmail = friend.email)
-
-                        notificationRepository.addOrUpdateNotification(notification)
+                        notificationRepository.addInfoNotification(description = "$currentUserEmail rejected your friend request", title = "Friend request status changed", userEmail = friend.email)
 
                         loadFriends()
                     }
@@ -154,9 +150,7 @@ class FriendViewModel(
 
                         friendRequestsRepository.sendFriendRequest(currentUserEmail, friend.email)
 
-                        val notification = Notification(description = "$currentUserEmail sent you a friend request", title = "Received a friend request", notificationTypeId = 0, userEmail = friend.email)
-
-                        notificationRepository.addOrUpdateNotification(notification)
+                        notificationRepository.addInfoNotification(description = "$currentUserEmail sent you a friend request", title = "Received a friend request", userEmail = friend.email)
 
                         loadFriends()
                     }

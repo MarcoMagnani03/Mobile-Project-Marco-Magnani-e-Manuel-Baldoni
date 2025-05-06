@@ -10,8 +10,18 @@ class NotificationsRepository(
         return dao.getNotificationsForUser(userEmail)
     }
 
-    suspend fun addOrUpdateNotification(notification: Notification) {
+    suspend fun addInfoNotification(title: String, description: String, userEmail:String) {
+        val notification = Notification(description = description, title = title, notificationTypeId = 1, userEmail = userEmail)
         dao.updateNotification(notification)
+    }
+
+    suspend fun addErrorNotification(title: String, description: String, userEmail:String) {
+        val notification = Notification(description = description, title = title, notificationTypeId = 0, userEmail = userEmail)
+        dao.updateNotification(notification)
+    }
+
+    suspend fun markNotificationAsRead(notificationId: Long) {
+        dao.markNotificationAsRead(notificationId)
     }
 
 

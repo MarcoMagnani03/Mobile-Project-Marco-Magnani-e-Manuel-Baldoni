@@ -102,6 +102,12 @@ data class Notification(
 
     @ColumnInfo
     var userEmail: String,
+
+    @ColumnInfo
+    val isRead: Boolean = false,
+
+    @ColumnInfo
+    val sentAt: Long = System.currentTimeMillis()
 )
 
 data class UserWithNotification(

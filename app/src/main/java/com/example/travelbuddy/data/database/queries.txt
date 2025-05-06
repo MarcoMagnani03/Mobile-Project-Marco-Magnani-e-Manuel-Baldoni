@@ -108,10 +108,10 @@ VALUES
 
 ---------------------------------------------------------------
 
--- USER INSERTS
+-- USER INSERTS (Password di account test è test)
 INSERT INTO User (email, password, passwordSalt, pin, pinSalt, firstname, lastname, phoneNumber, location, bio, profilePicture)
 VALUES
-    ('test@test.it', 'testPassword123', 'testSalt123', '1234', 'testPinSalt', 'Test', 'User', '0123456789', 'Test City, Italy', 'Bio di esempio per l\'utente di test', NULL),
+    ('test@test.it', '347c384fdb50740f8ce788bc983af3d02d836eb2bf17b664d8cdd101012fe124', '4354a3cbd81ba1ce18362f5dbc8eb64e', '1234', 'testPinSalt', 'Test', 'User', '0123456789', 'Test City, Italy', 'Bio di esempio per utente di test', NULL),
     ('user1@example.com', 'password123', 'salt123', '1234', 'pinSalt1', 'Mario', 'Rossi', '1234567890', 'Roma, Italia', 'Viaggiatore appassionato di cultura', NULL),
     ('user2@example.com', 'password123', 'salt123', '5678', 'pinSalt2', 'Luigi', 'Bianchi', '2345678901', 'Milano, Italia', 'Adoro le escursioni in montagna', NULL),
     ('user3@example.com', 'password123', 'salt123', '9101', 'pinSalt3', 'Giulia', 'Verdi', '3456789012', 'Firenze, Italia', 'Appassionata di arte e storia', NULL),
@@ -130,12 +130,12 @@ VALUES
     (2, 'Error', 'error');
 
 -- NOTIFICATIONS (utente: "ca")
-INSERT INTO Notification (id, title, description, notificationTypeId, userEmail)
+INSERT INTO Notification (id, title, description, notificationTypeId, userEmail, isRead, sentAt)
 VALUES
-    ('Benvenuto in TravelBuddy', 'La tua avventura inizia qui!', 1, 'ca'),
-    (2, 'Nuova attività disponibile', 'È stata aggiunta una nuova escursione per il tuo viaggio.', 1, 'ca'),
-    (3, 'Errore di sincronizzazione', 'Impossibile aggiornare le notifiche. Riprova più tardi.', 2, 'ca'),
-    (4, 'Problema di connessione', 'Controlla la tua rete internet e riprova.', 2, 'ca');
+    (1, 'Benvenuto in TravelBuddy', 'La tua avventura inizia qui!', 1, 'ca', 1, '2024-06-01 10:30:00'),
+    (2, 'Nuova attività disponibile', 'È stata aggiunta una nuova escursione per il tuo viaggio.', 1, 'ca', 0, '2024-06-03 15:45:22'),
+    (3, 'Errore di sincronizzazione', 'Impossibile aggiornare le notifiche. Riprova più tardi.', 2, 'ca', 0, '2024-06-05 09:12:37'),
+    (4, 'Problema di connessione', 'Controlla la tua rete internet e riprova.', 2, 'ca', 0, '2024-06-05 11:05:18');
 
 
 INSERT INTO Expense (title, amount, date, description, cretedByUserEmail, tripId)

@@ -1,5 +1,6 @@
 package com.example.travelbuddy.ui.composables
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -13,6 +14,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.travelbuddy.ui.screens.notifications.NotificationWithType
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 fun getNotificationIcon(iconName: String?): ImageVector {
     return when (iconName?.lowercase()) {
@@ -25,20 +29,29 @@ fun getNotificationIcon(iconName: String?): ImageVector {
 @Composable
 fun NotificationItem(
     notification: NotificationWithType,
-    onDeleteClick: (() -> Unit)? = null
+    onDeleteClick: (() -> Unit)? = null,
+    onMarkAsRead: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
     val isError = notification.type.icon?.lowercase() == "error"
     val textColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSecondaryContainer
     val labelColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
 
+    val sentDate = remember(notification.notification.sentAt) {
+        val formatter = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
+        formatter.format(Date(notification.notification.sentAt))
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(vertical = 4.dp)
+            .clickable(onClick = onMarkAsRead),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        ),
+            containerColor = if (notification.notification.isRead)
+                MaterialTheme.colorScheme.primaryContainer
+            else
+                MaterialTheme.colorScheme.surfaceVariant),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp
         )
@@ -85,6 +98,14 @@ fun NotificationItem(
                     fontSize = 12.sp,
                     color = labelColor,
                     modifier = Modifier.padding(top = 4.dp)
+                )
+
+                // Data invio
+                Text(
+                    text = sentDate,
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    modifier = Modifier.padding(top = 2.dp)
                 )
             }
 
@@ -139,9 +160,7 @@ fun NotificationIconVector(iconName: String?) {
 
     Surface(
         modifier = Modifier.size(40.dp),
-        shape = MaterialTheme.shapes.small,
-        color = if (isError) MaterialTheme.colorScheme.error.copy(alpha = 0.1f)
-        else MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+        shape = MaterialTheme.shapes.small
     ) {
         Box(contentAlignment = Alignment.Center) {
             val icon = getNotificationIcon(iconName)

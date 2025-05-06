@@ -64,7 +64,7 @@ class ViewProfileViewModel(
                     val currentUserEmail = getCurrentUserEmailOrThrow()
                     friendRequestRepository.sendFriendRequest(currentUserEmail, email)
 
-                    val notification = Notification(description = "$currentUserEmail sent you a friend request", title = "Received a friend request", notificationTypeId = 0, userEmail = email)
+                    notificationRepository.addInfoNotification(description = "$currentUserEmail sent you a friend request", title = "Received a friend request", userEmail = email)
                     loadUserData(email)
                     _state.update {
                         it.copy(
@@ -90,9 +90,7 @@ class ViewProfileViewModel(
                     val currentUserEmail = getCurrentUserEmailOrThrow()
                     friendRequestRepository.acceptFriendRequest(email,currentUserEmail )
 
-                    val notification = Notification(description = "$currentUserEmail accepted your friend request", title = "Friend request status changed", notificationTypeId = 0, userEmail = email)
-
-                    notificationRepository.addOrUpdateNotification(notification)
+                    notificationRepository.addInfoNotification(description = "$currentUserEmail accepted your friend request", title = "Friend request status changed", userEmail = email)
                     loadUserData(email)
                     _state.update {
                         it.copy(
@@ -118,9 +116,7 @@ class ViewProfileViewModel(
                 try {
                     val currentUserEmail = getCurrentUserEmailOrThrow()
                     friendRequestRepository.refuseFriendRequest(email,currentUserEmail)
-                    val notification = Notification(description = "$currentUserEmail rejected your friend request", title = "Friend request status changed", notificationTypeId = 0, userEmail = email)
-
-                    notificationRepository.addOrUpdateNotification(notification)
+                    notificationRepository.addInfoNotification(description = "$currentUserEmail rejected your friend request", title = "Friend request status changed", userEmail = email)
                     loadUserData(email)
                     _state.update {
                         it.copy(

@@ -33,7 +33,7 @@ fun NotificationsScreen(
             TravelBuddyTopBar(
                 navController = navController,
                 title = "Notifications",
-                subtitle = "Your update and alerts",
+                subtitle = "Your updates and alerts",
                 canNavigateBack = true
             )
         },
@@ -67,7 +67,12 @@ fun NotificationsScreen(
                     items(state.notifications) { notification ->
                         NotificationItem(
                             notification = notification,
-                            onDeleteClick = { actions.deleteNotification(notification.notification.id) }
+                            onDeleteClick = { actions.deleteNotification(notification.notification.id) },
+                            onMarkAsRead = {
+                                if (!notification.notification.isRead) {
+                                    actions.markNotificationAsRead(notification.notification.id)
+                                }
+                            }
                         )
                     }
                 }
@@ -87,7 +92,7 @@ fun EmptyNotificationsMessage() {
         ) {
             Icon(
                 imageVector = Icons.Filled.Notifications,
-                contentDescription = "Nessuna notifica",
+                contentDescription = "No notifications",
                 tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
                 modifier = Modifier.size(64.dp)
             )
@@ -95,7 +100,7 @@ fun EmptyNotificationsMessage() {
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Non hai notifiche",
+                text = "You have no notifications",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)

@@ -28,6 +28,7 @@ data class NotificationsState(
 interface NotificationsActions {
     fun loadNotifications()
     fun deleteNotification(notificationId: Long)
+    fun markNotificationAsRead(notificationId: Long)
 }
 
 class NotificationsViewModel(
@@ -86,7 +87,18 @@ class NotificationsViewModel(
             viewModelScope.launch {
                 try {
                     notificationRepository.deleteNotification(notificationId)
-                    loadNotifications() // Reload notifications after deletion
+                    loadNotifications()
+                } catch (e: Exception) {
+                    _state.update { it.copy(errorMessage = e.message) }
+                }
+            }
+        }
+
+        override fun markNotificationAsRead(notificationId: Long){
+            viewModelScope.launch {
+                try {
+                    notificationRepository.markNotificationAsRead(notificationId)
+                    loadNotifications()
                 } catch (e: Exception) {
                     _state.update { it.copy(errorMessage = e.message) }
                 }
