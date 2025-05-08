@@ -1,5 +1,6 @@
 package com.example.travelbuddy.ui.screens.budgetOverview
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,31 +22,49 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.travelbuddy.data.database.Expense
+import com.example.travelbuddy.ui.TravelBuddyRoute
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -56,6 +75,8 @@ fun BudgetOverviewScreen(
     actions: BudgetOverviewActions,
     navController: NavController
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     Scaffold(
         topBar = {
             TravelBuddyTopBar(
@@ -68,7 +89,7 @@ fun BudgetOverviewScreen(
         bottomBar = { TravelBuddyBottomBar(navController) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { actions.addExpense(state.tripId) },
+                onClick = { navController.navigate(TravelBuddyRoute.NewExpense(state.tripId.toString())) },
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
                 Icon(
@@ -84,7 +105,7 @@ fun BudgetOverviewScreen(
                 .padding(contentPadding)
                 .fillMaxSize()
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item {
                 Spacer(modifier = Modifier.height(8.dp))
@@ -95,22 +116,28 @@ fun BudgetOverviewScreen(
             item {
                 Text(
                     text = "Expenses List",
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
             items(state.expenses) { expense ->
-                ExpenseItem(expense)
+                ExpenseItem(
+                    expense,
+                    onEditClick = {
+
+                    },
+                    onDeleteClick = {
+                        coroutineScope.launch {
+                            actions.deleteExpense(expense, state.tripId)
+                        }
+                    }
+                )
             }
 
             item {
-                BudgetSummary(
-                    totalBudget = state.totalBudget,
-                    spentSoFar = state.spentSoFar
-                )
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(70.dp))
             }
         }
     }
@@ -121,55 +148,56 @@ fun BudgetStatusCard(state: BudgetOverviewState) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "Budget Status",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
                 text = "Expense distribution",
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Circular progress with user contributions
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
-                contentAlignment = Alignment.Center
+            Canvas(modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .padding(16.dp)
             ) {
-                // Placeholder for pie chart - in a real app you'd use a charting library
-                Box(
-                    modifier = Modifier
-                        .size(180.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
-                )
+                var startAngle = 0f // Starting angle for the pie chart
+                val center = Offset(size.width / 2, size.height / 2)
+                val radius = size.minDimension / 2
+                val remainingAmount = state.totalBudget - state.spentSoFar
+                val remainingAngle = (remainingAmount / state.totalBudget) * 360f
 
-                // Center text showing remaining budget
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "€${state.totalBudget - state.spentSoFar}",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
+                state.userContributions.forEach { (user, amount) ->
+                    val sweepAngle = (amount / state.totalBudget) * 360f
+
+                    drawArc(
+                        color = Color(user.hashCode()).copy(alpha = 0.8f), // Color based on user hash
+                        startAngle = startAngle,
+                        sweepAngle = sweepAngle.toFloat(),
+                        useCenter = true,
+                        topLeft = Offset(center.x - radius, center.y - radius),
+                        size = Size(radius * 2, radius * 2),
+                        style = Fill
                     )
-                    Text(
-                        text = "remaining",
-                        style = MaterialTheme.typography.bodySmall
-                    )
+
+                    startAngle += sweepAngle.toFloat() // Update start angle for next segment
                 }
+
+                drawArc(
+                    color = Color.LightGray,
+                    startAngle = startAngle,
+                    sweepAngle = remainingAngle.toFloat(),
+                    useCenter = true,
+                    topLeft = Offset(center.x - radius, center.y - radius),
+                    size = Size(radius * 2, radius * 2),
+                    style = Fill
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -186,7 +214,7 @@ fun BudgetStatusCard(state: BudgetOverviewState) {
                             modifier = Modifier
                                 .size(12.dp)
                                 .clip(CircleShape)
-                                .background(if (userName.contains("John")) Color.Green else Color.Blue)
+                                .background(Color(userName.hashCode()).copy(alpha = 0.8f))
                         )
 
                         Spacer(modifier = Modifier.width(8.dp))
@@ -194,13 +222,15 @@ fun BudgetStatusCard(state: BudgetOverviewState) {
                         Text(
                             text = userName,
                             style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            color = MaterialTheme.colorScheme.onSurface
                         )
 
                         Text(
                             text = "€${amount.toInt()}",
                             style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -215,14 +245,16 @@ fun BudgetStatusCard(state: BudgetOverviewState) {
             ) {
                 Text(
                     text = "Total Budget",
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Text(
-                    text = "€${state.totalBudget.toInt()}",
+                    text = "€${state.totalBudget}",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Green
+                    color = if (state.totalBudget > 0) MaterialTheme.colorScheme.primary else Color.Red
                 )
             }
 
@@ -230,25 +262,82 @@ fun BudgetStatusCard(state: BudgetOverviewState) {
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "€${state.spentSoFar.toInt()} remaining",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
+                    text = "Spent so far",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Text(
+                    text = "€${state.spentSoFar}",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Budget used: ${calculatePercentage(state.spentSoFar, state.totalBudget)}%",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            LinearProgressIndicator(
+                progress = { (state.spentSoFar / state.totalBudget).toFloat().coerceIn(0f, 1f) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .clip(RoundedCornerShape(4.dp)),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = Color.LightGray,
+            )
         }
     }
 }
 
 @Composable
-fun ExpenseItem(expense: Expense) {
+fun ExpenseItem(
+    expense: Expense,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit
+) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Confirm delete", style = MaterialTheme.typography.headlineLarge) },
+            text = { Text("Are you sure you want to delete this expense?", style = MaterialTheme.typography.bodyLarge) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                        onDeleteClick()
+                    }
+                ) {
+                    Text("Delete", color = Color.Red)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -261,8 +350,9 @@ fun ExpenseItem(expense: Expense) {
                 Column {
                     Text(
                         text = expense.title,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
 
                     Text(
@@ -275,91 +365,51 @@ fun ExpenseItem(expense: Expense) {
                         Text(
                             text = expense.description!!,
                             style = MaterialTheme.typography.bodySmall,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            modifier = Modifier.padding(0.dp, 10.dp, 0.dp, 0.dp),
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+                Text(
+                    text = "€${expense.amount}",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.Bottom,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                IconButton(
+                    onClick = onEditClick,
+                    modifier = Modifier.size(32.dp)
                 ) {
-                    Text(
-                        text = "€${expense.amount}",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(20.dp)
                     )
+                }
 
-                    Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
-                    // Status indicator (paid or pending)
-                    Box(
-                        modifier = Modifier
-                            .size(12.dp)
-                            .clip(CircleShape)
-                            .background(Color.Green)
+                IconButton(
+                    onClick = { showDeleteDialog = true },
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        tint = Color.Red,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun BudgetSummary(totalBudget: Double, spentSoFar: Double) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = "Spent So Far",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "€${spentSoFar.toInt()}",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Green
-                )
-
-                Text(
-                    text = "of €${totalBudget.toInt()}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray
-                )
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "Budget used: ${calculatePercentage(spentSoFar, totalBudget)}%",
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            LinearProgressIndicator(
-                progress = (spentSoFar / totalBudget).toFloat().coerceIn(0f, 1f),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp)
-                    .clip(RoundedCornerShape(4.dp)),
-                color = Color.Green,
-                trackColor = MaterialTheme.colorScheme.primary
-            )
         }
     }
 }

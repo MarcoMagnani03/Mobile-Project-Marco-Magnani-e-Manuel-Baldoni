@@ -112,7 +112,7 @@ fun TripDetailsQuickBalance(
             ) {
                 TextButton(onClick = onViewAllExpensesClick) {
                     Text(
-                        text = "View All Activities",
+                        text = "View All Expenses",
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Medium
                     )

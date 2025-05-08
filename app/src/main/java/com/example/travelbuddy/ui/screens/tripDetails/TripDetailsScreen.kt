@@ -71,8 +71,6 @@ fun TripDetailsScreen(
                 }
             )
 
-            Spacer(Modifier.height(10.dp))
-
             TripDetailsQuickBalance(
                 balanceEntries = state.trip?.expenses?.map { expense ->
                     BalanceEntry(

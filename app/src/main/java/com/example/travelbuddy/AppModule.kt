@@ -88,7 +88,7 @@ val appModule = module {
     viewModel { NewExpenseViewModel(get(), get()) }
     viewModel { FriendViewModel(get(),get(),get(),get(),get()) }
     viewModel { ViewProfileViewModel(get(),get(),get(),get(),get()) }
-    viewModel { NotificationsViewModel(get(),get(),get())}
-    viewModel { BudgetOverviewViewModel(get(),get(),get())}
+    viewModel { NotificationsViewModel(get(),get(),get()) }
+    viewModel { BudgetOverviewViewModel(get(),get()) }
 
 }

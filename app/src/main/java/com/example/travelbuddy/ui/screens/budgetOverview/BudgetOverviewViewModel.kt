@@ -27,13 +27,12 @@ data class BudgetOverviewState(
 
 interface BudgetOverviewActions {
     fun loadBudgetData(tripId: Long)
-    fun addExpense(tripId: Long)
+    suspend fun deleteExpense(expense: Expense, tripId: Long)
 }
 
 class BudgetOverviewViewModel(
     private val tripsRepository: TripsRepository,
     private val expensesRepository: ExpensesRepository,
-    private val usersRepository: UsersRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(BudgetOverviewState())
@@ -93,9 +92,9 @@ class BudgetOverviewViewModel(
             }
         }
 
-        override fun addExpense(tripId: Long) {
-            // Navigate to add expense screen
-            // In a real app, you would use a navigation controller or event to handle this
+        override suspend fun deleteExpense(expense: Expense, tripId: Long) {
+            expensesRepository.delete(expense)
+            loadBudgetData(tripId)
         }
     }
 
