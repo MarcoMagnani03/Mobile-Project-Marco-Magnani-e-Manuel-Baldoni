@@ -2,6 +2,7 @@ package com.example.travelbuddy.ui.screens.tripDetails
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.travelbuddy.data.database.Trip
 import com.example.travelbuddy.data.database.TripActivityType
 import com.example.travelbuddy.data.database.TripWithActivitiesAndExpensesAndPhotosAndUsers
 import com.example.travelbuddy.data.repositories.TripActivitiesTypesRepository
@@ -19,6 +20,7 @@ data class TripDetailsState(
 interface TripDetailsActions {
     fun loadTrip(tripId: Long)
     fun loadTripActivityTypes()
+    fun deleteTrip(trip: Trip)
 }
 
 class TripDetailsViewModel(
@@ -47,6 +49,16 @@ class TripDetailsViewModel(
                     _state.value = _state.value.copy(tripActivityTypes = tripActivityTypes)
                 } catch (e: Exception) {
                     _state.value = _state.value.copy(error = "Error loading the activity types")
+                }
+            }
+        }
+
+        override fun deleteTrip(trip: Trip) {
+            viewModelScope.launch {
+                try {
+                    tripsRepository.delete(trip)
+                } catch (e: Exception) {
+                    _state.value = _state.value.copy(error = "Error deleting trip")
                 }
             }
         }

@@ -48,7 +48,7 @@ fun TripDetailsQuickBalance(
         ) {
             Text(
                 text = "Quick balance",
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 16.dp)
@@ -91,7 +91,8 @@ fun TripDetailsQuickBalance(
                 Text(
                     text = "Total Expenses",
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Text(
@@ -143,7 +144,8 @@ fun BalanceEntryRow(entry: BalanceEntry) {
             // Name
             Text(
                 text = entry.name,
-                fontSize = 16.sp
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
 

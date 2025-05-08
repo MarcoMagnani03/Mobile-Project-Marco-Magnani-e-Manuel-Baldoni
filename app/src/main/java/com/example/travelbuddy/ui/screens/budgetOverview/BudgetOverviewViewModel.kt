@@ -27,7 +27,7 @@ data class BudgetOverviewState(
 
 interface BudgetOverviewActions {
     fun loadBudgetData(tripId: Long)
-    suspend fun deleteExpense(expense: Expense, tripId: Long)
+    fun deleteExpense(expense: Expense, tripId: Long)
 }
 
 class BudgetOverviewViewModel(
@@ -92,9 +92,18 @@ class BudgetOverviewViewModel(
             }
         }
 
-        override suspend fun deleteExpense(expense: Expense, tripId: Long) {
-            expensesRepository.delete(expense)
-            loadBudgetData(tripId)
+        override fun deleteExpense(expense: Expense, tripId: Long) {
+            viewModelScope.launch {
+                try {
+                    expensesRepository.delete(expense)
+                    loadBudgetData(tripId)
+                } catch (e: Exception) {
+                    _state.value = _state.value.copy(
+                        error = "Error deleting trip: ${e.message}",
+                        isLoading = false
+                    )
+                }
+            }
         }
     }
 

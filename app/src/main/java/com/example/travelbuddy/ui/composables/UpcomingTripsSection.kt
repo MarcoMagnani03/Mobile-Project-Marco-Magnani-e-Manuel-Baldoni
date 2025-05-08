@@ -26,11 +26,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.travelbuddy.data.database.Trip
+import com.example.travelbuddy.data.database.TripWithTripActivitiesAndExpenses
 import com.example.travelbuddy.ui.TravelBuddyRoute
 
 @Composable
 fun UpcomingTripsSection(
-    trips: List<Trip>,
+    trips: List<TripWithTripActivitiesAndExpenses>,
     navController: NavController
 ) {
     Card(
@@ -51,7 +52,7 @@ fun UpcomingTripsSection(
                 .padding(16.dp)
         ) {
             Text(
-                text = "Prossimi Viaggi",
+                text = "Next trips",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 8.dp),
@@ -88,14 +89,14 @@ fun UpcomingTripsSection(
 
 @Composable
 fun UpcomingTripItem(
-    trip: Trip,
+    trip: TripWithTripActivitiesAndExpenses,
     navController: NavController
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                navController.navigate(TravelBuddyRoute.TripDetails(tripId = trip.id.toString()))
+                navController.navigate(TravelBuddyRoute.TripDetails(tripId = trip.trip.id.toString()))
             }
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -104,15 +105,16 @@ fun UpcomingTripItem(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = trip.name,
+                text = trip.trip.name,
                 fontWeight = FontWeight.Medium,
-                fontSize = 16.sp
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(Modifier.height(4.dp))
 
             Text(
-                text = "${trip.startDate} - ${trip.endDate}",
+                text = "${trip.trip.startDate} - ${trip.trip.endDate}",
                 color = Color.Gray,
                 fontSize = 14.sp
             )
@@ -120,7 +122,7 @@ fun UpcomingTripItem(
 
         Icon(
             imageVector = Icons.Default.ChevronRight,
-            contentDescription = "Dettagli viaggio",
+            contentDescription = "Trip details",
             tint = Color.Gray
         )
     }

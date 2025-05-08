@@ -42,29 +42,29 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .padding(contentPadding)
-                .padding(12.dp, 0.dp)
+                .padding(horizontal = 12.dp)
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
             state.userWithTrips?.let {
                 ActiveTripsSection(
                     trips = it.trips.filter { trip ->
-                        LocalDate.parse(trip.startDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")).isBefore(LocalDate.now()) &&
-                                LocalDate.parse(trip.endDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")).isAfter(LocalDate.now())
+                        LocalDate.parse(trip.trip.startDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")).isBefore(LocalDate.now()) &&
+                                LocalDate.parse(trip.trip.endDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")).isAfter(LocalDate.now())
                     },
                     navController = navController
                 )
 
                 UpcomingTripsSection(
                     trips = it.trips.filter { trip ->
-                        LocalDate.parse(trip.startDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")).isAfter(LocalDate.now())
+                        LocalDate.parse(trip.trip.startDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")).isAfter(LocalDate.now())
                     },
                     navController = navController
                 )
 
                 PastTripsSection(
                     trips = it.trips.filter { trip ->
-                        LocalDate.parse(trip.endDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")).isBefore(LocalDate.now())
+                        LocalDate.parse(trip.trip.endDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")).isBefore(LocalDate.now())
                     },
                     navController = navController
                 )

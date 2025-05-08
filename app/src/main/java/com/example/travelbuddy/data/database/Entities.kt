@@ -227,6 +227,7 @@ data class Group(
 data class UserWithTrips(
     @Embedded val user: User,
     @Relation(
+        entity = Trip::class,
         parentColumn = "email",
         entityColumn = "id",
         associateBy = Junction(
@@ -235,7 +236,7 @@ data class UserWithTrips(
             entityColumn = "tripId"
         )
     )
-    val trips: List<Trip>
+    val trips: List<TripWithTripActivitiesAndExpenses>
 )
 
 data class TripWithUsers(

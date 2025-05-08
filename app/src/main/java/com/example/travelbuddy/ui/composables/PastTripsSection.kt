@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,11 +26,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.travelbuddy.data.database.Trip
+import com.example.travelbuddy.data.database.TripWithTripActivitiesAndExpenses
 import com.example.travelbuddy.ui.TravelBuddyRoute
 
 @Composable
 fun PastTripsSection(
-    trips: List<Trip>,
+    trips: List<TripWithTripActivitiesAndExpenses>,
     navController: NavController
 ) {
     Card(
@@ -52,7 +52,7 @@ fun PastTripsSection(
                 .padding(16.dp)
         ) {
             Text(
-                text = "Viaggi passati",
+                text = "Past trips",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 8.dp),
@@ -89,14 +89,14 @@ fun PastTripsSection(
 
 @Composable
 fun PastTripItem(
-    trip: Trip,
+    trip: TripWithTripActivitiesAndExpenses,
     navController: NavController
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                navController.navigate(TravelBuddyRoute.TripDetails(tripId = trip.id.toString()))
+                navController.navigate(TravelBuddyRoute.TripDetails(tripId = trip.trip.id.toString()))
             }
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -106,15 +106,16 @@ fun PastTripItem(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = trip.name,
+                text = trip.trip.name,
                 fontWeight = FontWeight.Medium,
-                fontSize = 16.sp
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(Modifier.height(4.dp))
 
             Text(
-                text = "${trip.startDate} - ${trip.endDate}",
+                text = "${trip.trip.startDate} - ${trip.trip.endDate}",
                 color = Color.Gray,
                 fontSize = 14.sp
             )
@@ -122,7 +123,7 @@ fun PastTripItem(
 
         Icon(
             imageVector = Icons.Default.History,
-            contentDescription = "Dettagli viaggio",
+            contentDescription = "Trip details",
             tint = Color.Gray
         )
     }

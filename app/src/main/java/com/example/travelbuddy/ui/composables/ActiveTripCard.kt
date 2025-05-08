@@ -27,11 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.travelbuddy.data.database.Trip
+import com.example.travelbuddy.data.database.TripWithTripActivitiesAndExpenses
 import com.example.travelbuddy.ui.TravelBuddyRoute
 
 @Composable
 fun ActiveTripCard(
-    trip: Trip,
+    trip: TripWithTripActivitiesAndExpenses,
     navController: NavController
 ) {
     Card(
@@ -46,7 +47,7 @@ fun ActiveTripCard(
             defaultElevation = 2.dp
         ),
         onClick = {
-            navController.navigate(TravelBuddyRoute.TripDetails(trip.id.toString()))
+            navController.navigate(TravelBuddyRoute.TripDetails(trip.trip.id.toString()))
         }
     ) {
         Column(
@@ -60,9 +61,10 @@ fun ActiveTripCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = trip.name,
+                    text = trip.trip.name,
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Box(
@@ -83,7 +85,7 @@ fun ActiveTripCard(
             }
 
             Text(
-                text = "${trip.startDate} - ${trip.endDate}",
+                text = "${trip.trip.startDate} - ${trip.trip.endDate}",
                 color = Color.Gray,
                 fontSize = 14.sp,
                 modifier = Modifier.padding(top = 8.dp)
@@ -97,27 +99,29 @@ fun ActiveTripCard(
             ) {
                 Column {
                     Text(
-                        text = "Eventi programmati",
+                        text = "Scheduled events",
                         color = Color.Gray,
                         fontSize = 14.sp
                     )
                     Text(
-                        text = "2",
+                        text = "${trip.activities.size}",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        text = "Spese totali",
+                        text = "Total expenses",
                         color = Color.Gray,
                         fontSize = 14.sp
                     )
                     Text(
-                        text = "€750,00",
+                        text = "€${trip.expenses.sumOf { expense -> expense.amount }}",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -125,9 +129,9 @@ fun ActiveTripCard(
             Spacer(modifier = Modifier.height(16.dp))
 
             TravelBuddyButton(
-                label = "Aggiungi spesa",
+                label = "Add expense",
                 onClick = {
-                    navController.navigate(TravelBuddyRoute.NewExpense(trip.id.toString()))
+                    navController.navigate(TravelBuddyRoute.NewExpense(trip.trip.id.toString()))
                 },
                 style = ButtonStyle.PRIMARY,
                 leadingIcon = {
@@ -142,9 +146,9 @@ fun ActiveTripCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             TravelBuddyButton(
-                label = "Aggiungi evento",
+                label = "Add event",
                 onClick = {
-                    navController.navigate(TravelBuddyRoute.NewTripActivity(trip.id.toString()))
+                    navController.navigate(TravelBuddyRoute.NewTripActivity(trip.trip.id.toString()))
                 },
                 style = ButtonStyle.PRIMARY_OUTLINED,
                 leadingIcon = {

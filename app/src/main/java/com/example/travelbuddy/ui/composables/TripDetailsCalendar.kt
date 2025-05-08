@@ -58,7 +58,7 @@ fun TripDetailsCalendar(
         ) {
             Text(
                 text = "Upcoming activities",
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 16.dp)
@@ -141,7 +141,8 @@ fun ActivityItem(
             Text(
                 text = formatDateToMonthDay(activity.startDate),
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = activity.name,

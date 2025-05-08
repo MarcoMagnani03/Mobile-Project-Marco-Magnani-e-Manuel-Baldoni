@@ -41,7 +41,7 @@ fun TravelBuddyButton(
         ButtonStyle.PRIMARY -> {
             Button(
                 onClick = { if (!isLoading) onClick() },
-                enabled = (enabled ?: true) && !isLoading,
+                enabled = (enabled != false) && !isLoading,
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
