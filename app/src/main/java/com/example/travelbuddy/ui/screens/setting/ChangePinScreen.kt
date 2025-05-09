@@ -50,7 +50,11 @@ fun ChangePinScreen(
         ) {
             InputField(
                 value = currentPin,
-                onValueChange = { if(currentPin.length <= 6 ) currentPin = it },
+                onValueChange = { newValue ->
+                    if (newValue.length <= 6) {
+                        currentPin = newValue
+                    }
+                },
                 label = "Current PIN",
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
@@ -58,7 +62,11 @@ fun ChangePinScreen(
 
             InputField(
                 value = newPin,
-                onValueChange = { if(newPin.length <= 6) newPin = it },
+                onValueChange = { newValue ->
+                    if (newValue.length <= 6) {
+                        newPin = newValue
+                    }
+                },
                 label = "New PIN",
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
@@ -66,7 +74,11 @@ fun ChangePinScreen(
 
             InputField(
                 value = confirmPin,
-                onValueChange = { if(confirmPin.length <= 6) confirmPin = it },
+                onValueChange = { newValue ->
+                    if (newValue.length <= 6) {
+                        confirmPin = newValue
+                    }
+                },
                 label = "Confirm New PIN",
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)

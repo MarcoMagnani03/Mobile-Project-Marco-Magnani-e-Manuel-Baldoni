@@ -34,9 +34,20 @@ data class SignUpState(
         get() = firstName.isNotBlank() &&
                 lastName.isNotBlank() &&
                 email.isNotBlank() &&
+                isEmailValid &&
                 password.isNotBlank() &&
-                confirmPassword.isNotBlank() &&
-                password == confirmPassword
+                isPasswordValid &&
+                confirmPassword == password &&
+                !isLoading
+
+    val isPasswordValid: Boolean
+        get() = password.length >= 8 &&
+                password.any { it.isDigit() } &&
+                password.any { it.isUpperCase() } &&
+                password.any { it.isLowerCase() }
+
+    val isEmailValid: Boolean
+        get() = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
 }
 
 interface SignUpActions {

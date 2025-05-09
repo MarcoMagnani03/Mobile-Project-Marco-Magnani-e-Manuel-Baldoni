@@ -26,11 +26,35 @@ fun ChangePasswordScreen(
     actions: SettingActions,
     navController: NavController
 ) {
+
+    fun isPasswordValid(password: String): Boolean {
+        return password.length >= 8 &&
+                password.any { it.isDigit() } &&
+                password.any { it.isUpperCase() } &&
+                password.any { it.isLowerCase() }
+    }
+
     var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var passwordMismatchError by remember { mutableStateOf<String?>(null) }
+    var passwordValidationError by remember { mutableStateOf<String?>(null) }
 
+    LaunchedEffect(newPassword) {
+        if (newPassword.isNotEmpty() && !isPasswordValid(newPassword)) {
+            passwordValidationError = "Password must be at least 8 characters and contain a number, uppercase and lowercase letter"
+        } else {
+            passwordValidationError = null
+        }
+    }
+
+    LaunchedEffect(newPassword, confirmPassword) {
+        if (confirmPassword.isNotEmpty() && newPassword != confirmPassword) {
+            passwordMismatchError = "Confirmation password does not match"
+        } else {
+            passwordMismatchError = null
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -64,7 +88,8 @@ fun ChangePasswordScreen(
                 label = "New Password",
                 modifier = Modifier.fillMaxWidth(),
                 type = InputFieldType.Password,
-                leadingIcon = { Icon(Icons.Outlined.Lock, "Password") }
+                leadingIcon = { Icon(Icons.Outlined.Lock, "Password") },
+                isError = passwordValidationError != null
             )
 
             InputField(
@@ -73,8 +98,13 @@ fun ChangePasswordScreen(
                 label = "Confirm New Password",
                 modifier = Modifier.fillMaxWidth(),
                 type = InputFieldType.Password,
-                leadingIcon = { Icon(Icons.Outlined.Lock, "Password") }
+                leadingIcon = { Icon(Icons.Outlined.Lock, "Password") },
+                isError = passwordMismatchError != null
             )
+
+            passwordValidationError?.let {
+                Text(text = it, color = MaterialTheme.colorScheme.error)
+            }
 
             passwordMismatchError?.let {
                 Text(text = it, color = MaterialTheme.colorScheme.error)
@@ -93,15 +123,14 @@ fun ChangePasswordScreen(
 
             Button(
                 onClick = {
-                    if (newPassword != confirmPassword) {
-                        passwordMismatchError = "Confirmation password does not match"
-                        actions.clearMessages()
-                    } else {
-                        passwordMismatchError = null
+                    if (passwordValidationError == null && passwordMismatchError == null) {
                         actions.onChangePassword(currentPassword, newPassword)
                     }
                 },
-                enabled = newPassword.isNotBlank() && confirmPassword.isNotBlank(),
+                enabled = newPassword.isNotBlank() &&
+                        confirmPassword.isNotBlank() &&
+                        passwordValidationError == null &&
+                        passwordMismatchError == null,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Change Password")

@@ -31,7 +31,6 @@ import com.example.travelbuddy.utils.ImageUtils
 import com.example.travelbuddy.utils.PermissionStatus
 import com.example.travelbuddy.utils.rememberMultiplePermissions
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(
     state: SignUpState,
@@ -91,13 +90,6 @@ fun SignUpScreen(
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Fields marked with * are required",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                modifier = Modifier.align(Alignment.Start)
-            )
-
             Spacer(modifier = Modifier.size(16.dp))
 
 
@@ -185,8 +177,18 @@ fun SignUpScreen(
                 label = "Email*",
                 onValueChange = actions::setEmail,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                leadingIcon = { Icon(Icons.Outlined.Email, "mail") }
+                leadingIcon = { Icon(Icons.Outlined.Email, "mail") },
+                isError = state.email.isNotBlank() && !state.isEmailValid
             )
+
+            if (state.email.isNotBlank() && !state.isEmailValid) {
+                Text(
+                    text = "Please enter a valid email address",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.align(Alignment.Start)
+                )
+            }
 
             Spacer(modifier = Modifier.size(16.dp))
 
@@ -195,8 +197,19 @@ fun SignUpScreen(
                 label = "Password*",
                 onValueChange = actions::setPassword,
                 type = InputFieldType.Password,
-                leadingIcon = { Icon(Icons.Outlined.Lock, "Password") }
+                leadingIcon = { Icon(Icons.Outlined.Lock, "Password") },
+                isError = state.password.isNotBlank() && !state.isPasswordValid
             )
+
+            if (state.password.isNotBlank() && !state.isPasswordValid) {
+                Text(
+                    text = "Password must be at least 8 characters, with one uppercase letter and one number",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.align(Alignment.Start)
+                )
+            }
+
 
             Spacer(modifier = Modifier.size(24.dp))
 
@@ -219,7 +232,12 @@ fun SignUpScreen(
 
 
             Spacer(modifier = Modifier.size(24.dp))
-
+            Text(
+                text = "Fields marked with * are required",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                modifier = Modifier.align(Alignment.Start)
+            )
             TravelBuddyButton(
                 label = "Sign up",
                 onClick = {actions.signUp(navController)},
