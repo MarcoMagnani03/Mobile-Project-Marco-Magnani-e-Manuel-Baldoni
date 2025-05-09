@@ -51,13 +51,17 @@ fun SettingScreen(
             Text("Privacy", style = MaterialTheme.typography.bodyLarge)
             Spacer(modifier = Modifier.height(15.dp))
             CardWithRow("Change Password") {
-                navController.navigate(TravelBuddyRoute.ChangePassword)
+                navController.navigate(TravelBuddyRoute.ChangePassword){
+                    launchSingleTop = true
+                }
             }
 
             Spacer(modifier = Modifier.height(15.dp))
 
             CardWithRow("Set Access PIN") {
-                navController.navigate(TravelBuddyRoute.ChangePin)
+                navController.navigate(TravelBuddyRoute.ChangePin){
+                    launchSingleTop = true
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))

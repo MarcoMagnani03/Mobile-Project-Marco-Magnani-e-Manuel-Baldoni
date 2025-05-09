@@ -8,9 +8,9 @@ import androidx.fragment.app.FragmentActivity
 import java.util.concurrent.Executor
 
 sealed class BiometricResult {
-    object Success : BiometricResult()
-    object Failed : BiometricResult()
-    object Cancelled : BiometricResult()
+    data object Success : BiometricResult()
+    data object Failed : BiometricResult()
+    data object Cancelled : BiometricResult()
     data class Error(val errorMessage: String) : BiometricResult()
 }
 

@@ -100,7 +100,11 @@ fun RowScope.AddBottomNavItem(
     NavigationBarItem(
         selected = selected,
         onClick = {
-            navController.navigate(navItem.route)
+            if (navController.currentDestination?.route != navItem.route::class.qualifiedName) {
+                navController.navigate(navItem.route) {
+                    launchSingleTop = true
+                }
+            }
         },
         icon = {
             Icon(

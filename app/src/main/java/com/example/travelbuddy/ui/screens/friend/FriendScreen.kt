@@ -50,7 +50,8 @@ private fun FriendSection(
     onRejectRequest: (FriendItemData) -> Unit,
     onSendRequest: (FriendItemData) -> Unit,
     onUnfriend: (FriendItemData) -> Unit,
-    navController: NavController
+    navController: NavController,
+    searchBar: (@Composable () -> Unit)? = null,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val friendsToShow = if (expanded) friends else friends.take(5)
@@ -62,6 +63,8 @@ private fun FriendSection(
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(bottom = 8.dp)
         )
+
+        searchBar?.invoke()
 
         Column(modifier = Modifier.fillMaxWidth()) {
             friendsToShow.forEach { friend ->
@@ -161,12 +164,6 @@ fun FriendScreen(
                 navController = navController
             )
 
-            TravelBuddySearchBar(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                placeholder = "Search by email"
-            )
-
             FriendSection(
                 title = "Suggested Friends",
                 friends = state.suggestedFriends
@@ -187,7 +184,14 @@ fun FriendScreen(
                 onRejectRequest = { },
                 onSendRequest = { actions.sendFriendRequest(it) },
                 onUnfriend = {},
-                navController = navController
+                navController = navController,
+                searchBar ={
+                    TravelBuddySearchBar(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        placeholder = "Search by email"
+                    )
+                }
             )
 
         }

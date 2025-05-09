@@ -158,19 +158,15 @@ fun NotificationItem(
 fun NotificationIconVector(iconName: String?) {
     val isError = iconName?.lowercase() == "error"
 
-    Surface(
-        modifier = Modifier.size(40.dp),
-        shape = MaterialTheme.shapes.small
-    ) {
-        Box(contentAlignment = Alignment.Center) {
-            val icon = getNotificationIcon(iconName)
-            Icon(
-                imageVector = icon,
-                contentDescription = "Notification icon",
-                tint = if (isError) MaterialTheme.colorScheme.error
-                else MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(24.dp)
-            )
-        }
+    Box(contentAlignment = Alignment.Center,
+        modifier = Modifier.size(40.dp)) {
+        val icon = getNotificationIcon(iconName)
+        Icon(
+            imageVector = icon,
+            contentDescription = "Notification icon",
+            tint = if (isError) MaterialTheme.colorScheme.error
+            else MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(24.dp)
+        )
     }
 }

@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
@@ -30,6 +31,11 @@ fun TravelBuddySearchBar(
         placeholder = { Text(placeholder) },
         singleLine = true,
         shape = MaterialTheme.shapes.large,
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+        ),
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)

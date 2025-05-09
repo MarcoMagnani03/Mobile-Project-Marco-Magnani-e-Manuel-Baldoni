@@ -55,14 +55,19 @@ fun TravelBuddyTopBar(
                 IconButton(onClick = { navController.navigateUp() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Torna indietro"
+                        contentDescription = "Go back"
                     )
                 }
             }
         },
         actions = {
-            // TODO: Cambiare con notifica
-            IconButton(onClick = { navController.navigate(TravelBuddyRoute.Notification) }) {
+            IconButton(onClick = {
+                if (navController.currentDestination?.route != TravelBuddyRoute.Notification::class.qualifiedName){
+                    navController.navigate(TravelBuddyRoute.Notification){
+                        launchSingleTop = true
+                    }
+                }
+            }) {
                 Icon(
                     imageVector = Icons.Default.Notifications,
                     contentDescription = "Notifications",
