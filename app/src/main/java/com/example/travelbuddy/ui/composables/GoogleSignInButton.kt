@@ -24,6 +24,7 @@ fun GoogleSignInButton(onResult: (GoogleSignInAccount?) -> Unit) {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 try {
                     val account = task.getResult(ApiException::class.java)
+                    //TODO: QUESTI PRINT MOSTRARLI COME NOTIFICHE
                     println("✅ Google Sign-In success: ${account?.email}")
                     onResult(account)
                 } catch (e: ApiException) {
@@ -55,11 +56,14 @@ fun GoogleSignInButton(onResult: (GoogleSignInAccount?) -> Unit) {
         label = "Sign up with Google",
         style = ButtonStyle.PRIMARY_OUTLINED,
         onClick = {
-            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build()
-            val client = GoogleSignIn.getClient(context, gso)
-            launcher.launch(client.signInIntent)
+            val client = GoogleSignIn.getClient(context, GoogleSignInOptions.DEFAULT_SIGN_IN)
+            client.signOut().addOnCompleteListener {
+                val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestEmail()
+                    .build()
+                val client = GoogleSignIn.getClient(context, gso)
+                launcher.launch(client.signInIntent)
+            }
         }
     )
 }
