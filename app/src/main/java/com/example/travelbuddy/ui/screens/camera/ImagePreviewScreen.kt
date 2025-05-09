@@ -52,9 +52,13 @@ fun ImagePreviewScreen(
                     onRetake()
                 },
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = Color.Black
+                )
             ) {
-                Text("Retake")
+                Text("Retake", style = MaterialTheme.typography.headlineLarge)
             }
 
             Button(
@@ -62,9 +66,13 @@ fun ImagePreviewScreen(
                     onConfirm(imageUri)
                 },
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Green)
+                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = Color.Black
+                )
             ) {
-                Text("Use Photo")
+                Text("Use Photo", style = MaterialTheme.typography.headlineLarge)
             }
         }
     }
