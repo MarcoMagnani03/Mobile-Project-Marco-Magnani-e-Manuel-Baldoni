@@ -61,8 +61,8 @@ fun GoogleSignInButton(onResult: (GoogleSignInAccount?) -> Unit) {
                 val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestEmail()
                     .build()
-                val client = GoogleSignIn.getClient(context, gso)
-                launcher.launch(client.signInIntent)
+                val newClient = GoogleSignIn.getClient(context, gso)
+                launcher.launch(newClient.signInIntent)
             }
         }
     )
