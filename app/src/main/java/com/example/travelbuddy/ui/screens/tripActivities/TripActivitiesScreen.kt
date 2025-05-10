@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -27,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -37,6 +38,7 @@ import com.example.travelbuddy.ui.composables.MapLocation
 import com.example.travelbuddy.ui.composables.MapWithColoredMarkers
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
+import com.example.travelbuddy.ui.composables.TripActivityListItem
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -179,29 +181,44 @@ fun TripActivitiesScreen(
             }
         }
     ) { contentPadding ->
-        Column(
+        LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .padding(contentPadding)
                 .padding(horizontal = 12.dp)
                 .fillMaxSize()
-                .verticalScroll(scrollState)
         ) {
-            MapWithColoredMarkers(
-                locations = state.tripActivities.map { tripActivity ->
-                    MapLocation(
-                        address = tripActivity.position.toString(),
-                        tripActivity = tripActivity
-                    )
-                },
-                onMarkerClick = { location ->
-                    selectedActivity = location.tripActivity
-                    isModalVisible = true
-                }
-            )
+            item {
+                MapWithColoredMarkers(
+                    locations = state.tripActivities.map { tripActivity ->
+                        MapLocation(
+                            address = tripActivity.position.toString(),
+                            tripActivity = tripActivity
+                        )
+                    },
+                    onMarkerClick = { location ->
+                        selectedActivity = location.tripActivity
+                        isModalVisible = true
+                    }
+                )
+            }
 
-            Spacer(Modifier.height(10.dp))
+            items(state.tripActivities) { tripActivity ->
+                TripActivityListItem(
+                    tripActivity = tripActivity,
+                    onEditClick = {
+
+                    },
+                    onDeleteClick = {
+
+                    }
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(70.dp))
+            }
         }
     }
 }

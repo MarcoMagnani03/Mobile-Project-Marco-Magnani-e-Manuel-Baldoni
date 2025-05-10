@@ -38,7 +38,7 @@ fun NewTripActivityScreen(
 
     LaunchedEffect(state.newTripActivityId) {
         state.newTripActivityId?.let {
-            navController.navigate(TravelBuddyRoute.TripDetails(tripId = state.tripId.toString()))
+            navController.navigate(TravelBuddyRoute.TripActivities(tripId = state.tripId.toString()))
         }
     }
 
@@ -130,7 +130,7 @@ fun NewTripActivityScreen(
             TravelBuddyButton(
                 enabled = state.canSubmit && !state.isLoading,
                 onClick = actions::createTripActivity,
-                label = "Create trip",
+                label = "Create activity",
                 isLoading = state.isLoading,
                 leadingIcon = {
                     Icon(
