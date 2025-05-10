@@ -116,6 +116,14 @@ fun TripActivitiesScreen(
                         Text(selectedActivity?.endDate ?: "")
                     }
 
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("Price per person:", fontWeight = FontWeight.Bold)
+                        Text(selectedActivity?.pricePerPerson.toString() ?: "")
+                    }
+
                     Text("Location:", fontWeight = FontWeight.Bold)
                     Text(selectedActivity?.position.toString())
 

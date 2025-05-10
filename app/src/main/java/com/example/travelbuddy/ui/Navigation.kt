@@ -19,6 +19,8 @@ import com.example.travelbuddy.ui.screens.camera.CameraCaptureScreen
 import com.example.travelbuddy.ui.screens.camera.ImagePreviewScreen
 import com.example.travelbuddy.ui.screens.code.CodeScreen
 import com.example.travelbuddy.ui.screens.code.CodeViewModel
+import com.example.travelbuddy.ui.screens.editTrip.EditTripScreen
+import com.example.travelbuddy.ui.screens.editTrip.EditTripViewModel
 import com.example.travelbuddy.ui.screens.friend.FriendScreen
 import com.example.travelbuddy.ui.screens.friend.FriendViewModel
 import com.example.travelbuddy.ui.screens.home.HomeViewModel
@@ -70,6 +72,7 @@ sealed interface TravelBuddyRoute {
     @Serializable data object ChangePassword: TravelBuddyRoute
     @Serializable data object ChangePin: TravelBuddyRoute
     @Serializable data class TripDetails(val tripId: String) : TravelBuddyRoute
+    @Serializable data class EditTrip(val tripId: String) : TravelBuddyRoute
     @Serializable data class NewTripActivity(val tripId: String) : TravelBuddyRoute
     @Serializable data class NewExpense(val tripId: String) : TravelBuddyRoute
     @Serializable data class ViewProfile(val userEmail: String) : TravelBuddyRoute
@@ -347,6 +350,24 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             TripActivitiesScreen(
                 state = state,
                 actions = tripActivitiesViewModel.actions,
+                navController = navController
+            )
+        }
+
+        composable<TravelBuddyRoute.EditTrip> { backStackEntry ->
+            val tripId = backStackEntry.arguments?.getString("tripId") ?: ""
+            val tripIdLong = tripId.toLongOrNull() ?: -1L
+            val editTripViewModel = koinViewModel<EditTripViewModel>()
+            val state by editTripViewModel.state.collectAsStateWithLifecycle()
+
+            LaunchedEffect(tripId) {
+                editTripViewModel.actions.setTripId(tripIdLong)
+                editTripViewModel.actions.loadTrip()
+            }
+
+            EditTripScreen(
+                state = state,
+                actions = editTripViewModel.actions,
                 navController = navController
             )
         }

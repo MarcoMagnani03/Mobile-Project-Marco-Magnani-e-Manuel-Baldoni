@@ -3,7 +3,6 @@ package com.example.travelbuddy
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
-import com.example.travelbuddy.data.database.NotificationsTypesDAO
 import com.example.travelbuddy.data.database.TravelBuddyDatabase
 import com.example.travelbuddy.data.repositories.ExpensesRepository
 import com.example.travelbuddy.data.repositories.FriendRequestsRepository
@@ -25,6 +24,7 @@ import com.example.travelbuddy.ui.screens.home.HomeViewModel
 import com.example.travelbuddy.ui.screens.login.LoginViewModel
 import com.example.travelbuddy.ui.screens.newExpense.NewExpenseViewModel
 import com.example.travelbuddy.ui.screens.newTrip.NewTripViewModel
+import com.example.travelbuddy.ui.screens.editTrip.EditTripViewModel
 import com.example.travelbuddy.ui.screens.newTripActivity.NewTripActivityViewModel
 import com.example.travelbuddy.ui.screens.notifications.NotificationsViewModel
 import com.example.travelbuddy.ui.screens.profile.ProfileViewModel
@@ -82,6 +82,7 @@ val appModule = module {
     viewModel { CodeViewModel(get(),get()) }
     viewModel { SignUpViewModel(get())}
     viewModel { NewTripViewModel(get(), get(), get()) }
+    viewModel { EditTripViewModel(get(), get(), get()) }
     viewModel { TripDetailsViewModel(get(), get()) }
     viewModel { ProfileViewModel(get(), get()) }
     viewModel { SettingViewModel(get(),get(),get()) }

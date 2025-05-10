@@ -151,8 +151,7 @@ fun TripDetailsScreen(
                         )
                     },
                     onClick = {
-                        // TODO: con modale di conferma
-
+                        navController.navigate(TravelBuddyRoute.EditTrip(tripId = state.trip?.trip?.id.toString()))
                     }
                 )
 
