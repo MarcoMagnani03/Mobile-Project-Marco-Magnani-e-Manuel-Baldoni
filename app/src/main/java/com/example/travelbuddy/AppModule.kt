@@ -19,6 +19,7 @@ import com.example.travelbuddy.data.repositories.UsersRepository
 import com.example.travelbuddy.ui.TravelBuddyViewModel
 import com.example.travelbuddy.ui.screens.budgetOverview.BudgetOverviewViewModel
 import com.example.travelbuddy.ui.screens.code.CodeViewModel
+import com.example.travelbuddy.ui.screens.editExpense.EditExpenseViewModel
 import com.example.travelbuddy.ui.screens.friend.FriendViewModel
 import com.example.travelbuddy.ui.screens.home.HomeViewModel
 import com.example.travelbuddy.ui.screens.login.LoginViewModel
@@ -93,4 +94,5 @@ val appModule = module {
     viewModel { NotificationsViewModel(get(),get(),get()) }
     viewModel { BudgetOverviewViewModel(get(),get()) }
     viewModel { TripActivitiesViewModel(get(),get()) }
+    viewModel { EditExpenseViewModel(get(),get()) }
 }

@@ -1,11 +1,9 @@
-package com.example.travelbuddy.ui.screens.editTrip
+package com.example.travelbuddy.ui.screens.editExpense
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -31,9 +28,9 @@ import com.example.travelbuddy.ui.composables.TravelBuddyButton
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
 
 @Composable
-fun EditTripScreen(
-    state: EditTripState,
-    actions: EditTripActions,
+fun EditExpenseScreen(
+    state: EditExpenseState,
+    actions: EditExpenseActions,
     navController: NavController
 ) {
     val scrollState = rememberScrollState()
@@ -42,8 +39,7 @@ fun EditTripScreen(
         topBar = {
             TravelBuddyTopBar(
                 navController = navController,
-                title = "Edit trip",
-                subtitle = "Plan your next adventure",
+                title = "Edit Expense",
                 canNavigateBack = true,
             )
         },
@@ -59,52 +55,37 @@ fun EditTripScreen(
                 .verticalScroll(scrollState)
         ) {
             InputField(
-                value = state.tripName,
-                onValueChange = actions::setTripName,
-                label = "Trip name*",
-                placeholder = "Enter trip name",
+                value = state.title,
+                onValueChange = actions::setTitle,
+                label = "Expense title*",
+                placeholder = "Enter expense title",
                 type = InputFieldType.Text,
             )
 
             InputField(
-                value = state.destination,
-                onValueChange = actions::setDestination,
-                label = "Destination*",
-                placeholder = "Where are you going?",
-                type = InputFieldType.Text,
-            )
-
-            InputField(
-                value = state.startDate,
-                onValueChange = actions::setStartDate,
-                label = "Start date*",
-                type = InputFieldType.Date,
-            )
-
-            InputField(
-                value = state.endDate,
-                onValueChange = actions::setEndDate,
-                label = "End date*",
-                type = InputFieldType.Date,
-            )
-
-            InputField(
-                value = state.budget.toString(),
+                value = state.amount.toString(),
                 onValueChange = { value ->
-                    val newBudget = value.toDoubleOrNull() ?: 0.0
-                    actions.setBudget(newBudget)
+                    val newAmount = value.toDoubleOrNull() ?: 0.0
+                    actions.setAmount(newAmount)
                 },
-                label = "Budget",
-                placeholder = "Enter your budget",
+                label = "Amount*",
+                placeholder = "Enter amount",
                 type = InputFieldType.Text,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
 
             InputField(
-                value = state.description ?: "",
+                value = state.date,
+                onValueChange = actions::setDate,
+                label = "Date*",
+                type = InputFieldType.DateTime,
+            )
+
+            InputField(
+                value = state.description,
                 onValueChange = actions::setDescription,
                 label = "Description",
-                placeholder = "Enter a description of the trip",
+                placeholder = "Enter description",
                 type = InputFieldType.Text,
                 modifier = Modifier
                     .defaultMinSize(0.dp, 100.dp),
@@ -113,22 +94,19 @@ fun EditTripScreen(
             TravelBuddyButton(
                 enabled = state.canSubmit && !state.isLoading,
                 onClick = {
-                    actions.editTrip()
-                    state.tripId?.let { tripId ->
-                        navController.navigate(TravelBuddyRoute.TripDetails(tripId = tripId.toString()))
-                    }
+                    actions.editExpense()
+                    navController.navigate(TravelBuddyRoute.BudgetOverview(state.tripId.toString()))
                 },
-                label = "Edit trip",
+                label = "Edit expense",
                 isLoading = state.isLoading,
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit trip",
+                        contentDescription = "Edit expense",
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             )
-            Spacer(Modifier.height(10.dp))
         }
     }
 }

@@ -124,6 +124,9 @@ interface ExpensesDAO {
 
     @Delete
     suspend fun delete(item: Expense)
+
+    @Query("SELECT * FROM Expense WHERE id = :expenseId")
+    suspend fun getExpenseById(expenseId: Long): Expense?
 }
 
 

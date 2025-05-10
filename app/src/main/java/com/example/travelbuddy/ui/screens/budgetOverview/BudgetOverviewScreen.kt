@@ -82,7 +82,7 @@ fun BudgetOverviewScreen(
                 ExpenseItem(
                     expense,
                     onEditClick = {
-
+                        navController.navigate(TravelBuddyRoute.EditExpense(state.tripId.toString(), expense.id.toString()))
                     },
                     onDeleteClick = {
                         actions.deleteExpense(expense, state.tripId)

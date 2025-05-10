@@ -19,6 +19,8 @@ import com.example.travelbuddy.ui.screens.camera.CameraCaptureScreen
 import com.example.travelbuddy.ui.screens.camera.ImagePreviewScreen
 import com.example.travelbuddy.ui.screens.code.CodeScreen
 import com.example.travelbuddy.ui.screens.code.CodeViewModel
+import com.example.travelbuddy.ui.screens.editExpense.EditExpenseScreen
+import com.example.travelbuddy.ui.screens.editExpense.EditExpenseViewModel
 import com.example.travelbuddy.ui.screens.editTrip.EditTripScreen
 import com.example.travelbuddy.ui.screens.editTrip.EditTripViewModel
 import com.example.travelbuddy.ui.screens.friend.FriendScreen
@@ -78,6 +80,7 @@ sealed interface TravelBuddyRoute {
     @Serializable data class ViewProfile(val userEmail: String) : TravelBuddyRoute
     @Serializable data class BudgetOverview(val tripId: String) : TravelBuddyRoute
     @Serializable data class TripActivities(val tripId: String) : TravelBuddyRoute
+    @Serializable data class EditExpense(val tripId: String, val expenseId: String) : TravelBuddyRoute
 }
 
 @Composable
@@ -371,5 +374,27 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
                 navController = navController
             )
         }
+
+        composable<TravelBuddyRoute.EditExpense> { backStackEntry ->
+            val tripId = backStackEntry.arguments?.getString("tripId") ?: ""
+            val tripIdLong = tripId.toLongOrNull() ?: -1L
+            val expenseId = backStackEntry.arguments?.getString("expenseId") ?: ""
+            val expenseIdLong = expenseId.toLongOrNull() ?: -1L
+            val editExpenseViewModel = koinViewModel<EditExpenseViewModel>()
+            val state by editExpenseViewModel.state.collectAsStateWithLifecycle()
+
+            LaunchedEffect(tripId) {
+                editExpenseViewModel.actions.setTripId(tripIdLong)
+                editExpenseViewModel.actions.setExpenseId(expenseIdLong)
+                editExpenseViewModel.actions.loadExpense()
+            }
+
+            EditExpenseScreen(
+                state = state,
+                actions = editExpenseViewModel.actions,
+                navController = navController
+            )
+        }
+
     }
 }
