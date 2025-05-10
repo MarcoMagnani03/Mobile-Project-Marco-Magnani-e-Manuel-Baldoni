@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
@@ -64,7 +63,7 @@ fun TripActivitiesScreen(
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
             title = { Text("Confirm delete", style = MaterialTheme.typography.headlineLarge) },
-            text = { Text("Are you sure you want to delete this expense?", style = MaterialTheme.typography.bodyLarge) },
+            text = { Text("Are you sure you want to delete this activity?", style = MaterialTheme.typography.bodyLarge) },
             dismissButton = {
                 TextButton(onClick = {
                     showDeleteDialog = false
@@ -208,10 +207,11 @@ fun TripActivitiesScreen(
                 TripActivityListItem(
                     tripActivity = tripActivity,
                     onEditClick = {
-
+                        navController.navigate(TravelBuddyRoute.EditTripActivity(state.tripId.toString(), tripActivity.id.toString()))
                     },
                     onDeleteClick = {
-
+                        selectedActivity = tripActivity
+                        showDeleteDialog = true
                     }
                 )
             }

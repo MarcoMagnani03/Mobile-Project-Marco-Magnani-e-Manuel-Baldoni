@@ -23,6 +23,8 @@ import com.example.travelbuddy.ui.screens.editExpense.EditExpenseScreen
 import com.example.travelbuddy.ui.screens.editExpense.EditExpenseViewModel
 import com.example.travelbuddy.ui.screens.editTrip.EditTripScreen
 import com.example.travelbuddy.ui.screens.editTrip.EditTripViewModel
+import com.example.travelbuddy.ui.screens.editTripActivity.EditTripActivityScreen
+import com.example.travelbuddy.ui.screens.editTripActivity.EditTripActivityViewModel
 import com.example.travelbuddy.ui.screens.friend.FriendScreen
 import com.example.travelbuddy.ui.screens.friend.FriendViewModel
 import com.example.travelbuddy.ui.screens.home.HomeViewModel
@@ -81,6 +83,7 @@ sealed interface TravelBuddyRoute {
     @Serializable data class BudgetOverview(val tripId: String) : TravelBuddyRoute
     @Serializable data class TripActivities(val tripId: String) : TravelBuddyRoute
     @Serializable data class EditExpense(val tripId: String, val expenseId: String) : TravelBuddyRoute
+    @Serializable data class EditTripActivity(val tripId: String, val tripActivityId: String) : TravelBuddyRoute
 }
 
 @Composable
@@ -396,5 +399,26 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             )
         }
 
+        composable<TravelBuddyRoute.EditTripActivity> { backStackEntry ->
+            val tripId = backStackEntry.arguments?.getString("tripId") ?: ""
+            val tripIdLong = tripId.toLongOrNull() ?: -1L
+            val tripActivityId = backStackEntry.arguments?.getString("tripActivityId") ?: ""
+            val tripActivityIdLong = tripActivityId.toLongOrNull() ?: -1L
+            val editTripActivityViewModel = koinViewModel<EditTripActivityViewModel>()
+            val state by editTripActivityViewModel.state.collectAsStateWithLifecycle()
+
+            LaunchedEffect(tripId) {
+                editTripActivityViewModel.actions.setTripId(tripIdLong)
+                editTripActivityViewModel.actions.setTripActivityId(tripActivityIdLong)
+                editTripActivityViewModel.actions.loadTripActivityTypes()
+                editTripActivityViewModel.actions.loadTripActivity()
+            }
+
+            EditTripActivityScreen(
+                state = state,
+                actions = editTripActivityViewModel.actions,
+                navController = navController
+            )
+        }
     }
 }

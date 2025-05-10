@@ -91,8 +91,8 @@ interface TripActivitiesDAO {
     @Delete
     suspend fun delete(item: TripActivity)
 
-    @Query("SELECT * FROM TripActivity WHERE tripId = :tripId")
-    suspend fun getAll(tripId: Long): List<TripActivity>
+    @Query("SELECT * FROM TripActivity WHERE id = :tripActivityId")
+    suspend fun getTripActivityById(tripActivityId: Long): TripActivity?
 
     @Query("SELECT * FROM TripActivity WHERE tripId = :tripId AND (:name IS NULL OR name LIKE '%' || :name || '%') AND (:startDate IS NULL OR startDate >= :startDate) AND (:endDate IS NULL OR endDate <= :endDate) AND (:pricePerPerson IS NULL OR pricePerPerson <= :pricePerPerson) AND (:tripActivityTypeId IS NULL OR tripActivityTypeId = :tripActivityTypeId)")
     suspend fun getFilteredActivities(
