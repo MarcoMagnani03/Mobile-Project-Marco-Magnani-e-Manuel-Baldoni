@@ -339,7 +339,8 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             val state by tripActivitiesViewModel.state.collectAsStateWithLifecycle()
 
             LaunchedEffect(tripId) {
-                tripActivitiesViewModel.actions.loadActivities(tripIdLong)
+                tripActivitiesViewModel.actions.setTripId(tripId = tripIdLong)
+                tripActivitiesViewModel.actions.loadActivities()
                 tripActivitiesViewModel.actions.loadTripActivityTypes()
             }
 

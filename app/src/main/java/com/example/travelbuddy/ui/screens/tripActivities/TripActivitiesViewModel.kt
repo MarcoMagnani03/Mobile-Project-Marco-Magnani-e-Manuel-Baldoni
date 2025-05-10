@@ -26,9 +26,11 @@ data class TripActivitiesState(
 )
 
 interface TripActivitiesActions {
-    fun loadActivities(tripId: Long)
+    fun setTripId(tripId: Long)
+    fun loadActivities()
     fun searchActivities(filters: TripActivitiesFilter)
     fun loadTripActivityTypes()
+    fun deleteTripActivity(tripActivity: TripActivity)
 
     fun filterByName(name: String?)
     fun filterByDateRange(startDate: String?, endDate: String?)
@@ -47,16 +49,12 @@ class TripActivitiesViewModel(
     private var currentFilters = TripActivitiesFilter()
 
     val actions = object : TripActivitiesActions {
-        override fun loadActivities(tripId: Long) {
-            viewModelScope.launch {
-                try {
-                    _state.value = _state.value.copy(tripId = tripId)
-                    val tripActivities = tripActivitiesRepository.getAll(tripId)
-                    _state.value = _state.value.copy(tripActivities = tripActivities)
-                } catch (e: Exception) {
-                    _state.value = _state.value.copy(error = "Error loading the trip activities")
-                }
-            }
+        override fun setTripId(tripId: Long) {
+            _state.value = _state.value.copy(tripId = tripId)
+        }
+
+        override fun loadActivities() {
+            searchActivities(currentFilters)
         }
 
         override fun searchActivities(filters: TripActivitiesFilter) {
@@ -109,9 +107,19 @@ class TripActivitiesViewModel(
 
         override fun resetFilters() {
             currentFilters = TripActivitiesFilter()
-            val tripId = _state.value.tripId
-            if (tripId > 0) {
-                loadActivities(tripId)
+            loadActivities()
+        }
+
+        override fun deleteTripActivity(tripActivity: TripActivity) {
+            viewModelScope.launch {
+                try {
+                    tripActivitiesRepository.delete(tripActivity)
+                    loadActivities()
+                } catch (e: Exception) {
+                    _state.value = _state.value.copy(
+                        error = e.message ?: "Error creating the trip, try again later"
+                    )
+                }
             }
         }
     }

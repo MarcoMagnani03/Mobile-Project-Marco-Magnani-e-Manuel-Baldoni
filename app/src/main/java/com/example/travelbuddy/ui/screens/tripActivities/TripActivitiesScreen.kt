@@ -63,21 +63,23 @@ fun TripActivitiesScreen(
             onDismissRequest = { showDeleteDialog = false },
             title = { Text("Confirm delete", style = MaterialTheme.typography.headlineLarge) },
             text = { Text("Are you sure you want to delete this expense?", style = MaterialTheme.typography.bodyLarge) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showDeleteDialog = false
-
-                    }
-                ) {
-                    Text("Delete", color = Color.Red)
-                }
-            },
             dismissButton = {
                 TextButton(onClick = {
                     showDeleteDialog = false
                 }) {
                     Text("Cancel")
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                        isModalVisible = false
+                        selectedActivity?.let { actions.deleteTripActivity(it) }
+                        selectedActivity = null
+                    }
+                ) {
+                    Text("Delete", color = Color.Red)
                 }
             }
         )
