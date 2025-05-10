@@ -11,8 +11,11 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.1"
 composeBom = "2024.04.01"
+mapsCompose = "2.15.0"
 navigationCompose = "2.8.9"
 ktor = "2.3.8"
+playServicesLocation = "21.3.0"
+playServicesMaps = "19.2.0"
 room = "2.6.1"
 firebaseCrashlyticsBuildtools = "3.0.3"
 cameraCore = "1.4.2"
@@ -56,6 +59,9 @@ androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.r
 androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "cameraView" }
 google-play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
+maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

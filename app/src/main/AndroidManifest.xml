@@ -55,6 +55,10 @@
             android:value="1024318500474-mo5g6hovlhqpqhh120cqnvq0t2mhf97c.apps.googleusercontent.com"
         />
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDHsSQutbW-UILDDuYayJoi8qXvFAq2log" />
+
     </application>
 
     <queries>

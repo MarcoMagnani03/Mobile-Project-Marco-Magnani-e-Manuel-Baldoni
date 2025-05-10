@@ -46,6 +46,8 @@ sealed interface InputFieldType {
     data object DateTime : InputFieldType
     @Serializable
     data object Select : InputFieldType
+    @Serializable
+    data object Position : InputFieldType
 }
 
 /**

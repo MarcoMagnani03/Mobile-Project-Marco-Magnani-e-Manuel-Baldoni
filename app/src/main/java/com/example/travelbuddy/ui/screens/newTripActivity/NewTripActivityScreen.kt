@@ -115,7 +115,7 @@ fun NewTripActivityScreen(
                 value = state.position?: "",
                 onValueChange = actions::setPosition,
                 label = "Position",
-                type = InputFieldType.Text
+                type = InputFieldType.Position
             )
 
             InputField(
