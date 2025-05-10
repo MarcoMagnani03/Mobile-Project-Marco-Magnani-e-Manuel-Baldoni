@@ -21,8 +21,7 @@ data class EditTripState(
     val budget: Double? = 0.0,
     val description: String? = null,
     val errorMessage: String = "",
-    val isLoading: Boolean = false,
-    val edited: Boolean = false
+    val isLoading: Boolean = false
 ) {
     val canSubmit: Boolean
         get() = tripName.isNotBlank() &&
@@ -41,7 +40,6 @@ interface EditTripActions {
     fun setDescription(value: String)
     fun setErrorMessage(value: String)
     fun setIsLoading(value: Boolean)
-    fun setEdited(value: Boolean)
     fun editTrip()
     fun loadTrip()
 }
@@ -91,10 +89,6 @@ class EditTripViewModel(
             _state.update { it.copy(isLoading = value) }
         }
 
-        override fun setEdited(value: Boolean) {
-            _state.update { it.copy(edited = value) }
-        }
-
         override fun loadTrip() {
             viewModelScope.launch {
                 val trip = state.value.tripId?.let { tripsRepository.getTripById(it) }
@@ -128,10 +122,6 @@ class EditTripViewModel(
                     if (newTrip != null) {
                         tripsRepository.upsert(newTrip)
                     }
-
-                    _state.value = _state.value.copy(
-                        edited = true
-                    )
                 } catch (e: Exception) {
                     _state.value = _state.value.copy(
                         isLoading = false,

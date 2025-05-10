@@ -65,7 +65,7 @@ fun TripDetailsScreen(
                     onClick = {
                         showDeleteDialog = false
                         if(state.trip?.trip != null){
-                            actions.deleteTrip(state.trip.trip)
+                            actions.deleteTrip()
                             navController.navigate(TravelBuddyRoute.Home)
                         }
                     }
@@ -75,6 +75,34 @@ fun TripDetailsScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+    var showLeaveDialog by remember { mutableStateOf(false) }
+
+    if (showLeaveDialog) {
+        AlertDialog(
+            onDismissRequest = { showLeaveDialog = false },
+            title = { Text("Confirm leave group", style = MaterialTheme.typography.headlineLarge) },
+            text = { Text("Are you sure you want to leave this group?", style = MaterialTheme.typography.bodyLarge) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showLeaveDialog = false
+                        if(state.trip?.trip != null){
+                            actions.removeUserFromGroup()
+                            navController.navigate(TravelBuddyRoute.Home)
+                        }
+                    }
+                ) {
+                    Text("Leave", color = Color.Red)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLeaveDialog = false }) {
                     Text("Cancel")
                 }
             }
@@ -132,7 +160,7 @@ fun TripDetailsScreen(
 
                 },
                 onLeaveGroupClick = {
-
+                    showLeaveDialog = true
                 }
             )
 

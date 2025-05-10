@@ -1,14 +1,19 @@
 package com.example.travelbuddy.ui.screens.tripDetails
 
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.travelbuddy.data.database.Group
 import com.example.travelbuddy.data.database.Trip
 import com.example.travelbuddy.data.database.TripActivityType
 import com.example.travelbuddy.data.database.TripWithActivitiesAndExpensesAndPhotosAndUsers
+import com.example.travelbuddy.data.repositories.GroupsRepository
 import com.example.travelbuddy.data.repositories.TripActivitiesTypesRepository
 import com.example.travelbuddy.data.repositories.TripsRepository
+import com.example.travelbuddy.data.repositories.UserSessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 data class TripDetailsState(
@@ -20,12 +25,15 @@ data class TripDetailsState(
 interface TripDetailsActions {
     fun loadTrip(tripId: Long)
     fun loadTripActivityTypes()
-    fun deleteTrip(trip: Trip)
+    fun deleteTrip()
+    fun removeUserFromGroup()
 }
 
 class TripDetailsViewModel(
     private val tripsRepository: TripsRepository,
-    private val tripActivitiesTypesRepository: TripActivitiesTypesRepository
+    private val tripActivitiesTypesRepository: TripActivitiesTypesRepository,
+    private val groupsRepository: GroupsRepository,
+    private val userSessionRepository: UserSessionRepository
 ): ViewModel() {
     private val _state = MutableStateFlow(TripDetailsState())
     val state = _state.asStateFlow()
@@ -53,10 +61,29 @@ class TripDetailsViewModel(
             }
         }
 
-        override fun deleteTrip(trip: Trip) {
+        override fun deleteTrip() {
             viewModelScope.launch {
                 try {
-                    tripsRepository.delete(trip)
+                    state.value.trip?.let { tripsRepository.delete(it.trip) }
+                } catch (e: Exception) {
+                    _state.value = _state.value.copy(error = "Error deleting trip")
+                }
+            }
+        }
+
+        override fun removeUserFromGroup() {
+            viewModelScope.launch {
+                try {
+                    val userEmail = userSessionRepository.userEmail.first()
+                    val tripId = state.value.trip?.trip?.id
+
+                    if (tripId != null) {
+                        val group = Group(
+                            userEmail = userEmail.toString(),
+                            tripId = tripId
+                        )
+                        groupsRepository.delete(group)
+                    }
                 } catch (e: Exception) {
                     _state.value = _state.value.copy(error = "Error deleting trip")
                 }

@@ -38,12 +38,6 @@ fun EditTripScreen(
 ) {
     val scrollState = rememberScrollState()
 
-    LaunchedEffect(state.edited) {
-        state.tripId?.let { tripId ->
-            navController.navigate(TravelBuddyRoute.TripDetails(tripId = tripId.toString()))
-        }
-    }
-
     Scaffold(
         topBar = {
             TravelBuddyTopBar(
@@ -118,7 +112,12 @@ fun EditTripScreen(
 
             TravelBuddyButton(
                 enabled = state.canSubmit && !state.isLoading,
-                onClick = actions::editTrip,
+                onClick = {
+                    actions.editTrip()
+                    state.tripId?.let { tripId ->
+                        navController.navigate(TravelBuddyRoute.TripDetails(tripId = tripId.toString()))
+                    }
+                },
                 label = "Edit trip",
                 isLoading = state.isLoading,
                 leadingIcon = {

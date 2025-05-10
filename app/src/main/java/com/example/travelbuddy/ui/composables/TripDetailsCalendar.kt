@@ -148,7 +148,7 @@ fun ActivityItem(
                 text = activity.name,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 18.sp,
-                color = Color.DarkGray
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = formatTimeRange(activity.startDate, activity.endDate),

@@ -83,7 +83,7 @@ val appModule = module {
     viewModel { SignUpViewModel(get())}
     viewModel { NewTripViewModel(get(), get(), get()) }
     viewModel { EditTripViewModel(get(), get(), get()) }
-    viewModel { TripDetailsViewModel(get(), get()) }
+    viewModel { TripDetailsViewModel(get(), get(), get(), get()) }
     viewModel { ProfileViewModel(get(), get()) }
     viewModel { SettingViewModel(get(),get(),get()) }
     viewModel { NewTripActivityViewModel(get(), get()) }
