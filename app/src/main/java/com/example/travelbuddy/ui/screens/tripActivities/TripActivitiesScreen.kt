@@ -1,4 +1,5 @@
-package com.example.travelbuddy.ui.screens.tripDetails
+package com.example.travelbuddy.ui.screens.tripActivities
+
 
 import TripDetailsCalendar
 import androidx.compose.foundation.layout.Arrangement
@@ -10,10 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -42,9 +44,9 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun TripDetailsScreen(
-    state: TripDetailsState,
-    actions: TripDetailsActions,
+fun TripActivitiesScreen(
+    state: TripActivitiesState,
+    actions: TripActivitiesActions,
     navController: NavController
 ){
     val scrollState = rememberScrollState()
@@ -64,10 +66,7 @@ fun TripDetailsScreen(
                 TextButton(
                     onClick = {
                         showDeleteDialog = false
-                        if(state.trip?.trip != null){
-                            actions.deleteTrip(state.trip.trip)
-                            navController.navigate(TravelBuddyRoute.Home)
-                        }
+
                     }
                 ) {
                     Text("Delete", color = Color.Red)
@@ -85,12 +84,23 @@ fun TripDetailsScreen(
         topBar = {
             TravelBuddyTopBar(
                 navController = navController,
-                title = state.trip?.trip?.name ?: "Trip title",
-                subtitle = formatTimeRange(state.trip?.trip?.startDate ?: "", state.trip?.trip?.endDate ?: ""),
+                title = "Activities",
                 canNavigateBack = true,
             )
         },
-        bottomBar = { TravelBuddyBottomBar(navController) }
+        bottomBar = { TravelBuddyBottomBar(navController) },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navController.navigate(TravelBuddyRoute.NewTripActivity(state.tripId.toString())) },
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add activity",
+                    tint = Color.White
+                )
+            }
+        }
     ) { contentPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -101,76 +111,7 @@ fun TripDetailsScreen(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
-            TripDetailsCalendar(
-                activities =
-                    state.trip?.activities
-                        ?.filter { activity -> parseDate(activity.endDate).after(Date()) }
-                        ?.sortedBy { activity -> parseDate(activity.startDate) }
-                        ?.take(3) ?: emptyList(),
-                activityTypes = activityTypesMap,
-                onViewAllClick = {
-                    navController.navigate(TravelBuddyRoute.TripActivities(tripId = state.trip?.trip?.id.toString()))
-                }
-            )
 
-            TripDetailsQuickBalance(
-                balanceEntries = state.trip?.expenses?.map { expense ->
-                    BalanceEntry(
-                        name = expense.title,
-                        amount = expense.amount
-                    )
-                }?.take(3) ?: emptyList(),
-                totalExpenses = state.trip?.expenses?.sumOf { expense -> expense.amount } ?: 0.0,
-                onViewAllExpensesClick = {
-                    navController.navigate(TravelBuddyRoute.BudgetOverview(tripId = state.trip?.trip?.id.toString()))
-                }
-            )
-
-            TripGroupMembers(
-                members = state.trip?.users ?: emptyList(),
-                onAddMemberClick = {
-
-                },
-                onLeaveGroupClick = {
-
-                }
-            )
-
-            Column (
-                modifier = Modifier.padding(horizontal = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                TravelBuddyButton(
-                    style = ButtonStyle.PRIMARY,
-                    label = "Edit trip",
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Add member",
-                            tint = Color.White
-                        )
-                    },
-                    onClick = {
-                        // TODO: con modale di conferma
-
-                    }
-                )
-
-                TravelBuddyButton(
-                    style = ButtonStyle.ERROR,
-                    label = "Delete trip",
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Add member",
-                            tint = Color.White
-                        )
-                    },
-                    onClick = {
-                        showDeleteDialog = true
-                    }
-                )
-            }
 
             Spacer(Modifier.height(10.dp))
         }

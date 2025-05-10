@@ -31,6 +31,7 @@ import com.example.travelbuddy.ui.screens.profile.ProfileViewModel
 import com.example.travelbuddy.ui.screens.profile.ViewProfileViewModel
 import com.example.travelbuddy.ui.screens.setting.SettingViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
+import com.example.travelbuddy.ui.screens.tripActivities.TripActivitiesViewModel
 import com.example.travelbuddy.ui.screens.tripDetails.TripDetailsViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -90,5 +91,5 @@ val appModule = module {
     viewModel { ViewProfileViewModel(get(),get(),get(),get(),get()) }
     viewModel { NotificationsViewModel(get(),get(),get()) }
     viewModel { BudgetOverviewViewModel(get(),get()) }
-
+    viewModel { TripActivitiesViewModel(get(),get()) }
 }

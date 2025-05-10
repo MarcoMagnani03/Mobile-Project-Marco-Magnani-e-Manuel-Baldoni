@@ -11,7 +11,7 @@ VALUES
     (8, 'Viaggio in Patagonia', 'Patagonia', '01/12/2025', '15/12/2025', 6000.0, 'Trekking tra ghiacciai e paesaggi incredibili'),
     (9, 'Natale a Vienna', 'Vienna', '22/12/2025', '28/12/2025', 2000.0, 'Mercatini di Natale e atmosfera magica'),
     (10, 'Capodanno a Sydney', 'Sydney', '29/12/2025', '05/01/2026', 7000.0, 'Fuochi artificio sul porto e spiagge estive'),
-    (11, 'Viaggio nel Tempo', 'Tutte le destinazioni', '01/01/2000', '31/12/2100', 999999.99, 'Un viaggio che attraversa un intero secolo di avventure');
+    (11, 'Viaggio nel Tempo', 'Tutte le destinazioni', '01/01/2000', '31/12/2100', 10000.0, 'Un viaggio che attraversa un intero secolo di avventure');
 
 ---------------------------------------------------------------
 
@@ -30,16 +30,19 @@ VALUES
 INSERT INTO `Group` (userEmail, tripId)
 VALUES
     ('test@test.it', 1),
+    ('marco.magnani@gmail.com', 1),
     ('test@test.it', 2),
+    ('marco.magnani@gmail.com', 2),
     ('test@test.it', 3),
-    ('test@test.it', 4),
+    ('marco.magnani@gmail.com', 4),
     ('test@test.it', 5),
-    ('test@test.it', 6),
+    ('marco.magnani@gmail.com', 6),
     ('test@test.it', 7),
-    ('test@test.it', 8),
+    ('marco.magnani@gmail.com', 8),
     ('test@test.it', 9),
-    ('test@test.it', 10),
-    ('test@test.it', 11);
+    ('marco.magnani@gmail.com', 10),
+    ('test@test.it', 11),
+    ('marco.magnani@gmail.com', 11);
 
 ---------------------------------------------------------------
 
@@ -111,8 +114,8 @@ VALUES
 -- USER INSERTS (Password di account test è test)
 INSERT INTO User (email, password, passwordSalt, pin, pinSalt, firstname, lastname, phoneNumber, location, bio, profilePicture)
 VALUES
-    ('test@test.it', '347c384fdb50740f8ce788bc983af3d02d836eb2bf17b664d8cdd101012fe124', '4354a3cbd81ba1ce18362f5dbc8eb64e', '1234', 'testPinSalt', 'Test', 'User', '0123456789', 'Test City, Italy', 'Bio di esempio per utente di test', NULL),
-    ('user1@example.com', 'password123', 'salt123', '1234', 'pinSalt1', 'Mario', 'Rossi', '1234567890', 'Roma, Italia', 'Viaggiatore appassionato di cultura', NULL),
+    ('test@test.it', 'd90e25dd8ee5bbf1e87628f73f44aee97c44e179079cb2622841c142044088d6', '9465b733f0c10775fb2b8eadfd796441', '35c6aa34e343045b8fad5fd522e79793f63be8c3365b43d2c76b45ff9aa798fa', 'testPinSalt', 'Test', 'User', '0123456789', 'Test City, Italy', 'Bio di esempio per utente di test', NULL),
+    ('marco.magnani@gmail.com', 'd90e25dd8ee5bbf1e87628f73f44aee97c44e179079cb2622841c142044088d6', '530caec57aa75d319d8aba7b25a3d934', '97c4f82cd5782195eecef6c506e69c1d477182a16a724a651d3c1e51cce46b05', 'pinSalt1', 'Mario', 'Rossi', '1234567890', 'Roma, Italia', 'Viaggiatore appassionato di cultura', NULL),
     ('user2@example.com', 'password123', 'salt123', '5678', 'pinSalt2', 'Luigi', 'Bianchi', '2345678901', 'Milano, Italia', 'Adoro le escursioni in montagna', NULL),
     ('user3@example.com', 'password123', 'salt123', '9101', 'pinSalt3', 'Giulia', 'Verdi', '3456789012', 'Firenze, Italia', 'Appassionata di arte e storia', NULL),
     ('user4@example.com', 'password123', 'salt123', '1122', 'pinSalt4', 'Anna', 'Gialli', '4567890123', 'Napoli, Italia', 'Amo il mare e il buon cibo', NULL),
@@ -132,27 +135,27 @@ VALUES
 -- NOTIFICATIONS (utente: "ca")
 INSERT INTO Notification (id, title, description, notificationTypeId, userEmail, isRead, sentAt)
 VALUES
-    (1, 'Benvenuto in TravelBuddy', 'La tua avventura inizia qui!', 1, 'ca', 1, '2024-06-01 10:30:00'),
-    (2, 'Nuova attività disponibile', 'È stata aggiunta una nuova escursione per il tuo viaggio.', 1, 'ca', 0, '2024-06-03 15:45:22'),
-    (3, 'Errore di sincronizzazione', 'Impossibile aggiornare le notifiche. Riprova più tardi.', 2, 'ca', 0, '2024-06-05 09:12:37'),
-    (4, 'Problema di connessione', 'Controlla la tua rete internet e riprova.', 2, 'ca', 0, '2024-06-05 11:05:18');
+    (1, 'Benvenuto in TravelBuddy', 'La tua avventura inizia qui!', 1, 'test@test.it', 1, '2024-06-01 10:30:00'),
+    (2, 'Nuova attività disponibile', 'È stata aggiunta una nuova escursione per il tuo viaggio.', 1, 'test@test.it', 0, '2024-06-03 15:45:22'),
+    (3, 'Errore di sincronizzazione', 'Impossibile aggiornare le notifiche. Riprova più tardi.', 2, 'marco.magnani@gmail.com', 0, '2024-06-05 09:12:37'),
+    (4, 'Problema di connessione', 'Controlla la tua rete internet e riprova.', 2, 'marco.magnani@gmail.com', 0, '2024-06-05 11:05:18');
 
 
 INSERT INTO Expense (title, amount, date, description, cretedByUserEmail, tripId)
 VALUES
     -- Trip 1: Roma
     ('Biglietto Colosseo', 18.0, '10/04/2024', 'Ingresso al Colosseo', 'test@test.it', 1),
-    ('Cena Trastevere', 25.0, '10/04/2024', 'Cena tipica romana', 'test@test.it', 1),
+    ('Cena Trastevere', 25.0, '10/04/2024', 'Cena tipica romana', 'marco.magnani@gmail.com', 1),
     ('Musei Vaticani', 17.0, '11/04/2024', 'Biglietto musei e Cappella Sistina', 'test@test.it', 1),
-    ('Gelato a Fontana di Trevi', 4.5, '11/04/2024', 'Gelateria storica', 'test@test.it', 1),
+    ('Gelato a Fontana di Trevi', 4.5, '11/04/2024', 'Gelateria storica', 'marco.magnani@gmail.com', 1),
     ('Trasporto pubblico', 10.0, '10/04/2024', 'Metro e autobus', 'test@test.it', 1),
 
     -- Trip 2: Barcellona
     ('Sagrada Familia', 26.0, '15/06/2024', 'Ingresso chiesa', 'test@test.it', 2),
     ('Tapas cena', 20.0, '15/06/2024', 'Tapas e sangria', 'test@test.it', 2),
-    ('Museo Picasso', 12.0, '16/06/2024', 'Ingresso intero', 'test@test.it', 2),
+    ('Museo Picasso', 12.0, '16/06/2024', 'Ingresso intero', 'marco.magnani@gmail.com', 2),
     ('Biglietto metro', 8.0, '16/06/2024', 'Titolo viaggio T10', 'test@test.it', 2),
-    ('Souvenir Ramblas', 15.0, '17/06/2024', 'Cartoline e calamite', 'test@test.it', 2),
+    ('Souvenir Ramblas', 15.0, '17/06/2024', 'Cartoline e calamite', 'marco.magnani@gmail.com', 2),
 
     -- Trip 3: Islanda
     ('Laguna Blu', 50.0, '02/07/2024', 'Spa termale', 'test@test.it', 3),
@@ -210,8 +213,9 @@ VALUES
     ('Pranzo Darling Harbour', 30.0, '01/01/2026', 'Ristorante sul mare', 'test@test.it', 10),
     ('Biglietto metro', 8.0, '01/01/2026', 'Trasporti urbani', 'test@test.it', 10),
 
-    ('Carrozza del 1800', 120.0, '15/03/1901', 'Noleggio carrozza a cavalli in Vienna imperiale', 'test@test.it', 11),
-    ('Panino futuristico', 45.5, '12/11/2099', 'Esperienza gastronomica nel 2100 con cibo sintetico', 'test@test.it', 11),
+    -- Trip 11: Viaggio nel tempo
+    ('Carrozza del 1800', 120.0, '15/03/1901', 'Noleggio carrozza a cavalli in Vienna imperiale', 'marco.magnani@gmail.com', 11),
+    ('Panino futuristico', 45.5, '12/11/2099', 'Esperienza gastronomica nel 2100 con cibo sintetico', 'marco.magnani@gmail.com', 11),
     ('Monete romane', 78.0, '01/08/2001', 'Acquisto di monete storiche in un museo archeologico', 'test@test.it', 11),
     ('Biglietto dirigibile', 150.0, '03/05/1930', 'Viaggio in dirigibile Zeppelin', 'test@test.it', 11),
     ('Visore VR temporale', 299.0, '10/07/2085', 'Simulazione immersiva di eventi storici', 'test@test.it', 11),

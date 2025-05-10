@@ -42,6 +42,9 @@ import com.example.travelbuddy.ui.screens.setting.SettingScreen
 import com.example.travelbuddy.ui.screens.setting.SettingViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpScreen
+import com.example.travelbuddy.ui.screens.tripActivities.TripActivitiesScreen
+import com.example.travelbuddy.ui.screens.tripActivities.TripActivitiesState
+import com.example.travelbuddy.ui.screens.tripActivities.TripActivitiesViewModel
 import com.example.travelbuddy.ui.screens.tripDetails.TripDetailsScreen
 import com.example.travelbuddy.ui.screens.tripDetails.TripDetailsViewModel
 import com.example.travelbuddy.utils.ImageUtils
@@ -71,6 +74,7 @@ sealed interface TravelBuddyRoute {
     @Serializable data class NewExpense(val tripId: String) : TravelBuddyRoute
     @Serializable data class ViewProfile(val userEmail: String) : TravelBuddyRoute
     @Serializable data class BudgetOverview(val tripId: String) : TravelBuddyRoute
+    @Serializable data class TripActivities(val tripId: String) : TravelBuddyRoute
 }
 
 @Composable
@@ -324,6 +328,24 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             BudgetOverviewScreen(
                 state = state,
                 actions = budgetOverviewViewModel.actions,
+                navController = navController
+            )
+        }
+
+        composable<TravelBuddyRoute.TripActivities> { backStackEntry ->
+            val tripId = backStackEntry.arguments?.getString("tripId") ?: ""
+            val tripIdLong = tripId.toLongOrNull() ?: -1L
+            val tripActivitiesViewModel = koinViewModel<TripActivitiesViewModel>()
+            val state by tripActivitiesViewModel.state.collectAsStateWithLifecycle()
+
+            LaunchedEffect(tripId) {
+                tripActivitiesViewModel.actions.loadActivities(tripIdLong)
+                tripActivitiesViewModel.actions.loadTripActivityTypes()
+            }
+
+            TripActivitiesScreen(
+                state = state,
+                actions = tripActivitiesViewModel.actions,
                 navController = navController
             )
         }
