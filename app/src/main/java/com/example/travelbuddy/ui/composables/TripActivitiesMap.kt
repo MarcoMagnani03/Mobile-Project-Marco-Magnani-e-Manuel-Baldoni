@@ -44,7 +44,8 @@ data class MapLocation(
 @Composable
 fun MapWithColoredMarkers(
     locations: List<MapLocation>,
-    onMarkerClick: (MapLocation) -> Unit = {}
+    onMarkerClick: (MapLocation) -> Unit = {},
+    selectedLocation: MapLocation? = null
 ) {
     val context = LocalContext.current
 
@@ -63,6 +64,22 @@ fun MapWithColoredMarkers(
         }
 
         isLoading = false
+    }
+
+    LaunchedEffect(selectedLocation) {
+        if(selectedLocation != null){
+            val updatedLocations = withContext(Dispatchers.IO) {
+                geocodeAddresses(
+                    listOf(
+                        selectedLocation
+                    ) as List<MapLocation>, context)
+            }
+            geocodedLocations = updatedLocations
+
+            updatedLocations.firstOrNull()?.latLng?.let { firstLocation ->
+                cameraPositionState.position = CameraPosition.fromLatLngZoom(firstLocation, 12f)
+            }
+        }
     }
 
     Card(

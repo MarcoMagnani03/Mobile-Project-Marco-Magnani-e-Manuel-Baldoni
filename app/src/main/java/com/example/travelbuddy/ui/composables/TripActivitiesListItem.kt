@@ -107,7 +107,7 @@ fun TripActivityListItem(
                         text = {
                             Text("Locate on map")
                         },
-                        onClick = onEditClick,
+                        onClick = onLocateOnMapClick,
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.LocationOn,

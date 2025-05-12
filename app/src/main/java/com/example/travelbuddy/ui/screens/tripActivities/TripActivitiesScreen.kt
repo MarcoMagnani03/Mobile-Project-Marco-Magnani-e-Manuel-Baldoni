@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -24,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +41,7 @@ import com.example.travelbuddy.ui.composables.MapWithColoredMarkers
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
 import com.example.travelbuddy.ui.composables.TripActivityListItem
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -49,10 +52,12 @@ fun TripActivitiesScreen(
     actions: TripActivitiesActions,
     navController: NavController
 ){
-    val scrollState = rememberScrollState()
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
 
     var selectedActivity by remember { mutableStateOf<TripActivity?>(null) }
     var isModalVisible by remember { mutableStateOf(false) }
+    var selectedLocation by remember { mutableStateOf<MapLocation?>(null) }
 
     val activityTypesMap = remember(state.tripActivityTypes) {
         state.tripActivityTypes.associateBy { it.id }
@@ -188,6 +193,7 @@ fun TripActivitiesScreen(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
+            state = listState,
             modifier = Modifier
                 .padding(contentPadding)
                 .padding(horizontal = 12.dp)
@@ -204,7 +210,8 @@ fun TripActivitiesScreen(
                     onMarkerClick = { location ->
                         selectedActivity = location.tripActivity
                         isModalVisible = true
-                    }
+                    },
+                    selectedLocation = selectedLocation
                 )
             }
 
@@ -222,7 +229,13 @@ fun TripActivitiesScreen(
                         showDeleteDialog = true
                     },
                     onLocateOnMapClick = {
-
+                        coroutineScope.launch {
+                            selectedLocation = MapLocation(
+                                address = tripActivity.position.toString(),
+                                tripActivity = tripActivity
+                            )
+                            listState.animateScrollToItem(0)
+                        }
                     }
                 )
             }
