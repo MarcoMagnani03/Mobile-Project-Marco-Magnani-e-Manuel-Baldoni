@@ -36,12 +36,6 @@ sealed class BottomNavItem(
         icon = Icons.Default.Home
     )
 
-    object NewTrip : BottomNavItem(
-        route = TravelBuddyRoute.NewTrip,
-        title = "New Trip",
-        icon = Icons.Default.AddCircle
-    )
-
     object Friends : BottomNavItem(
         route = TravelBuddyRoute.Friend,
         title = "Friends",
@@ -63,7 +57,6 @@ sealed class BottomNavItem(
 
 val bottomNavItems = listOf(
     BottomNavItem.Home,
-    BottomNavItem.NewTrip,
     BottomNavItem.Friends,
     BottomNavItem.Profile,
     BottomNavItem.Settings

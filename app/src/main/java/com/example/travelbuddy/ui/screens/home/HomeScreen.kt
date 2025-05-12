@@ -1,16 +1,25 @@
 package com.example.travelbuddy.ui.screens.home
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.travelbuddy.ui.TravelBuddyRoute
 import com.example.travelbuddy.ui.composables.ActiveTripsSection
 import com.example.travelbuddy.ui.composables.PastTripsSection
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
@@ -36,7 +45,19 @@ fun HomeScreen(
                 canNavigateBack = false
             )
         },
-        bottomBar = { TravelBuddyBottomBar(navController) }
+        bottomBar = { TravelBuddyBottomBar(navController) },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navController.navigate(TravelBuddyRoute.NewTrip) },
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add trip",
+                    tint = Color.White
+                )
+            }
+        }
     ) { contentPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -68,6 +89,8 @@ fun HomeScreen(
                     },
                     navController = navController
                 )
+
+                Spacer(modifier = Modifier.height(70.dp))
             }
         }
     }
