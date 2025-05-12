@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.travelbuddy.data.database.TripActivity
 import com.example.travelbuddy.ui.TravelBuddyRoute
+import com.example.travelbuddy.ui.composables.CopyToClipboardButton
 import com.example.travelbuddy.ui.composables.MapLocation
 import com.example.travelbuddy.ui.composables.MapWithColoredMarkers
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
@@ -122,11 +123,15 @@ fun TripActivitiesScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text("Price per person:", fontWeight = FontWeight.Bold)
-                        Text(selectedActivity?.pricePerPerson.toString() ?: "")
+                        Text(selectedActivity?.pricePerPerson.toString())
                     }
 
                     Text("Location:", fontWeight = FontWeight.Bold)
                     Text(selectedActivity?.position.toString())
+                    CopyToClipboardButton(
+                        textToCopy = selectedActivity?.position.toString(),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
 
                     Spacer(modifier = Modifier.height(10.dp))
 
@@ -206,12 +211,18 @@ fun TripActivitiesScreen(
             items(state.tripActivities) { tripActivity ->
                 TripActivityListItem(
                     tripActivity = tripActivity,
+                    tripActivityType = state.tripActivityTypes.first { tripActivityType ->
+                        tripActivityType.id == tripActivity.tripActivityTypeId
+                    },
                     onEditClick = {
                         navController.navigate(TravelBuddyRoute.EditTripActivity(state.tripId.toString(), tripActivity.id.toString()))
                     },
                     onDeleteClick = {
                         selectedActivity = tripActivity
                         showDeleteDialog = true
+                    },
+                    onLocateOnMapClick = {
+
                     }
                 )
             }
