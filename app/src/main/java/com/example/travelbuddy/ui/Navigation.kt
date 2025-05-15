@@ -19,6 +19,8 @@ import com.example.travelbuddy.ui.screens.camera.CameraCaptureScreen
 import com.example.travelbuddy.ui.screens.camera.ImagePreviewScreen
 import com.example.travelbuddy.ui.screens.code.CodeScreen
 import com.example.travelbuddy.ui.screens.code.CodeViewModel
+import com.example.travelbuddy.ui.screens.discoverEvents.DiscoverEventsScreen
+import com.example.travelbuddy.ui.screens.discoverEvents.EventsViewModel
 import com.example.travelbuddy.ui.screens.editExpense.EditExpenseScreen
 import com.example.travelbuddy.ui.screens.editExpense.EditExpenseViewModel
 import com.example.travelbuddy.ui.screens.editTrip.EditTripScreen
@@ -87,6 +89,7 @@ sealed interface TravelBuddyRoute {
     @Serializable data class EditExpense(val tripId: String, val expenseId: String) : TravelBuddyRoute
     @Serializable data class EditTripActivity(val tripId: String, val tripActivityId: String) : TravelBuddyRoute
     @Serializable data class TripPhotos(val tripId: String) : TravelBuddyRoute
+    @Serializable data class DiscoverEvents(val tripId: String) : TravelBuddyRoute
 }
 
 @Composable
@@ -439,6 +442,23 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
                 state = state,
                 actions = tripPhotosViewModel.actions,
                 navController = navController
+            )
+        }
+
+        composable<TravelBuddyRoute.DiscoverEvents> { backStackEntry ->
+            val tripId = backStackEntry.arguments?.getString("tripId") ?: ""
+            val tripIdLong = tripId.toLongOrNull() ?: -1L
+            val discoverEventsViewModel = koinViewModel<EventsViewModel>()
+            val state by discoverEventsViewModel.state.collectAsStateWithLifecycle()
+
+            LaunchedEffect(tripId) {
+                discoverEventsViewModel.actions.loadTrip(tripIdLong)
+            }
+
+            DiscoverEventsScreen(
+                state = state,
+                actions = discoverEventsViewModel.actions,
+                navController = navController,
             )
         }
     }

@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.example.travelbuddy.data.database.TravelBuddyDatabase
+import com.example.travelbuddy.data.network.PredictHQApiService
+import com.example.travelbuddy.data.repositories.EventsRepository
 import com.example.travelbuddy.data.repositories.ExpensesRepository
 import com.example.travelbuddy.data.repositories.FriendRequestsRepository
 import com.example.travelbuddy.data.repositories.FriendshipsRepository
@@ -20,6 +22,7 @@ import com.example.travelbuddy.data.repositories.UsersRepository
 import com.example.travelbuddy.ui.TravelBuddyViewModel
 import com.example.travelbuddy.ui.screens.budgetOverview.BudgetOverviewViewModel
 import com.example.travelbuddy.ui.screens.code.CodeViewModel
+import com.example.travelbuddy.ui.screens.discoverEvents.EventsViewModel
 import com.example.travelbuddy.ui.screens.editExpense.EditExpenseViewModel
 import com.example.travelbuddy.ui.screens.friend.FriendViewModel
 import com.example.travelbuddy.ui.screens.home.HomeViewModel
@@ -37,6 +40,14 @@ import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
 import com.example.travelbuddy.ui.screens.tripActivities.TripActivitiesViewModel
 import com.example.travelbuddy.ui.screens.tripDetails.TripDetailsViewModel
 import com.example.travelbuddy.ui.screens.tripPhotos.TripPhotosViewModel
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.request.header
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -66,6 +77,24 @@ val appModule = module {
     single { get<TravelBuddyDatabase>().notificationsDAO() }
     single { get<TravelBuddyDatabase>().notificationsTypesDAO() }
     single { get<TravelBuddyDatabase>().photosDAO() }
+    single {
+        HttpClient {
+            install(ContentNegotiation) {
+                json(Json {
+                    prettyPrint = true
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                    coerceInputValues = true
+                })
+            }
+            defaultRequest {
+                header("Authorization", "Bearer Cl1x_upBnRI1Pr3V39FjaMqY9bbJpLOOdTw-H_Vh")
+                contentType(ContentType.Application.Json)
+            }
+        }
+    }
+
+    single { PredictHQApiService(get()) }
 
     single { UsersRepository(get()) }
     single { UserSessionRepository(get()) }
@@ -80,6 +109,7 @@ val appModule = module {
     single { NotificationsRepository(get())}
     single { NotificationsTypeRepository(get())}
     single { PhotosRepository(get())}
+    single { EventsRepository(get())}
 
 
     viewModel { HomeViewModel(get(), get()) }
@@ -102,4 +132,5 @@ val appModule = module {
     viewModel { EditExpenseViewModel(get(),get()) }
     viewModel { EditTripActivityViewModel(get(),get()) }
     viewModel { TripPhotosViewModel(get()) }
+    viewModel { EventsViewModel(get(), get()) }
 }

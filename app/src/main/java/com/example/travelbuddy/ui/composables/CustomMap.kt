@@ -27,13 +27,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.ui.platform.LocalContext
-import com.example.travelbuddy.data.database.TripActivity
-import com.google.maps.android.compose.MapUiSettings
 
 data class MapLocation(
     val address: String,
+    val title: String? = "",
+    val id: String = "",
     var latLng: LatLng? = null,
-    val tripActivity: TripActivity? = null
 )
 
 /**
@@ -74,7 +73,6 @@ fun MapWithColoredMarkers(
                         selectedLocation
                     ), context)
             }
-            geocodedLocations = updatedLocations
 
             updatedLocations.firstOrNull()?.latLng?.let { firstLocation ->
                 cameraPositionState.position = CameraPosition.fromLatLngZoom(firstLocation, 12f)
@@ -101,7 +99,7 @@ fun MapWithColoredMarkers(
                         state = MarkerState(position = position),
                         snippet = "Lat: ${position.latitude}, Lng: ${position.longitude}",
                         icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN),
-                        title = location.tripActivity?.name,
+                        title = location.title,
                         onClick = {
                             onMarkerClick(location)
                             false

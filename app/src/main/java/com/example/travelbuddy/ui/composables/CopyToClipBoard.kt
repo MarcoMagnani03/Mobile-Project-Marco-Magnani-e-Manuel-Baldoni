@@ -22,12 +22,10 @@ fun CopyToClipboardButton(
 ) {
     val context = LocalContext.current
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
-    var copied by remember { mutableStateOf(false) }
 
     Button(
         onClick = {
             clipboardManager.setText(AnnotatedString(textToCopy))
-            copied = true
             Toast.makeText(context, "Location copied", Toast.LENGTH_SHORT).show()
         },
         colors = ButtonColors(

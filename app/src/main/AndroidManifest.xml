@@ -69,4 +69,10 @@
         </intent>
     </queries>
 
+    <queries>
+        <intent>
+            <action android:name="android.settings.WIRELESS_SETTINGS"/>
+        </intent>
+    </queries>
+
 </manifest>

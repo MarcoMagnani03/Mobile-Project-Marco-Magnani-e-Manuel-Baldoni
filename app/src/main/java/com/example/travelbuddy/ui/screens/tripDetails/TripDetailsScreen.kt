@@ -186,7 +186,10 @@ fun TripDetailsScreen(
                     shape = RoundedCornerShape(8.dp),
                     elevation = CardDefaults.cardElevation(
                         defaultElevation = 2.dp
-                    )
+                    ),
+                    onClick = {
+                        navController.navigate(TravelBuddyRoute.TripPhotos(tripId = state.trip?.trip?.id.toString()))
+                    }
                 ) {
                     Column(
                         modifier = Modifier.padding(8.dp).fillMaxSize(),
@@ -217,7 +220,7 @@ fun TripDetailsScreen(
                         defaultElevation = 2.dp
                     ),
                     onClick = {
-                        navController.navigate(TravelBuddyRoute.TripPhotos(tripId = state.trip?.trip?.id.toString()))
+                        navController.navigate(TravelBuddyRoute.DiscoverEvents(tripId = state.trip?.trip?.id.toString()))
                     }
                 ) {
                     Column(

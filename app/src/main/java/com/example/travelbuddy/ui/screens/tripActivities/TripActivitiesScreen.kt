@@ -209,11 +209,14 @@ fun TripActivitiesScreen(
                     locations = state.tripActivities.map { tripActivity ->
                         MapLocation(
                             address = tripActivity.position.toString(),
-                            tripActivity = tripActivity
+                            title = tripActivity.name,
+                            id = tripActivity.id.toString()
                         )
                     },
                     onMarkerClick = { location ->
-                        selectedActivity = location.tripActivity
+                        selectedActivity = state.tripActivities.first{ tripActivity ->
+                            tripActivity.id.toString() == location.id
+                        }
                         isModalVisible = true
                     },
                     selectedLocation = selectedLocation
@@ -241,7 +244,8 @@ fun TripActivitiesScreen(
                         coroutineScope.launch {
                             selectedLocation = MapLocation(
                                 address = tripActivity.position.toString(),
-                                tripActivity = tripActivity
+                                title = tripActivity.name,
+                                id = tripActivity.id.toString()
                             )
                             listState.animateScrollToItem(0)
                         }

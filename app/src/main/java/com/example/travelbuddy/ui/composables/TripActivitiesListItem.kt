@@ -39,7 +39,7 @@ import java.util.Locale
 @Composable
 fun TripActivityListItem(
     tripActivity: TripActivity,
-    tripActivityType: TripActivityType,
+    tripActivityType: TripActivityType?,
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onLocateOnMapClick: () -> Unit,
@@ -61,20 +61,22 @@ fun TripActivityListItem(
                 .padding(start = 16.dp)
         ) {
             Column {
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = Color(0xFFE0F7E5),
-                            shape = RoundedCornerShape(16.dp)
+                if(tripActivityType != null){
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                color = Color(0xFFE0F7E5),
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    ) {
+                        Text(
+                            text = tripActivityType.label,
+                            color = Color(0xFF00A87E),
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Medium
                         )
-                        .padding(horizontal = 6.dp, vertical = 2.dp)
-                ) {
-                    Text(
-                        text = tripActivityType.label,
-                        color = Color(0xFF00A87E),
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Medium
-                    )
+                    }
                 }
 
                 Text(
@@ -90,11 +92,14 @@ fun TripActivityListItem(
                     color = Color.Gray,
                     fontSize = 14.sp
                 )
-                Text(
-                    text = "Price per person: €${tripActivity.pricePerPerson}",
-                    color = Color.Gray,
-                    fontSize = 14.sp
-                )
+
+                if(tripActivity.pricePerPerson != null){
+                    Text(
+                        text = "Price per person: €${tripActivity.pricePerPerson}",
+                        color = Color.Gray,
+                        fontSize = 14.sp
+                    )
+                }
 
                 Text(
                     text = tripActivity.notes.toString(),
