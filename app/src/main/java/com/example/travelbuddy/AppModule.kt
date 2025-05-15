@@ -11,6 +11,7 @@ import com.example.travelbuddy.data.repositories.TripActivitiesTypesRepository
 import com.example.travelbuddy.data.repositories.GroupsRepository
 import com.example.travelbuddy.data.repositories.NotificationsRepository
 import com.example.travelbuddy.data.repositories.NotificationsTypeRepository
+import com.example.travelbuddy.data.repositories.PhotosRepository
 import com.example.travelbuddy.data.repositories.SettingPreferenceRepository
 import com.example.travelbuddy.data.repositories.TripActivitiesRepository
 import com.example.travelbuddy.data.repositories.TripsRepository
@@ -35,6 +36,7 @@ import com.example.travelbuddy.ui.screens.setting.SettingViewModel
 import com.example.travelbuddy.ui.screens.signup.SignUpViewModel
 import com.example.travelbuddy.ui.screens.tripActivities.TripActivitiesViewModel
 import com.example.travelbuddy.ui.screens.tripDetails.TripDetailsViewModel
+import com.example.travelbuddy.ui.screens.tripPhotos.TripPhotosViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -63,6 +65,7 @@ val appModule = module {
     single { get<TravelBuddyDatabase>().friendshipsDAO() }
     single { get<TravelBuddyDatabase>().notificationsDAO() }
     single { get<TravelBuddyDatabase>().notificationsTypesDAO() }
+    single { get<TravelBuddyDatabase>().photosDAO() }
 
     single { UsersRepository(get()) }
     single { UserSessionRepository(get()) }
@@ -76,6 +79,7 @@ val appModule = module {
     single { FriendshipsRepository(get())}
     single { NotificationsRepository(get())}
     single { NotificationsTypeRepository(get())}
+    single { PhotosRepository(get())}
 
 
     viewModel { HomeViewModel(get(), get()) }
@@ -97,4 +101,5 @@ val appModule = module {
     viewModel { TripActivitiesViewModel(get(),get()) }
     viewModel { EditExpenseViewModel(get(),get()) }
     viewModel { EditTripActivityViewModel(get(),get()) }
+    viewModel { TripPhotosViewModel(get()) }
 }

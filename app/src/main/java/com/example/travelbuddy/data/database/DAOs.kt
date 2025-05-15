@@ -179,6 +179,12 @@ interface PhotosDAO {
 
     @Delete
     suspend fun delete(item: Photo)
+
+    @Query("SELECT * FROM Photo WHERE tripId = :tripId ORDER BY creationDate DESC")
+    suspend fun getPhotosByTripId(tripId: Long): List<Photo>
+
+    @Query("SELECT * FROM Photo WHERE id = :photoId")
+    suspend fun getPhotoById(photoId: Long): Photo?
 }
 
 @Dao

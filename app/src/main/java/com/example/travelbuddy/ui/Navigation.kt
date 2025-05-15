@@ -53,6 +53,8 @@ import com.example.travelbuddy.ui.screens.tripActivities.TripActivitiesState
 import com.example.travelbuddy.ui.screens.tripActivities.TripActivitiesViewModel
 import com.example.travelbuddy.ui.screens.tripDetails.TripDetailsScreen
 import com.example.travelbuddy.ui.screens.tripDetails.TripDetailsViewModel
+import com.example.travelbuddy.ui.screens.tripPhotos.TripPhotosScreen
+import com.example.travelbuddy.ui.screens.tripPhotos.TripPhotosViewModel
 import com.example.travelbuddy.utils.ImageUtils
 import com.example.travelbuddy.utils.getBackStackEntryOrNull
 import kotlinx.serialization.Serializable
@@ -84,6 +86,7 @@ sealed interface TravelBuddyRoute {
     @Serializable data class TripActivities(val tripId: String) : TravelBuddyRoute
     @Serializable data class EditExpense(val tripId: String, val expenseId: String) : TravelBuddyRoute
     @Serializable data class EditTripActivity(val tripId: String, val tripActivityId: String) : TravelBuddyRoute
+    @Serializable data class TripPhotos(val tripId: String) : TravelBuddyRoute
 }
 
 @Composable
@@ -417,6 +420,24 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             EditTripActivityScreen(
                 state = state,
                 actions = editTripActivityViewModel.actions,
+                navController = navController
+            )
+        }
+
+        composable<TravelBuddyRoute.TripPhotos> { backStackEntry ->
+            val tripId = backStackEntry.arguments?.getString("tripId") ?: ""
+            val tripIdLong = tripId.toLongOrNull() ?: -1L
+            val tripPhotosViewModel = koinViewModel<TripPhotosViewModel>()
+            val state by tripPhotosViewModel.state.collectAsStateWithLifecycle()
+
+            LaunchedEffect(tripId) {
+                tripPhotosViewModel.actions.setTripId(tripIdLong)
+                tripPhotosViewModel.actions.loadPhotos()
+            }
+
+            TripPhotosScreen(
+                state = state,
+                actions = tripPhotosViewModel.actions,
                 navController = navController
             )
         }

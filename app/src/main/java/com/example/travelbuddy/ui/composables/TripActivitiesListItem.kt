@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.MoreVert
@@ -41,12 +42,15 @@ fun TripActivityListItem(
     tripActivityType: TripActivityType,
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    onLocateOnMapClick: () -> Unit
+    onLocateOnMapClick: () -> Unit,
+    onCardClick: () -> Unit,
+    onAddToCalendar: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        onClick = onCardClick
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -123,6 +127,18 @@ fun TripActivityListItem(
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Edit,
+                                contentDescription = "Edit trip activity",
+                            )
+                        }
+                    ),
+                    TravelBuddyDropDownMenuItem(
+                        text = {
+                            Text("Add to calendar")
+                        },
+                        onClick = onAddToCalendar,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.EditCalendar,
                                 contentDescription = "Edit trip activity",
                             )
                         }

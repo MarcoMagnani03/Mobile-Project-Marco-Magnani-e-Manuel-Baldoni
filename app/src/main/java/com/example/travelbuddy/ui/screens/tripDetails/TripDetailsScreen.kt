@@ -3,17 +3,25 @@ package com.example.travelbuddy.ui.screens.tripDetails
 import TripDetailsCalendar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.LocationSearching
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -163,6 +171,72 @@ fun TripDetailsScreen(
                     showLeaveDialog = true
                 }
             )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(), // constrain Row width
+            ) {
+                Card(
+                    modifier = Modifier
+                        .weight(1f) // evenly divide space
+                        .aspectRatio(1f)
+                        .padding(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    shape = RoundedCornerShape(8.dp),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 2.dp
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(8.dp).fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.PhotoLibrary,
+                            contentDescription = "Go to photos",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            "Trip Photos",
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+                Card(
+                    modifier = Modifier
+                        .weight(1f) // evenly divide space
+                        .aspectRatio(1f)
+                        .padding(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    shape = RoundedCornerShape(8.dp),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 2.dp
+                    ),
+                    onClick = {
+                        navController.navigate(TravelBuddyRoute.TripPhotos(tripId = state.trip?.trip?.id.toString()))
+                    }
+                ) {
+                    Column(
+                        modifier = Modifier.padding(8.dp).fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.LocationSearching,
+                            contentDescription = "Discover events",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            "Discover Events",
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            }
 
             Column (
                 modifier = Modifier.padding(horizontal = 12.dp),

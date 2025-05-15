@@ -1,5 +1,8 @@
 package com.example.travelbuddy.ui.screens.tripActivities
 
+import android.content.Intent
+import android.provider.CalendarContract
+import android.provider.CalendarContract.Events
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
@@ -30,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -52,6 +55,8 @@ fun TripActivitiesScreen(
     actions: TripActivitiesActions,
     navController: NavController
 ){
+    val context = LocalContext.current
+
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -135,7 +140,7 @@ fun TripActivitiesScreen(
                     Text(selectedActivity?.position.toString())
                     CopyToClipboardButton(
                         textToCopy = selectedActivity?.position.toString(),
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.primary
                     )
 
                     Spacer(modifier = Modifier.height(10.dp))
@@ -221,6 +226,10 @@ fun TripActivitiesScreen(
                     tripActivityType = state.tripActivityTypes.first { tripActivityType ->
                         tripActivityType.id == tripActivity.tripActivityTypeId
                     },
+                    onCardClick = {
+                        selectedActivity = tripActivity
+                        isModalVisible = true
+                    },
                     onEditClick = {
                         navController.navigate(TravelBuddyRoute.EditTripActivity(state.tripId.toString(), tripActivity.id.toString()))
                     },
@@ -236,6 +245,17 @@ fun TripActivitiesScreen(
                             )
                             listState.animateScrollToItem(0)
                         }
+                    },
+                    onAddToCalendar = {
+                        val intent = Intent(Intent.ACTION_INSERT).apply {
+                            data = Events.CONTENT_URI
+                            putExtra(Events.TITLE, tripActivity.name)
+                            putExtra(Events.DESCRIPTION, tripActivity.notes + "\nPrice per person: €" + tripActivity.pricePerPerson)
+                            putExtra(Events.EVENT_LOCATION, tripActivity.position)
+                            putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, parseDateToMillis(tripActivity.startDate))
+                            putExtra(CalendarContract.EXTRA_EVENT_END_TIME, parseDateToMillis(tripActivity.endDate))
+                        }
+                        context.startActivity(intent)
                     }
                 )
             }
@@ -256,15 +276,7 @@ private fun parseDate(dateString: String): Date {
     }
 }
 
-private fun formatDateToMonthDay(dateString: String): String {
-    val date = parseDate(dateString)
-    val format = SimpleDateFormat("MMM dd", Locale.getDefault())
-    return format.format(date)
-}
-
-private fun formatTimeRange(startDate: String, endDate: String): String {
-    val start = parseDate(startDate)
-    val end = parseDate(endDate)
-    val timeFormat = SimpleDateFormat("MMM dd", Locale.getDefault())
-    return "${timeFormat.format(start)} - ${timeFormat.format(end)}"
+private fun parseDateToMillis(dateString: String): Long {
+    val format = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+    return format.parse(dateString)?.time ?: 0L
 }

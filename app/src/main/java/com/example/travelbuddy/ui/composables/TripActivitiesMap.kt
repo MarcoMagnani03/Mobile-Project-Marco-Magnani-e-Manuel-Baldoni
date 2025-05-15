@@ -72,7 +72,7 @@ fun MapWithColoredMarkers(
                 geocodeAddresses(
                     listOf(
                         selectedLocation
-                    ) as List<MapLocation>, context)
+                    ), context)
             }
             geocodedLocations = updatedLocations
 
