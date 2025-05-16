@@ -20,7 +20,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
@@ -83,7 +84,6 @@ fun CodeScreen(
                         actions.showError(result.errorMessage)
                     }
                     BiometricResult.Failed -> {
-                        println("Arriva qui")
                         actions.showError("Authentication failed")
                     }
                     BiometricResult.Cancelled -> {
@@ -101,14 +101,17 @@ fun CodeScreen(
         }
     }
 
+    val scrollState = rememberScrollState()
+
     Scaffold { contentPadding ->
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .padding(contentPadding)
                 .padding(12.dp)
                 .fillMaxSize()
+                .verticalScroll(scrollState),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
             Text(
                 text = screenTitle,

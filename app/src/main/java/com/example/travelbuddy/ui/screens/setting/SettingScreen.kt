@@ -2,17 +2,17 @@ package com.example.travelbuddy.ui.screens.setting
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.travelbuddy.ui.TravelBuddyRoute
 import com.example.travelbuddy.ui.composables.CardWithRow
@@ -30,6 +30,7 @@ fun SettingScreen(
     actions: SettingActions,
     navController: NavController
 ) {
+    val scrollState = rememberScrollState()
     Scaffold(
         topBar = {
             TravelBuddyTopBar(
@@ -46,6 +47,7 @@ fun SettingScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp)
+                .verticalScroll(scrollState),
         ) {
 
             Text("Privacy", style = MaterialTheme.typography.bodyLarge)

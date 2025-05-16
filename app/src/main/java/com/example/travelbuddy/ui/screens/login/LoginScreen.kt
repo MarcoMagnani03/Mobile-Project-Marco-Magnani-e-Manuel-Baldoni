@@ -25,8 +25,9 @@ import com.example.travelbuddy.ui.composables.InputField
 import com.example.travelbuddy.ui.composables.InputFieldType
 import com.example.travelbuddy.ui.composables.TravelBuddyButton
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.LaunchedEffect
-import com.example.travelbuddy.ui.composables.ButtonStyle
+import androidx.compose.foundation.rememberScrollState
 import com.example.travelbuddy.ui.composables.GoogleSignInButton
 
 @Composable
@@ -43,6 +44,9 @@ fun LoginScreen(
             actions.resetNavigation()
         }
     }
+
+    val scrollState = rememberScrollState()
+
     Scaffold { contentPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -51,6 +55,7 @@ fun LoginScreen(
                 .padding(contentPadding)
                 .padding(12.dp)
                 .fillMaxSize()
+                .verticalScroll(scrollState),
         ) {
             Text(
                 text = "Travel Buddy",
