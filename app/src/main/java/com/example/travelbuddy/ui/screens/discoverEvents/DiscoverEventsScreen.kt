@@ -14,8 +14,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Addchart
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -24,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,6 +36,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,6 +46,7 @@ import com.example.travelbuddy.ui.composables.CopyToClipboardButton
 import com.example.travelbuddy.ui.composables.MapLocation
 import com.example.travelbuddy.ui.composables.MapWithColoredMarkers
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
+import com.example.travelbuddy.ui.composables.TravelBuddyButton
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -62,6 +67,121 @@ fun DiscoverEventsScreen(
     var selectedEvent by remember { mutableStateOf<Event?>(null) }
     var selectedLocation by remember { mutableStateOf<MapLocation?>(null) }
     var isModalVisible by remember { mutableStateOf(false) }
+
+    if (isModalVisible && selectedEvent != null) {
+        AlertDialog(
+            onDismissRequest = { isModalVisible = false },
+            title = {
+                Text(
+                    text = selectedEvent?.title ?: "Event",
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+            },
+            text = {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    selectedEvent!!.price?.let {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Event price: ",
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
+
+                            Text(
+                                text = "€${selectedEvent!!.price}",
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.LocationOn,
+                            contentDescription = "Location",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                text = selectedEvent!!.address,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            CopyToClipboardButton(
+                                textToCopy = selectedEvent!!.address,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.CalendarMonth,
+                            contentDescription = "Date",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = selectedEvent!!.startDateTime.format(DateTimeFormatter.ofPattern("yyyy MMM dd, h:mm a")),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = selectedEvent!!.description.toString(),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(top = 8.dp),
+                        fontSize = 14.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    TravelBuddyButton(
+                        label = "Add to trip",
+                        onClick = {
+
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Addchart,
+                                contentDescription = "Add to trip",
+                            )
+                        }
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        isModalVisible = false
+                        selectedEvent = null
+                    },
+                    modifier = Modifier.padding(0.dp)
+                ) {
+                    Text("Close")
+                }
+            }
+        )
+    }
 
     LaunchedEffect(state.trip) {
         if(state.trip != null){
@@ -256,6 +376,21 @@ fun EventCard(
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(top = 8.dp),
                 fontSize = 14.sp
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            TravelBuddyButton(
+                label = "Add to trip",
+                onClick = {
+
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Addchart,
+                        contentDescription = "Add to trip",
+                    )
+                }
             )
         }
     }

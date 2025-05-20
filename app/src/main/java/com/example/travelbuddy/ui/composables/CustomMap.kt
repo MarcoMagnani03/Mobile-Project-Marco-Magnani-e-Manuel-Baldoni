@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.ui.platform.LocalContext
+import com.google.android.gms.maps.model.LatLngBounds
 
 data class MapLocation(
     val address: String,
@@ -52,32 +53,37 @@ fun MapWithColoredMarkers(
     var isLoading by remember { mutableStateOf(true) }
     val cameraPositionState = rememberCameraPositionState()
 
-    LaunchedEffect(locations) {
+    LaunchedEffect(locations, selectedLocation) {
+        isLoading = true
+
         val updatedLocations = withContext(Dispatchers.IO) {
             geocodeAddresses(locations, context)
         }
         geocodedLocations = updatedLocations
 
-        updatedLocations.firstOrNull()?.latLng?.let { firstLocation ->
-            cameraPositionState.position = CameraPosition.fromLatLngZoom(firstLocation, 12f)
-        }
-
-        isLoading = false
-    }
-
-    LaunchedEffect(selectedLocation) {
         if(selectedLocation != null){
-            val updatedLocations = withContext(Dispatchers.IO) {
-                geocodeAddresses(
-                    listOf(
-                        selectedLocation
-                    ), context)
-            }
-
-            updatedLocations.firstOrNull()?.latLng?.let { firstLocation ->
+            updatedLocations.firstOrNull { loc ->
+                loc.id == selectedLocation.id
+            }?.latLng?.let { firstLocation ->
                 cameraPositionState.position = CameraPosition.fromLatLngZoom(firstLocation, 12f)
             }
         }
+        else {
+            val boundsBuilder = LatLngBounds.builder()
+            val validLocations = updatedLocations.mapNotNull { it.latLng }
+            if (validLocations.isNotEmpty()) {
+                validLocations.forEach { boundsBuilder.include(it) }
+                val bounds = boundsBuilder.build()
+
+                // Center of the bounds
+                val center = bounds.center
+
+                // Adjust zoom level as needed (12f is arbitrary — you could use a utility function)
+                cameraPositionState.position = CameraPosition.fromLatLngZoom(center, getBoundsZoomLevel(bounds))
+            }
+        }
+
+        isLoading = false
     }
 
     Card(
@@ -136,5 +142,20 @@ suspend fun geocodeAddresses(
             e.printStackTrace()
             location
         }
+    }
+}
+
+private fun getBoundsZoomLevel(bounds: LatLngBounds): Float {
+    // Very basic logic — you can fine-tune this
+    val latDiff = bounds.northeast.latitude - bounds.southwest.latitude
+    val lngDiff = bounds.northeast.longitude - bounds.southwest.longitude
+    val maxDiff = maxOf(latDiff, lngDiff)
+
+    return when {
+        maxDiff < 0.005 -> 15f
+        maxDiff < 0.05 -> 13f
+        maxDiff < 0.1 -> 11f
+        maxDiff < 1.0 -> 9f
+        else -> 6f
     }
 }
