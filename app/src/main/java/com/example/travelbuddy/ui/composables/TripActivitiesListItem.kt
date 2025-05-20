@@ -56,11 +56,13 @@ fun TripActivityListItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .fillMaxWidth(1f)
+                .fillMaxWidth()
                 .padding(vertical = 16.dp)
                 .padding(start = 16.dp)
         ) {
-            Column {
+            Column(
+                modifier = Modifier.weight(1f) // Ensures it doesn't take up infinite width
+            ) {
                 if(tripActivityType != null){
                     Box(
                         modifier = Modifier

@@ -81,7 +81,15 @@ sealed interface TravelBuddyRoute {
     @Serializable data object ChangePin: TravelBuddyRoute
     @Serializable data class TripDetails(val tripId: String) : TravelBuddyRoute
     @Serializable data class EditTrip(val tripId: String) : TravelBuddyRoute
-    @Serializable data class NewTripActivity(val tripId: String) : TravelBuddyRoute
+    @Serializable data class NewTripActivity(
+        val tripId: String,
+        val name: String? = "",
+        val startDate: String? = "",
+        val endDate: String? = "",
+        val pricePerPerson: Double? = 0.0,
+        val position: String? = "",
+        val notes: String? = ""
+    ) : TravelBuddyRoute
     @Serializable data class NewExpense(val tripId: String) : TravelBuddyRoute
     @Serializable data class ViewProfile(val userEmail: String) : TravelBuddyRoute
     @Serializable data class BudgetOverview(val tripId: String) : TravelBuddyRoute
@@ -304,6 +312,36 @@ fun TravelBuddyNavGraph(navController: NavHostController) {
             LaunchedEffect(tripId) {
                 newTripActivityViewModel.actions.setTripId(tripIdLong)
                 newTripActivityViewModel.actions.loadTripActivityTypes()
+
+                val name = backStackEntry.arguments?.getString("name")
+                if(name != null){
+                    newTripActivityViewModel.actions.setTripActivityName(name)
+                }
+
+                val startDate = backStackEntry.arguments?.getString("startDate")
+                if(startDate != null){
+                    newTripActivityViewModel.actions.setStartDate(startDate)
+                }
+
+                val endDate = backStackEntry.arguments?.getString("endDate")
+                if(endDate != null){
+                    newTripActivityViewModel.actions.setEndDate(endDate)
+                }
+
+                val pricePerPerson = backStackEntry.arguments?.getString("pricePerPerson")
+                if(pricePerPerson != null){
+                    newTripActivityViewModel.actions.setPricePerPerson(pricePerPerson.toDouble())
+                }
+
+                val position = backStackEntry.arguments?.getString("position")
+                if(position != null){
+                    newTripActivityViewModel.actions.setPosition(position)
+                }
+
+                val notes = backStackEntry.arguments?.getString("notes")
+                if(notes != null){
+                    newTripActivityViewModel.actions.setNotes(notes)
+                }
             }
 
             NewTripActivityScreen(

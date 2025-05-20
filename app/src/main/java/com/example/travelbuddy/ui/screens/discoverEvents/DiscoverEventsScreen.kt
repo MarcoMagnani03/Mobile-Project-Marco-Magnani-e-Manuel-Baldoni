@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.travelbuddy.data.models.Event
+import com.example.travelbuddy.ui.TravelBuddyRoute
 import com.example.travelbuddy.ui.composables.CopyToClipboardButton
 import com.example.travelbuddy.ui.composables.MapLocation
 import com.example.travelbuddy.ui.composables.MapWithColoredMarkers
@@ -158,7 +159,15 @@ fun DiscoverEventsScreen(
                     TravelBuddyButton(
                         label = "Add to trip",
                         onClick = {
-
+                            navController.navigate(TravelBuddyRoute.NewTripActivity(
+                                tripId = state.trip?.id.toString(),
+                                name = selectedEvent!!.title,
+                                startDate = selectedEvent!!.startDateTime.toString(),
+                                endDate = selectedEvent!!.endDateTime.toString(),
+                                pricePerPerson = selectedEvent!!.price,
+                                position = selectedEvent!!.address,
+                                notes = selectedEvent!!.description
+                            ))
                         },
                         leadingIcon = {
                             Icon(
@@ -281,7 +290,9 @@ fun DiscoverEventsScreen(
                                     )
                                     listState.animateScrollToItem(0)
                                 }
-                            }
+                            },
+                            navController = navController,
+                            tripId = state.trip?.id ?: 0
                         )
                     }
                 }
@@ -293,7 +304,9 @@ fun DiscoverEventsScreen(
 @Composable
 fun EventCard(
     event: Event,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    navController: NavController,
+    tripId: Long
 ) {
     Card(
         modifier = Modifier
@@ -383,7 +396,15 @@ fun EventCard(
             TravelBuddyButton(
                 label = "Add to trip",
                 onClick = {
-
+                    navController.navigate(TravelBuddyRoute.NewTripActivity(
+                        tripId = tripId.toString(),
+                        name = event.title,
+                        startDate = event.startDateTime.toString(),
+                        endDate = event.endDateTime.toString(),
+                        pricePerPerson = event.price,
+                        position = event.address,
+                        notes = event.description
+                    ))
                 },
                 leadingIcon = {
                     Icon(
