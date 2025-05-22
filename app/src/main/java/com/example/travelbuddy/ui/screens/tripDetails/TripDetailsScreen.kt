@@ -116,6 +116,33 @@ fun TripDetailsScreen(
         )
     }
 
+    var showAddToGroup by remember { mutableStateOf(false) }
+
+    if (showAddToGroup) {
+        AlertDialog(
+            onDismissRequest = { showAddToGroup = false },
+            title = { Text("Add friends to trip", style = MaterialTheme.typography.headlineLarge) },
+            text = {
+
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showAddToGroup = false
+
+                    }
+                ) {
+                    Text("Add", color = MaterialTheme.colorScheme.primary)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showAddToGroup = false }) {
+                    Text("Cancel", color = Color.Red)
+                }
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
             TravelBuddyTopBar(
@@ -162,9 +189,9 @@ fun TripDetailsScreen(
             )
 
             TripGroupMembers(
-                members = state.trip?.users ?: emptyList(),
+                members = state.trip?.usersWithState ?: emptyList(),
                 onAddMemberClick = {
-
+                    showAddToGroup = true
                 },
                 onLeaveGroupClick = {
                     showLeaveDialog = true

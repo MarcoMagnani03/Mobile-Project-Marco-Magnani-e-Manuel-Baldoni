@@ -221,7 +221,8 @@ data class TripWithExpenses(
 @Entity(primaryKeys = ["userEmail", "tripId"])
 data class Group(
     val userEmail: String,
-    val tripId: Long
+    val tripId: Long,
+    val state: Boolean
 )
 
 data class UserWithTrips(
@@ -304,7 +305,12 @@ data class TripWithTripActivitiesAndExpenses(
     val expenses: List<Expense>
 )
 
-data class TripWithActivitiesAndExpensesAndPhotosAndUsers(
+data class UserWithGroupState(
+    @Embedded val user: User,
+    val state: Boolean
+)
+
+data class TripWithActivitiesExpensesAndPhotos(
     @Embedded val trip: Trip,
 
     @Relation(
@@ -323,16 +329,14 @@ data class TripWithActivitiesAndExpensesAndPhotosAndUsers(
         parentColumn = "id",
         entityColumn = "tripId"
     )
-    val photos: List<Photo>,
+    val photos: List<Photo>
+)
 
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "email",
-        associateBy = Junction(
-            value = Group::class,
-            parentColumn = "tripId",
-            entityColumn = "userEmail"
-        )
-    )
-    val users: List<User>
+// Data class finale con UserWithGroupState
+data class TripWithActivitiesAndExpensesAndPhotosAndUsers(
+    @Embedded val trip: Trip,
+    val activities: List<TripActivity>,
+    val expenses: List<Expense>,
+    val photos: List<Photo>,
+    val usersWithState: List<UserWithGroupState>
 )

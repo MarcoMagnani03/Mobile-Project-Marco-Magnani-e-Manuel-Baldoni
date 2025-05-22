@@ -27,22 +27,22 @@ VALUES
 ---------------------------------------------------------------
 
 -- ASSOCIAZIONE VIAGGI UTENTE
-INSERT INTO `Group` (userEmail, tripId)
+INSERT INTO `Group` (userEmail, tripId, state)
 VALUES
-    ('test@test.it', 1),
-    ('marco.magnani@gmail.com', 1),
-    ('test@test.it', 2),
-    ('marco.magnani@gmail.com', 2),
-    ('test@test.it', 3),
-    ('marco.magnani@gmail.com', 4),
-    ('test@test.it', 5),
-    ('marco.magnani@gmail.com', 6),
-    ('test@test.it', 7),
-    ('marco.magnani@gmail.com', 8),
-    ('test@test.it', 9),
-    ('marco.magnani@gmail.com', 10),
-    ('test@test.it', 11),
-    ('marco.magnani@gmail.com', 11);
+    ('test@test.it', 1, true),
+    ('marco.magnani@gmail.com', 1, true),
+    ('test@test.it', 2, true),
+    ('marco.magnani@gmail.com', 2, true),
+    ('test@test.it', 3, true),
+    ('marco.magnani@gmail.com', 4, true),
+    ('test@test.it', 5, true),
+    ('marco.magnani@gmail.com', 6, true),
+    ('test@test.it', 7, true),
+    ('marco.magnani@gmail.com', 8, true),
+    ('test@test.it', 9, true),
+    ('marco.magnani@gmail.com', 10, true),
+    ('test@test.it', 11, true),
+    ('marco.magnani@gmail.com', 11, true);
 
 ---------------------------------------------------------------
 

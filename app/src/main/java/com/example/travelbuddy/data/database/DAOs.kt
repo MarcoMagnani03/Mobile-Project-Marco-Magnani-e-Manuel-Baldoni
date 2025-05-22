@@ -17,40 +17,31 @@ interface TripsDAO {
     @Query("SELECT * FROM Trip WHERE id = :tripId")
     suspend fun getTripById(tripId: Long): Trip?
 
-    @Query("SELECT * FROM Trip")
-    suspend fun getAllTrips(): List<Trip>
-
-    @Transaction
-    @Query("SELECT * FROM Trip WHERE id = :tripId")
-    suspend fun getTripWithActivitiesById(tripId: Long): TripWithTripActivities?
-
-    @Transaction
-    @Query("SELECT * FROM Trip WHERE id = :tripId")
-    suspend fun getTripWithActivitiesAndExpensesById(tripId: Long): TripWithTripActivitiesAndExpenses?
-
-    @Transaction
-    @Query("SELECT * FROM Trip WHERE id = :tripId")
-    suspend fun getTripWithAllRelationsById(tripId: Long): TripWithActivitiesAndExpensesAndPhotosAndUsers?
-
-    @Transaction
-    @Query("SELECT * FROM Trip")
-    suspend fun getAllTripsWithAllRelations(): List<TripWithActivitiesAndExpensesAndPhotosAndUsers>
-
-    @Transaction
     @Query("""
-        SELECT t.* FROM Trip t 
-        INNER JOIN `Group` g ON t.id = g.tripId 
-        WHERE g.userEmail = :userEmail
-    """)
-    suspend fun getTripsForUser(userEmail: String): List<Trip>
+    SELECT u.*, g.state
+    FROM User u
+    INNER JOIN `Group` g ON u.email = g.userEmail
+    WHERE g.tripId = :tripId
+""")
+    suspend fun getUsersWithStateForTrip(tripId: Long): List<UserWithGroupState>
 
+    // Query per ottenere il trip completo
     @Transaction
-    @Query("""
-        SELECT t.* FROM Trip t 
-        INNER JOIN `Group` g ON t.id = g.tripId 
-        WHERE g.userEmail = :userEmail
-    """)
-    suspend fun getTripsWithAllRelationsForUser(userEmail: String): List<TripWithActivitiesAndExpensesAndPhotosAndUsers>
+    @Query("SELECT * FROM Trip WHERE id = :tripId")
+    suspend fun getTripWithActivitiesExpensesAndPhotos(tripId: Long): TripWithActivitiesExpensesAndPhotos
+
+    suspend fun getTripCompleteWithUserStates(tripId: Long): TripWithActivitiesAndExpensesAndPhotosAndUsers? {
+        val tripWithDetails = getTripWithActivitiesExpensesAndPhotos(tripId) ?: return null
+        val usersWithState = getUsersWithStateForTrip(tripId)
+
+        return TripWithActivitiesAndExpensesAndPhotosAndUsers(
+            trip = tripWithDetails.trip,
+            activities = tripWithDetails.activities,
+            expenses = tripWithDetails.expenses,
+            photos = tripWithDetails.photos,
+            usersWithState = usersWithState
+        )
+    }
 }
 
 @Dao
@@ -161,8 +152,19 @@ interface UsersDAO {
     }
 
     @Transaction
-    @Query("SELECT * FROM User WHERE email = :email")
-    suspend fun getUserWithTrips(email: String): UserWithTrips?
+    @Query("""
+    SELECT t.*
+    FROM Trip t
+    INNER JOIN `Group` g ON t.id = g.tripId
+    WHERE g.userEmail = :email AND g.state = 1
+""")
+    suspend fun getActiveTripsWithDetailsForUser(email: String): List<TripWithTripActivitiesAndExpenses>
+
+    suspend fun getUserWithActiveTrips(email: String): UserWithTrips? {
+        val user = getUserByEmail(email) ?: return null
+        val activeTrips = getActiveTripsWithDetailsForUser(email)
+        return UserWithTrips(user, activeTrips)
+    }
 
     @Query("""
     SELECT * FROM User 

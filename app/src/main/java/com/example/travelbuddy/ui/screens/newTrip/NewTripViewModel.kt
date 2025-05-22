@@ -127,7 +127,8 @@ class NewTripViewModel(
 
                             val newGroup = Group(
                                 userEmail = email,
-                                tripId = tripId
+                                tripId = tripId,
+                                state = true
                             )
 
                             groupsRepository.upsert(newGroup)

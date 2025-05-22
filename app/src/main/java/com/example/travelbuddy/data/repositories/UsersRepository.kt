@@ -80,7 +80,7 @@ class UsersRepository(
 
     suspend fun hasPin(email: String): Boolean = dao.hasPin(email)
 
-    suspend fun getUserWithTrips(email: String): UserWithTrips? = dao.getUserWithTrips(email)
+    suspend fun getUserWithTrips(email: String): UserWithTrips? = dao.getUserWithActiveTrips(email)
 
     suspend fun editUser(
         oldEmail: String,

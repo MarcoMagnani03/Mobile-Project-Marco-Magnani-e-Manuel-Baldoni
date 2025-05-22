@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.travelbuddy.data.database.TripActivity
 import com.example.travelbuddy.data.database.TripActivityType
+import com.example.travelbuddy.ui.theme.Green20
 import com.example.travelbuddy.utils.formatDateToMonthDay
 import com.example.travelbuddy.utils.formatTimeRange
 
@@ -61,14 +62,14 @@ fun TripActivityListItem(
                     Box(
                         modifier = Modifier
                             .background(
-                                color = Color(0xFFE0F7E5),
+                                color = Green20,
                                 shape = RoundedCornerShape(16.dp)
                             )
                             .padding(horizontal = 6.dp, vertical = 2.dp)
                     ) {
                         Text(
                             text = tripActivityType.label,
-                            color = Color(0xFF00A87E),
+                            color = MaterialTheme.colorScheme.primary,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Medium
                         )

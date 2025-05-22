@@ -29,6 +29,7 @@ import androidx.navigation.NavController
 import com.example.travelbuddy.data.database.Trip
 import com.example.travelbuddy.data.database.TripWithTripActivitiesAndExpenses
 import com.example.travelbuddy.ui.TravelBuddyRoute
+import com.example.travelbuddy.ui.theme.Green20
 
 @Composable
 fun ActiveTripCard(
@@ -70,14 +71,14 @@ fun ActiveTripCard(
                 Box(
                     modifier = Modifier
                         .background(
-                            color = Color(0xFFE0F7E5),
+                            color = Green20,
                             shape = RoundedCornerShape(16.dp)
                         )
                         .padding(horizontal = 12.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = "In corso",
-                        color = Color(0xFF00A87E),
+                        text = "In progress",
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium
                     )

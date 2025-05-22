@@ -1,6 +1,8 @@
 package com.example.travelbuddy.ui.composables
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,13 +24,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.travelbuddy.data.database.User
+import androidx.compose.ui.unit.sp
+import com.example.travelbuddy.data.database.UserWithGroupState
+import com.example.travelbuddy.ui.theme.Green20
+import com.example.travelbuddy.ui.theme.Orange
 
 @Composable
 fun TripGroupMembers(
-    members: List<User>,
+    members: List<UserWithGroupState>,
     onAddMemberClick: () -> Unit,
     onLeaveGroupClick: () -> Unit
 ) {
@@ -60,7 +66,10 @@ fun TripGroupMembers(
             Spacer(modifier = Modifier.height(8.dp))
 
             members.forEach { member ->
-                MemberRow(name = "${member.firstname} ${member.lastname}")
+                MemberRow(
+                    name = "${member.user.firstname} ${member.user.lastname}",
+                    state = member.state
+                )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -97,23 +106,67 @@ fun TripGroupMembers(
 @Composable
 private fun MemberRow(
     name: String,
+    state: Boolean,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = Icons.Default.Person,
-            contentDescription = null,
-            tint = Color(0xFF00A97F),
-            modifier = Modifier.size(24.dp)
-        )
+    if(state){
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.size(24.dp)
+            )
 
-        Text(
-            text = name,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(start = 16.dp)
-        )
+            Text(
+                text = name,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+        }
+    }
+    else {
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.size(24.dp)
+            )
+
+            Text(
+                text = name,
+                style = MaterialTheme.typography.bodyLarge,
+                fontStyle = FontStyle.Italic,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+
+            Row (
+                modifier = Modifier.fillMaxWidth(1f),
+                horizontalArrangement = Arrangement.End
+            ){
+                Box(
+                    modifier = Modifier
+                        .background(
+                            color = Orange,
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = "Pending",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
     }
 }
