@@ -7,6 +7,7 @@ import com.example.travelbuddy.data.database.Group
 import com.example.travelbuddy.data.repositories.GroupsRepository
 import com.example.travelbuddy.data.repositories.TripsRepository
 import com.example.travelbuddy.data.repositories.UserSessionRepository
+import com.example.travelbuddy.utils.parseDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -27,7 +28,8 @@ data class EditTripState(
         get() = tripName.isNotBlank() &&
                 destination.isNotBlank() &&
                 startDate.isNotBlank() &&
-                endDate.isNotBlank()
+                endDate.isNotBlank() &&
+                parseDate(startDate).before(parseDate(endDate))
 }
 
 interface EditTripActions {
@@ -67,10 +69,24 @@ class EditTripViewModel(
 
         override fun setStartDate(value: String) {
             _state.update { it.copy(startDate = value) }
+
+            if(parseDate(_state.value.startDate).after(parseDate(_state.value.endDate))){
+                setErrorMessage("Start date must be before end date")
+            }
+            else{
+                setErrorMessage("")
+            }
         }
 
         override fun setEndDate(value: String) {
             _state.update { it.copy(endDate = value) }
+
+            if(parseDate(_state.value.startDate).after(parseDate(_state.value.endDate))){
+                setErrorMessage("End date must be after start date")
+            }
+            else{
+                setErrorMessage("")
+            }
         }
 
         override fun setBudget(value: Double) {

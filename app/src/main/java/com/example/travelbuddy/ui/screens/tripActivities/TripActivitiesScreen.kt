@@ -44,6 +44,7 @@ import com.example.travelbuddy.ui.composables.MapWithColoredMarkers
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
 import com.example.travelbuddy.ui.composables.TripActivityListItem
+import com.example.travelbuddy.utils.parseDateToMillis
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -269,18 +270,4 @@ fun TripActivitiesScreen(
             }
         }
     }
-}
-
-private fun parseDate(dateString: String): Date {
-    val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    return try {
-        format.parse(dateString) ?: Date()
-    } catch (e: Exception) {
-        Date()
-    }
-}
-
-private fun parseDateToMillis(dateString: String): Long {
-    val format = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-    return format.parse(dateString)?.time ?: 0L
 }

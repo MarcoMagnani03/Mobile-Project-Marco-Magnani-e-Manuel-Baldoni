@@ -36,7 +36,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,10 +49,7 @@ import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
 import com.example.travelbuddy.ui.composables.TravelBuddyButton
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
-import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -415,26 +411,4 @@ fun EventCard(
             )
         }
     }
-}
-
-private fun parseDate(dateString: String): Date {
-    val format = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-    return try {
-        format.parse(dateString) ?: Date()
-    } catch (e: Exception) {
-        Date()
-    }
-}
-
-private fun formatDateToMonthDay(dateString: String): String {
-    val date = parseDate(dateString)
-    val format = SimpleDateFormat("MMM dd yy", Locale.getDefault())
-    return format.format(date)
-}
-
-private fun formatTimeRange(startDate: String, endDate: String): String {
-    val start = parseDate(startDate)
-    val end = parseDate(endDate)
-    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-    return "${timeFormat.format(start)} - ${timeFormat.format(end)}"
 }

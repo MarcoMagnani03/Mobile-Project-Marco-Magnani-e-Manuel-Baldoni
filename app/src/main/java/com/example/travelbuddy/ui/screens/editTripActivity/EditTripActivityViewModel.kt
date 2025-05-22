@@ -6,6 +6,7 @@ import com.example.travelbuddy.data.database.TripActivityType
 import com.example.travelbuddy.data.database.TripActivity
 import com.example.travelbuddy.data.repositories.TripActivitiesTypesRepository
 import com.example.travelbuddy.data.repositories.TripActivitiesRepository
+import com.example.travelbuddy.utils.parseDateTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -26,7 +27,10 @@ data class EditTripActivityState(
     val isLoading: Boolean = false,
 ) {
     val canSubmit: Boolean
-        get() = tripActivityName.isNotBlank()
+        get() = tripActivityName.isNotBlank() &&
+                startDate.isNotBlank() &&
+                endDate.isNotBlank() &&
+                parseDateTime(startDate).before(parseDateTime(endDate))
 }
 
 interface EditTripActivityActions {
@@ -68,10 +72,24 @@ class EditTripActivityViewModel(
 
         override fun setStartDate(value: String) {
             _state.update { it.copy(startDate = value) }
+
+            if(parseDateTime(_state.value.startDate).after(parseDateTime(_state.value.endDate))){
+                setErrorMessage("Start date must be before end date")
+            }
+            else{
+                setErrorMessage("")
+            }
         }
 
         override fun setEndDate(value: String) {
             _state.update { it.copy(endDate = value) }
+
+            if(parseDateTime(_state.value.startDate).after(parseDateTime(_state.value.endDate))){
+                setErrorMessage("End date must be after start date")
+            }
+            else{
+                setErrorMessage("")
+            }
         }
 
         override fun setTripActivityTypeId(value: String) {

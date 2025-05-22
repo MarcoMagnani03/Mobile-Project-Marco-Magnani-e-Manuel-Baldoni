@@ -5,13 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.travelbuddy.data.database.Expense
 import com.example.travelbuddy.data.repositories.ExpensesRepository
 import com.example.travelbuddy.data.repositories.TripsRepository
-import com.example.travelbuddy.data.repositories.UsersRepository
+import com.example.travelbuddy.utils.formatTimeRange
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 data class BudgetOverviewState(
     val tripId: Long = 0,
@@ -105,21 +102,5 @@ class BudgetOverviewViewModel(
                 }
             }
         }
-    }
-
-    private fun parseDate(dateString: String): Date {
-        val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        return try {
-            format.parse(dateString) ?: Date()
-        } catch (e: Exception) {
-            Date()
-        }
-    }
-
-    private fun formatTimeRange(startDate: String, endDate: String): String {
-        val start = parseDate(startDate)
-        val end = parseDate(endDate)
-        val timeFormat = SimpleDateFormat("MMM dd", Locale.getDefault())
-        return "${timeFormat.format(start)} - ${timeFormat.format(end)}"
     }
 }

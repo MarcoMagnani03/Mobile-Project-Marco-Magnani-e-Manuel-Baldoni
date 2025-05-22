@@ -1,3 +1,5 @@
+package com.example.travelbuddy.ui.composables
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,12 +24,13 @@ import android.graphics.BitmapFactory
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Upcoming
 import androidx.compose.material3.Icon
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontStyle
 import com.example.travelbuddy.data.database.TripActivity
 import com.example.travelbuddy.data.database.TripActivityType
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.travelbuddy.utils.extractDay
+import com.example.travelbuddy.utils.formatDateToMonthDay
+import com.example.travelbuddy.utils.formatTimeRange
+import com.example.travelbuddy.utils.parseDate
 
 @Composable
 fun TripDetailsCalendar(
@@ -177,34 +180,6 @@ fun ActivityItem(
             }
         }
     }
-}
-
-private fun parseDate(dateString: String): Date {
-    val format = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-    return try {
-        format.parse(dateString) ?: Date()
-    } catch (e: Exception) {
-        Date()
-    }
-}
-
-private fun extractDay(dateString: String): String {
-    val date = parseDate(dateString)
-    val dayFormat = SimpleDateFormat("MMM dd", Locale.getDefault())
-    return dayFormat.format(date)
-}
-
-private fun formatDateToMonthDay(dateString: String): String {
-    val date = parseDate(dateString)
-    val format = SimpleDateFormat("MMM dd", Locale.getDefault())
-    return format.format(date)
-}
-
-private fun formatTimeRange(startDate: String, endDate: String): String {
-    val start = parseDate(startDate)
-    val end = parseDate(endDate)
-    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-    return "${timeFormat.format(start)} - ${timeFormat.format(end)}"
 }
 
 @Composable

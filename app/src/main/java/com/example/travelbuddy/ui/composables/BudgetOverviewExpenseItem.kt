@@ -30,8 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.travelbuddy.data.database.Expense
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.example.travelbuddy.utils.formatDate
 
 @Composable
 fun ExpenseItem(
@@ -145,17 +144,5 @@ fun ExpenseItem(
                 }
             }
         }
-    }
-}
-
-private fun formatDate(dateString: String): String {
-    val inputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    val outputFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-
-    return try {
-        val date = inputFormat.parse(dateString)
-        date?.let { outputFormat.format(it) } ?: dateString
-    } catch (e: Exception) {
-        dateString
     }
 }

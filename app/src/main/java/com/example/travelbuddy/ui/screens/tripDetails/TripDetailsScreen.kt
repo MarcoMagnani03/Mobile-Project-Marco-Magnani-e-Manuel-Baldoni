@@ -1,6 +1,5 @@
 package com.example.travelbuddy.ui.screens.tripDetails
 
-import TripDetailsCalendar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,7 +13,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocationSearching
@@ -43,11 +41,12 @@ import com.example.travelbuddy.ui.composables.ButtonStyle
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
 import com.example.travelbuddy.ui.composables.TravelBuddyButton
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
+import com.example.travelbuddy.ui.composables.TripDetailsCalendar
 import com.example.travelbuddy.ui.composables.TripDetailsQuickBalance
 import com.example.travelbuddy.ui.composables.TripGroupMembers
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
+import com.example.travelbuddy.utils.formatTimeRange
+import com.example.travelbuddy.utils.parseDate
 
 @Composable
 fun TripDetailsScreen(
@@ -279,26 +278,4 @@ fun TripDetailsScreen(
             Spacer(Modifier.height(10.dp))
         }
     }
-}
-
-private fun parseDate(dateString: String): Date {
-    val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    return try {
-        format.parse(dateString) ?: Date()
-    } catch (e: Exception) {
-        Date()
-    }
-}
-
-private fun formatDateToMonthDay(dateString: String): String {
-    val date = parseDate(dateString)
-    val format = SimpleDateFormat("MMM dd", Locale.getDefault())
-    return format.format(date)
-}
-
-private fun formatTimeRange(startDate: String, endDate: String): String {
-    val start = parseDate(startDate)
-    val end = parseDate(endDate)
-    val timeFormat = SimpleDateFormat("MMM dd", Locale.getDefault())
-    return "${timeFormat.format(start)} - ${timeFormat.format(end)}"
 }
