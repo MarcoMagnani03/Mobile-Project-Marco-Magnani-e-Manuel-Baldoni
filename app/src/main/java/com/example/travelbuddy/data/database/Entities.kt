@@ -222,7 +222,13 @@ data class TripWithExpenses(
 data class Group(
     val userEmail: String,
     val tripId: Long,
-    val state: Boolean
+)
+
+@Entity(primaryKeys = ["receiverEmail", "tripId"])
+data class GroupInvitation(
+    val senderEmail: String,
+    val receiverEmail: String,
+    val tripId: Long
 )
 
 data class UserWithTrips(
@@ -305,11 +311,6 @@ data class TripWithTripActivitiesAndExpenses(
     val expenses: List<Expense>
 )
 
-data class UserWithGroupState(
-    @Embedded val user: User,
-    val state: Boolean
-)
-
 data class TripWithActivitiesExpensesAndPhotos(
     @Embedded val trip: Trip,
 
@@ -332,11 +333,18 @@ data class TripWithActivitiesExpensesAndPhotos(
     val photos: List<Photo>
 )
 
-// Data class finale con UserWithGroupState
+data class InvitationWithTripName(
+    @Embedded val invitation: GroupInvitation,
+    val tripName: String
+)
+
+
+
 data class TripWithActivitiesAndExpensesAndPhotosAndUsers(
     @Embedded val trip: Trip,
     val activities: List<TripActivity>,
     val expenses: List<Expense>,
     val photos: List<Photo>,
-    val usersWithState: List<UserWithGroupState>
+    val usersGroup: List<User>,
+    val invitationGroup: List<InvitationWithTripName>
 )

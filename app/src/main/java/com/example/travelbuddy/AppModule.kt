@@ -9,6 +9,7 @@ import com.example.travelbuddy.data.repositories.EventsRepository
 import com.example.travelbuddy.data.repositories.ExpensesRepository
 import com.example.travelbuddy.data.repositories.FriendRequestsRepository
 import com.example.travelbuddy.data.repositories.FriendshipsRepository
+import com.example.travelbuddy.data.repositories.GroupInvitesRepository
 import com.example.travelbuddy.data.repositories.TripActivitiesTypesRepository
 import com.example.travelbuddy.data.repositories.GroupsRepository
 import com.example.travelbuddy.data.repositories.NotificationsRepository
@@ -77,6 +78,7 @@ val appModule = module {
     single { get<TravelBuddyDatabase>().notificationsDAO() }
     single { get<TravelBuddyDatabase>().notificationsTypesDAO() }
     single { get<TravelBuddyDatabase>().photosDAO() }
+    single {get<TravelBuddyDatabase>().groupInvitationsDAO()}
     single {
         HttpClient {
             install(ContentNegotiation) {
@@ -110,6 +112,7 @@ val appModule = module {
     single { NotificationsTypeRepository(get())}
     single { PhotosRepository(get())}
     single { EventsRepository(get())}
+    single {GroupInvitesRepository(get(),get())}
 
 
     viewModel { HomeViewModel(get(), get()) }
@@ -126,7 +129,7 @@ val appModule = module {
     viewModel { NewExpenseViewModel(get(), get()) }
     viewModel { FriendViewModel(get(),get(),get(),get(),get()) }
     viewModel { ViewProfileViewModel(get(),get(),get(),get(),get()) }
-    viewModel { NotificationsViewModel(get(),get(),get()) }
+    viewModel { NotificationsViewModel(get(),get(),get(),get()) }
     viewModel { BudgetOverviewViewModel(get(),get()) }
     viewModel { TripActivitiesViewModel(get(),get()) }
     viewModel { EditExpenseViewModel(get(),get()) }

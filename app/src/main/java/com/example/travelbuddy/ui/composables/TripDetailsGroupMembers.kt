@@ -28,13 +28,15 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.travelbuddy.data.database.UserWithGroupState
+import com.example.travelbuddy.data.database.InvitationWithTripName
+import com.example.travelbuddy.data.database.User
 import com.example.travelbuddy.ui.theme.Green20
 import com.example.travelbuddy.ui.theme.Orange
 
 @Composable
 fun TripGroupMembers(
-    members: List<UserWithGroupState>,
+    members: List<User>,
+    groupInvitations: List<InvitationWithTripName>,
     onAddMemberClick: () -> Unit,
     onLeaveGroupClick: () -> Unit
 ) {
@@ -67,8 +69,15 @@ fun TripGroupMembers(
 
             members.forEach { member ->
                 MemberRow(
-                    name = "${member.user.firstname} ${member.user.lastname}",
-                    state = member.state
+                    name = "${member.firstname} ${member.lastname}",
+                    state = true
+                )
+            }
+
+            groupInvitations.forEach { member ->
+                MemberRow(
+                    name = member.invitation.receiverEmail,
+                    state = false
                 )
             }
 

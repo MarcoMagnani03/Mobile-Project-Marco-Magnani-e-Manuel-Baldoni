@@ -27,22 +27,22 @@ VALUES
 ---------------------------------------------------------------
 
 -- ASSOCIAZIONE VIAGGI UTENTE
-INSERT INTO `Group` (userEmail, tripId, state)
+INSERT INTO `Group` (userEmail, tripId)
 VALUES
-    ('test@test.it', 1, true),
-    ('marco.magnani@gmail.com', 1, true),
-    ('test@test.it', 2, true),
-    ('marco.magnani@gmail.com', 2, true),
-    ('test@test.it', 3, true),
-    ('marco.magnani@gmail.com', 4, true),
-    ('test@test.it', 5, true),
-    ('marco.magnani@gmail.com', 6, true),
-    ('test@test.it', 7, true),
-    ('marco.magnani@gmail.com', 8, true),
-    ('test@test.it', 9, true),
-    ('marco.magnani@gmail.com', 10, true),
-    ('test@test.it', 11, true),
-    ('marco.magnani@gmail.com', 11, true);
+    ('test@test.it', 1),
+    ('marco.magnani@gmail.com', 1),
+    ('test@test.it', 2),
+    ('marco.magnani@gmail.com', 2),
+    ('test@test.it', 3),
+    ('marco.magnani@gmail.com', 4),
+    ('test@test.it', 5),
+    ('marco.magnani@gmail.com', 6),
+    ('test@test.it', 7),
+    ('marco.magnani@gmail.com', 8),
+    ('test@test.it', 9),
+    ('marco.magnani@gmail.com', 10),
+    ('test@test.it', 11),
+    ('marco.magnani@gmail.com', 11);
 
 ---------------------------------------------------------------
 
@@ -114,8 +114,8 @@ VALUES
 -- USER INSERTS (Password di account test è test)
 INSERT INTO User (email, password, passwordSalt, pin, pinSalt, firstname, lastname, phoneNumber, location, bio, profilePicture)
 VALUES
-    ('test@test.it', 'd90e25dd8ee5bbf1e87628f73f44aee97c44e179079cb2622841c142044088d6', '9465b733f0c10775fb2b8eadfd796441', '35c6aa34e343045b8fad5fd522e79793f63be8c3365b43d2c76b45ff9aa798fa', 'testPinSalt', 'Test', 'User', '0123456789', 'Test City, Italy', 'Bio di esempio per utente di test', NULL),
-    ('marco.magnani@gmail.com', 'd90e25dd8ee5bbf1e87628f73f44aee97c44e179079cb2622841c142044088d6', '530caec57aa75d319d8aba7b25a3d934', '97c4f82cd5782195eecef6c506e69c1d477182a16a724a651d3c1e51cce46b05', 'pinSalt1', 'Mario', 'Rossi', '1234567890', 'Roma, Italia', 'Viaggiatore appassionato di cultura', NULL),
+    ('test@test.it', '347c384fdb50740f8ce788bc983af3d02d836eb2bf17b664d8cdd101012fe124', '4354a3cbd81ba1ce18362f5dbc8eb64e', NULL, NULL, 'Test', 'User', '0123456789', 'Test City, Italy', 'Bio di esempio per utente di test', NULL),
+    ('marco.magnani@gmail.com', 'd90e25dd8ee5bbf1e87628f73f44aee97c44e179079cb2622841c142044088d6', '9465b733f0c10775fb2b8eadfd796441', NULL, NULL, 'Mario', 'Rossi', '1234567890', 'Roma, Italia', 'Viaggiatore appassionato di cultura', NULL),
     ('user2@example.com', 'password123', 'salt123', '5678', 'pinSalt2', 'Luigi', 'Bianchi', '2345678901', 'Milano, Italia', 'Adoro le escursioni in montagna', NULL),
     ('user3@example.com', 'password123', 'salt123', '9101', 'pinSalt3', 'Giulia', 'Verdi', '3456789012', 'Firenze, Italia', 'Appassionata di arte e storia', NULL),
     ('user4@example.com', 'password123', 'salt123', '1122', 'pinSalt4', 'Anna', 'Gialli', '4567890123', 'Napoli, Italia', 'Amo il mare e il buon cibo', NULL),
@@ -220,3 +220,14 @@ VALUES
     ('Biglietto dirigibile', 150.0, '03/05/1930', 'Viaggio in dirigibile Zeppelin', 'test@test.it', 11),
     ('Visore VR temporale', 299.0, '10/07/2085', 'Simulazione immersiva di eventi storici', 'test@test.it', 11),
     ('Tè con Einstein', 60.0, '14/03/1921', 'Esperienza interattiva con attore storico', 'test@test.it', 11);
+
+
+
+
+INSERT INTO GroupInvitation (senderEmail, receiverEmail, tripId) VALUES
+('test@test.it', 'marco.magnani@gmail.com', 3),
+('marco.magnani@gmail.com', 'test@test.it', 4),
+('test@test.it', 'marco.magnani@gmail.com', 5),
+('marco.magnani@gmail.com', 'test@test.it', 6),
+('test@test.it', 'marco.magnani@gmail.com', 7),
+('marco.magnani@gmail.com', 'test@test.it', 10)

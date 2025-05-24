@@ -5,7 +5,6 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
-
 @Dao
 interface TripsDAO {
     @Upsert
@@ -18,28 +17,38 @@ interface TripsDAO {
     suspend fun getTripById(tripId: Long): Trip?
 
     @Query("""
-    SELECT u.*, g.state
+    SELECT u.*
     FROM User u
     INNER JOIN `Group` g ON u.email = g.userEmail
     WHERE g.tripId = :tripId
 """)
-    suspend fun getUsersWithStateForTrip(tripId: Long): List<UserWithGroupState>
+    suspend fun getUsersForTrip(tripId: Long): List<User>
 
-    // Query per ottenere il trip completo
+    @Query("""
+    SELECT gi.*, t.name AS tripName
+    FROM GroupInvitation gi
+    INNER JOIN Trip t ON gi.tripId = t.id
+    WHERE gi.tripId = :tripId
+""")
+    suspend fun getInvitationsWithTripName(tripId: Long): List<InvitationWithTripName>
+
+
     @Transaction
     @Query("SELECT * FROM Trip WHERE id = :tripId")
     suspend fun getTripWithActivitiesExpensesAndPhotos(tripId: Long): TripWithActivitiesExpensesAndPhotos
 
     suspend fun getTripCompleteWithUserStates(tripId: Long): TripWithActivitiesAndExpensesAndPhotosAndUsers? {
         val tripWithDetails = getTripWithActivitiesExpensesAndPhotos(tripId) ?: return null
-        val usersWithState = getUsersWithStateForTrip(tripId)
+        val gruopUsers = getUsersForTrip(tripId)
+        val invitation = getInvitationsWithTripName(tripId)
 
         return TripWithActivitiesAndExpensesAndPhotosAndUsers(
             trip = tripWithDetails.trip,
             activities = tripWithDetails.activities,
             expenses = tripWithDetails.expenses,
             photos = tripWithDetails.photos,
-            usersWithState = usersWithState
+            usersGroup = gruopUsers,
+            invitationGroup = invitation
         )
     }
 }
@@ -58,6 +67,49 @@ interface NotificationsDAO {
     @Query("UPDATE Notification SET isRead = 1  WHERE id=:notificationId")
     suspend fun markNotificationAsRead(notificationId:Long)
 }
+
+@Dao
+interface GroupInvitationDAO {
+
+    @Query("""
+        SELECT gi.*, t.name AS tripName
+        FROM GroupInvitation gi
+        INNER JOIN Trip t ON gi.tripId = t.id
+        WHERE gi.receiverEmail = :receiverEmail
+    """)
+    suspend fun getPendingInvitesForUser(receiverEmail: String): List<InvitationWithTripName>
+
+    @Delete
+    suspend fun deleteInvitation(invitation: GroupInvitation)
+
+    @Query("DELETE FROM GroupInvitation WHERE receiverEmail = :email AND tripId = :tripId")
+    suspend fun deleteInvitationByEmailAndTripId(email: String, tripId: Long)
+
+    @Upsert
+    suspend fun upsert(invitation: GroupInvitation)
+
+    @Query("SELECT * FROM GroupInvitation WHERE receiverEmail = :email AND tripId = :tripId")
+    suspend fun getInviteByEmailAndTripId(email: String, tripId: Long): GroupInvitation?
+
+    @Query("SELECT * FROM GroupInvitation WHERE senderEmail = :senderEmail")
+    suspend fun getInvitesSentByUser(senderEmail: String): List<GroupInvitation>
+
+    @Transaction
+    suspend fun acceptInviteTransaction(receiverEmail: String, tripId: Long, groupDao: GroupsDAO) {
+        // Elimina l'invito
+        deleteInvitationByEmailAndTripId(receiverEmail, tripId)
+
+        // Crea e inserisce il membro del gruppo
+        val groupMember = Group(
+            userEmail = receiverEmail,
+            tripId = tripId
+        )
+
+        groupDao.upsert(groupMember)
+    }
+}
+
+
 
 @Dao
 interface NotificationsTypesDAO {
@@ -156,7 +208,7 @@ interface UsersDAO {
     SELECT t.*
     FROM Trip t
     INNER JOIN `Group` g ON t.id = g.tripId
-    WHERE g.userEmail = :email AND g.state = 1
+    WHERE g.userEmail = :email
 """)
     suspend fun getActiveTripsWithDetailsForUser(email: String): List<TripWithTripActivitiesAndExpenses>
 
@@ -191,11 +243,24 @@ interface PhotosDAO {
 
 @Dao
 interface GroupsDAO {
+    // I tuoi metodi esistenti
     @Upsert
     suspend fun upsert(group: Group)
 
     @Delete
-    suspend fun delete(item: Group)
+    suspend fun delete(group: Group)
+
+    @Query("SELECT * FROM `Group` WHERE tripId = :tripId")
+    suspend fun getGroupMembersByTripId(tripId: Long): List<Group>
+
+    @Query("SELECT * FROM `Group` WHERE userEmail = :email")
+    suspend fun getGroupsByUserEmail(email: String): List<Group>
+
+    @Query("SELECT * FROM `Group` WHERE userEmail = :userEmail AND tripId = :tripId LIMIT 1")
+    suspend fun getGroupMember(userEmail: String, tripId: Long): Group?
+
+    @Query("SELECT COUNT(*) FROM `Group` WHERE tripId = :tripId")
+    suspend fun getGroupMembersCount(tripId: Long): Int
 }
 
 @Dao

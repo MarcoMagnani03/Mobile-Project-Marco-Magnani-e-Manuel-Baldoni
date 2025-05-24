@@ -80,8 +80,7 @@ class TripDetailsViewModel(
                     if (tripId != null) {
                         val group = Group(
                             userEmail = userEmail.toString(),
-                            tripId = tripId,
-                            state = true
+                            tripId = tripId
                         )
                         groupsRepository.delete(group)
                     }

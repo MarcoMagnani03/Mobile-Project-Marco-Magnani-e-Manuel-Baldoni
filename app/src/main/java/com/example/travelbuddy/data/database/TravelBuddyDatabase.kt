@@ -16,9 +16,10 @@ import androidx.room.RoomDatabase
             NotificationType::class,
             Group::class,
             Expense::class,
-            Photo::class
+            Photo::class,
+            GroupInvitation::class
         ],
-    version = 10
+    version = 11
 )
 abstract class TravelBuddyDatabase : RoomDatabase() {
     abstract fun tripsDAO(): TripsDAO
@@ -32,4 +33,5 @@ abstract class TravelBuddyDatabase : RoomDatabase() {
     abstract fun expensesDAO(): ExpensesDAO
     abstract fun photosDAO(): PhotosDAO
     abstract fun friendRequestDAO(): FriendRequestsDAO
+    abstract fun groupInvitationsDAO(): GroupInvitationDAO
 }

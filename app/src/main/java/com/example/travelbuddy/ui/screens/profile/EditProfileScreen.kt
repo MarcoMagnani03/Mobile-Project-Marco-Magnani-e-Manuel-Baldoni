@@ -173,16 +173,6 @@ fun EditProfileScreen(
                 leadingIcon = { Icon(Icons.Outlined.Info, "Bio") }
             )
 
-            Spacer(modifier = Modifier.size(16.dp))
-
-            InputField(
-                value = state.email,
-                label = "Email",
-                onValueChange = actions.updateFieldFor(ProfileField.Email),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                leadingIcon = { Icon(Icons.Outlined.Email, "Email") }
-            )
-
             Spacer(modifier = Modifier.size(24.dp))
 
             TravelBuddyButton(

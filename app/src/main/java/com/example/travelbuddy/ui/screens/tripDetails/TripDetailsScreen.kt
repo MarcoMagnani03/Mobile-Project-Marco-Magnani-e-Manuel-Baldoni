@@ -189,7 +189,8 @@ fun TripDetailsScreen(
             )
 
             TripGroupMembers(
-                members = state.trip?.usersWithState ?: emptyList(),
+                members = state.trip?.usersGroup ?: emptyList(),
+                groupInvitations = state.trip?.invitationGroup ?: emptyList(),
                 onAddMemberClick = {
                     showAddToGroup = true
                 },

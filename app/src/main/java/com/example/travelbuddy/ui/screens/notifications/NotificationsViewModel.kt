@@ -2,8 +2,11 @@ package com.example.travelbuddy.ui.screens.notifications
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.travelbuddy.data.database.GroupInvitation
+import com.example.travelbuddy.data.database.InvitationWithTripName
 import com.example.travelbuddy.data.database.Notification
 import com.example.travelbuddy.data.database.NotificationType
+import com.example.travelbuddy.data.repositories.GroupInvitesRepository
 import com.example.travelbuddy.data.repositories.NotificationsRepository
 import com.example.travelbuddy.data.repositories.NotificationsTypeRepository
 import com.example.travelbuddy.data.repositories.UserSessionRepository
@@ -22,19 +25,24 @@ data class NotificationWithType(
 data class NotificationsState(
     val notifications: List<NotificationWithType> = emptyList(),
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val groupInvites: List<InvitationWithTripName> = emptyList(),
 )
 
 interface NotificationsActions {
     fun loadNotifications()
     fun deleteNotification(notificationId: Long)
     fun markNotificationAsRead(notificationId: Long)
+    fun acceptGroupInvite(receiverEmail: String, tripId: Long)
+    fun declineGroupInvite(receiverEmail: String, tripId: Long)
+    fun loadGroupInvites()
 }
 
 class NotificationsViewModel(
     private val notificationRepository: NotificationsRepository,
     private val notificationTypeRepository: NotificationsTypeRepository,
-    private val sessionRepository: UserSessionRepository
+    private val sessionRepository: UserSessionRepository,
+    private val groupInviteRepository: GroupInvitesRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(NotificationsState())
@@ -67,7 +75,7 @@ class NotificationsViewModel(
                     } else {
                         _state.update {
                             it.copy(
-                                errorMessage = "Sessione utente non trovata",
+                                errorMessage = "User session not found",
                                 isLoading = false
                             )
                         }
@@ -75,10 +83,47 @@ class NotificationsViewModel(
                 } catch (e: Exception) {
                     _state.update {
                         it.copy(
-                            errorMessage = e.message ?: "Errore nel caricamento delle notifiche",
+                            errorMessage = e.message ?: "Error during notifications loading",
                             isLoading = false
                         )
                     }
+                }
+            }
+        }
+
+        override fun loadGroupInvites() {
+            viewModelScope.launch {
+                try {
+                    val email = sessionRepository.userEmail.first()
+                    if (email != null) {
+                        val invites = groupInviteRepository.getPendingInvitesForUser(email)
+                        _state.update { it.copy(groupInvites = invites) }
+                    }
+                } catch (e: Exception) {
+                    _state.update { it.copy(errorMessage = e.message ?: "Error loading group invites") }
+                }
+            }
+        }
+
+        override fun acceptGroupInvite(receiverEmail: String, tripId: Long)
+        {
+            viewModelScope.launch {
+                try {
+                    groupInviteRepository.acceptGroupInvite(receiverEmail = receiverEmail, tripId = tripId)
+                    loadGroupInvites()
+                } catch (e: Exception) {
+                    _state.update { it.copy(errorMessage = e.message ?: "Error accepting invite") }
+                }
+            }
+        }
+
+        override fun declineGroupInvite(receiverEmail: String, tripId: Long) {
+            viewModelScope.launch {
+                try {
+                    groupInviteRepository.declineGroupInvite(receiverEmail = receiverEmail, tripId = tripId)
+                    loadGroupInvites()
+                } catch (e: Exception) {
+                    _state.update { it.copy(errorMessage = e.message ?: "Error declining invite") }
                 }
             }
         }
