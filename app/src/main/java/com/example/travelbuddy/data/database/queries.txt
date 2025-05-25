@@ -231,3 +231,14 @@ INSERT INTO GroupInvitation (senderEmail, receiverEmail, tripId) VALUES
 ('marco.magnani@gmail.com', 'test@test.it', 6),
 ('test@test.it', 'marco.magnani@gmail.com', 7),
 ('marco.magnani@gmail.com', 'test@test.it', 10)
+
+INSERT INTO Friendship (emailFirstUser, emailSecondUser) VALUES
+    ('test@test.it', 'user2@example.com'),
+    ('test@test.it', 'user3@example.com'),
+    ('test@test.it', 'user4@example.com'),
+    ('marco.magnani@gmail.com', 'user5@example.com'),
+    ('marco.magnani@gmail.com', 'user6@example.com'),
+    ('marco.magnani@gmail.com', 'user7@example.com'),
+    ('user8@example.com', 'test@test.it'),
+    ('user9@example.com', 'marco.magnani@gmail.com'),
+    ('user10@example.com', 'test@test.it');

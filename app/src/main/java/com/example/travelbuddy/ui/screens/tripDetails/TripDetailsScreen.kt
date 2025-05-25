@@ -38,6 +38,7 @@ import androidx.navigation.NavController
 import com.example.travelbuddy.ui.TravelBuddyRoute
 import com.example.travelbuddy.ui.composables.BalanceEntry
 import com.example.travelbuddy.ui.composables.ButtonStyle
+import com.example.travelbuddy.ui.composables.InviteFriendsDialog
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
 import com.example.travelbuddy.ui.composables.TravelBuddyButton
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
@@ -118,30 +119,17 @@ fun TripDetailsScreen(
 
     var showAddToGroup by remember { mutableStateOf(false) }
 
-    if (showAddToGroup) {
-        AlertDialog(
-            onDismissRequest = { showAddToGroup = false },
-            title = { Text("Add friends to trip", style = MaterialTheme.typography.headlineLarge) },
-            text = {
-
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showAddToGroup = false
-
-                    }
-                ) {
-                    Text("Add", color = MaterialTheme.colorScheme.primary)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showAddToGroup = false }) {
-                    Text("Cancel", color = Color.Red)
-                }
-            }
-        )
-    }
+    InviteFriendsDialog(
+        showDialog = showAddToGroup,
+        onDismiss = { showAddToGroup = false },
+        allFriends = state.friendList,
+        groupEmails = state.trip?.usersGroup?.map { it.email } ?: emptyList(),
+        invitedEmails = state.trip?.invitationGroup?.map { it.invitation.receiverEmail } ?: emptyList(),
+        onInvite = { selectedFriends ->
+            // invia le richieste di invito qui
+            actions.sendInvitations(selectedFriends)
+        }
+    )
 
     Scaffold(
         topBar = {

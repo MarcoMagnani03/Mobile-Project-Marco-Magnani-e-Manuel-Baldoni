@@ -3,10 +3,15 @@ package com.example.travelbuddy.ui.screens.tripDetails
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.travelbuddy.data.database.FriendRequest
+import com.example.travelbuddy.data.database.Friendship
 import com.example.travelbuddy.data.database.Group
 import com.example.travelbuddy.data.database.Trip
 import com.example.travelbuddy.data.database.TripActivityType
 import com.example.travelbuddy.data.database.TripWithActivitiesAndExpensesAndPhotosAndUsers
+import com.example.travelbuddy.data.database.User
+import com.example.travelbuddy.data.repositories.FriendshipsRepository
+import com.example.travelbuddy.data.repositories.GroupInvitesRepository
 import com.example.travelbuddy.data.repositories.GroupsRepository
 import com.example.travelbuddy.data.repositories.TripActivitiesTypesRepository
 import com.example.travelbuddy.data.repositories.TripsRepository
@@ -19,7 +24,8 @@ import kotlinx.coroutines.launch
 data class TripDetailsState(
     val trip: TripWithActivitiesAndExpensesAndPhotosAndUsers? = null,
     val tripActivityTypes: List<TripActivityType> = emptyList(),
-    val error: String? = null
+    val error: String? = null,
+    val friendList: List<User> = emptyList()
 )
 
 interface TripDetailsActions {
@@ -27,13 +33,16 @@ interface TripDetailsActions {
     fun loadTripActivityTypes()
     fun deleteTrip()
     fun removeUserFromGroup()
+    fun sendInvitations(selectedFriends: List<User>)
 }
 
 class TripDetailsViewModel(
     private val tripsRepository: TripsRepository,
     private val tripActivitiesTypesRepository: TripActivitiesTypesRepository,
     private val groupsRepository: GroupsRepository,
-    private val userSessionRepository: UserSessionRepository
+    private val userSessionRepository: UserSessionRepository,
+    private val friendshipsRepository: FriendshipsRepository,
+    private val groupInvitesRepository: GroupInvitesRepository
 ): ViewModel() {
     private val _state = MutableStateFlow(TripDetailsState())
     val state = _state.asStateFlow()
@@ -42,8 +51,11 @@ class TripDetailsViewModel(
         override fun loadTrip(tripId: Long) {
             viewModelScope.launch {
                 try {
+                    val userEmail = userSessionRepository.userEmail.first()
                     val trip = tripsRepository.getTripWithAllRelationsById(tripId)
+                    val friendList = friendshipsRepository.getFriendshipsUsersByUser(userEmail.toString())
                     _state.value = _state.value.copy(trip = trip)
+                    _state.value = _state.value.copy(friendList = friendList)
                 } catch (e: Exception) {
                     _state.value = _state.value.copy(error = "Error loading the trip")
                 }
@@ -86,6 +98,21 @@ class TripDetailsViewModel(
                     }
                 } catch (e: Exception) {
                     _state.value = _state.value.copy(error = "Error deleting trip")
+                }
+            }
+        }
+
+        override fun sendInvitations(selectedFriends: List<User>) {
+            viewModelScope.launch {
+                try {
+                    val userEmail = userSessionRepository.userEmail.first()
+                    val tripId = state.value.trip?.trip?.id ?: return@launch
+
+                    selectedFriends.forEach { friend ->
+                        groupInvitesRepository.sendGroupInvite(receiverEmail = friend.email, senderEmail = userEmail.toString(), tripId = tripId) // o usa un repository dedicato se esiste
+                    }
+                } catch (e: Exception) {
+                    _state.value = _state.value.copy(error = "Error sending invitations")
                 }
             }
         }

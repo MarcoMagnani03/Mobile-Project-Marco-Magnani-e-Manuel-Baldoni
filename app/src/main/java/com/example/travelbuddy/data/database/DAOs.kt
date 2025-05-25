@@ -278,6 +278,16 @@ interface FriendshipsDAO {
     suspend fun getFriendshipsByUser(email: String): List<Friendship>
 
     @Query("""
+    SELECT u.* FROM User u
+    INNER JOIN Friendship f ON (
+        (f.emailFirstUser = :email AND u.email = f.emailSecondUser)
+        OR
+        (f.emailSecondUser = :email AND u.email = f.emailFirstUser)
+    )
+""")
+    suspend fun getFriendshipsUsersByUser(email: String): List<User>
+
+    @Query("""
         DELETE FROM Friendship
         WHERE (emailFirstUser = :user1 AND emailSecondUser = :user2)
         OR (emailFirstUser = :user2 AND emailSecondUser = :user1)

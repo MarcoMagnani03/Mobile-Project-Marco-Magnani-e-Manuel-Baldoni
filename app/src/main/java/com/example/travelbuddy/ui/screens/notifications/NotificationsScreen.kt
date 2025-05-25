@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Group
@@ -139,9 +140,11 @@ fun NotificationsScreen(
 @Composable
 fun GroupInvitesSection(
     invites: List<InvitationWithTripName>,
-    onAcceptInvite: (String,Long) -> Unit,
-    onDeclineInvite: (String,Long) -> Unit,
+    onAcceptInvite: (String, Long) -> Unit,
+    onDeclineInvite: (String, Long) -> Unit
 ) {
+    var expanded by remember { mutableStateOf(false) }
+
     Column {
         Row(
             modifier = Modifier
@@ -156,28 +159,28 @@ fun GroupInvitesSection(
                 fontWeight = FontWeight.Bold
             )
 
-//            if (invites.size > 5) {
-//                TextButton(
-//                    onClick = onViewAllInvites,
-//                    contentPadding = PaddingValues(horizontal = 8.dp)
-//                ) {
-//                    Text("View All")
-//                    Icon(
-//                        imageVector = Icons.Default.ArrowForward,
-//                        contentDescription = "View all invites",
-//                        modifier = Modifier.size(16.dp)
-//                    )
-//                }
-//            }
+            if (invites.size > 5) {
+                TextButton(
+                    onClick = { expanded = !expanded },
+                    contentPadding = PaddingValues(horizontal = 8.dp)
+                ) {
+                    Text(if (expanded) "View Less" else "View All")
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = if (expanded) "View less invites" else "View all invites",
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
         }
 
-        val displayedInvites = if (invites.size > 5) invites.take(5) else invites
+        val displayedInvites = if (expanded) invites else invites.take(5)
 
         displayedInvites.forEach { invite ->
             GroupInviteItem(
                 invite = invite,
                 onAccept = { onAcceptInvite(invite.invitation.receiverEmail, invite.invitation.tripId) },
-                onDecline = { onDeclineInvite(invite.invitation.receiverEmail, invite.invitation.tripId)}
+                onDecline = { onDeclineInvite(invite.invitation.receiverEmail, invite.invitation.tripId) }
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
