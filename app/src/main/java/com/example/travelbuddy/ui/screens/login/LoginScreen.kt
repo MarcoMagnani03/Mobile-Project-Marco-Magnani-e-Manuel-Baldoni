@@ -1,5 +1,6 @@
 package com.example.travelbuddy.ui.screens.login
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,12 +29,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.ui.platform.LocalContext
 import com.example.travelbuddy.ui.composables.GoogleSignInButton
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun LoginScreen(
     state: LoginState,
     actions: LoginActions,
+    toastEvent: Flow<String>,
     navController: NavController
 ) {
     LaunchedEffect(state.navigateToCode) {
@@ -46,6 +50,14 @@ fun LoginScreen(
     }
 
     val scrollState = rememberScrollState()
+
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        toastEvent.collect { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Scaffold { contentPadding ->
         Column(

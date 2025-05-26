@@ -2,15 +2,16 @@ package com.example.travelbuddy.ui.screens.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.example.travelbuddy.data.repositories.UserSessionRepository
 import com.example.travelbuddy.data.repositories.UsersRepository
-import com.example.travelbuddy.ui.TravelBuddyRoute
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+
 
 data class LoginState(
     val email: String = "",
@@ -38,6 +39,9 @@ class LoginViewModel(
 ) : ViewModel() {
     private val _state = MutableStateFlow(LoginState())
     val state = _state.asStateFlow()
+    private val _toastEvent = MutableSharedFlow<String>()
+    val toastEvent = _toastEvent.asSharedFlow()
+
 
     val actions = object : LoginActions {
         override fun setEmail(email: String) =
@@ -58,29 +62,34 @@ class LoginViewModel(
                         _state.value.email,
                         _state.value.password
                     )
+
+                    val message = if (!success) "Invalid credentials" else null;
                     _state.value = _state.value.copy(
                         isLoading = false,
                         isSuccess = success,
-                        errorMessage = if (!success) "Invalid credentials" else null
+                        errorMessage = message
                     )
 
                     if(success){
                         onLoginSuccess(_state.value.email)
                     }
+                    else{
+                        _toastEvent.emit(message.toString())
+                    }
                 } catch (e: Exception) {
+                    val message = e.message ?: "Login failed";
                     _state.value = _state.value.copy(
                         isLoading = false,
-                        errorMessage = e.message ?: "Login failed"
+                        errorMessage = message
                     )
+                    _toastEvent.emit(message)
                 }
             }
         }
 
         override fun handleGoogleSignIn(account: GoogleSignInAccount) {
             viewModelScope.launch {
-                println(account)
                 val email = userRepository.handleGoogleSignIn(account)
-                println(email)
                 if (email != null) {
                     onLoginSuccess(email)
                 } else {
