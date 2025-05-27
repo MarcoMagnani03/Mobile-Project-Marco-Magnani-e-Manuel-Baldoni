@@ -13,6 +13,7 @@ import com.example.travelbuddy.data.database.User
 import com.example.travelbuddy.data.repositories.FriendshipsRepository
 import com.example.travelbuddy.data.repositories.GroupInvitesRepository
 import com.example.travelbuddy.data.repositories.GroupsRepository
+import com.example.travelbuddy.data.repositories.NotificationsRepository
 import com.example.travelbuddy.data.repositories.TripActivitiesTypesRepository
 import com.example.travelbuddy.data.repositories.TripsRepository
 import com.example.travelbuddy.data.repositories.UserSessionRepository
@@ -42,7 +43,8 @@ class TripDetailsViewModel(
     private val groupsRepository: GroupsRepository,
     private val userSessionRepository: UserSessionRepository,
     private val friendshipsRepository: FriendshipsRepository,
-    private val groupInvitesRepository: GroupInvitesRepository
+    private val groupInvitesRepository: GroupInvitesRepository,
+    private val notificationsRepository: NotificationsRepository
 ): ViewModel() {
     private val _state = MutableStateFlow(TripDetailsState())
     val state = _state.asStateFlow()
@@ -77,6 +79,16 @@ class TripDetailsViewModel(
             viewModelScope.launch {
                 try {
                     state.value.trip?.let { tripsRepository.delete(it.trip) }
+
+                    userSessionRepository.userEmail.collect { currentUserEmail ->
+                        if (currentUserEmail.isNullOrBlank()) return@collect
+
+                        val groupEntries = groupsRepository.getGroupMembersByTripId(
+                            state.value.trip?.trip?.id ?: 0)
+                        groupEntries.toSet().forEach { group ->
+                            notificationsRepository.addInfoNotification(description = "$currentUserEmail deleted a trip", title = "Delete trip", userEmail = group.userEmail)
+                        }
+                    }
                 } catch (e: Exception) {
                     _state.value = _state.value.copy(error = "Error deleting trip")
                 }
@@ -95,6 +107,12 @@ class TripDetailsViewModel(
                             tripId = tripId
                         )
                         groupsRepository.delete(group)
+                    }
+
+                    val groupEntries = groupsRepository.getGroupMembersByTripId(
+                        state.value.trip?.trip?.id ?: 0)
+                    groupEntries.toSet().forEach { group ->
+                        notificationsRepository.addInfoNotification(description = "$userEmail left the group of trip: ${state.value.trip?.trip?.name}", title = "$userEmail left the group", userEmail = group.userEmail)
                     }
                 } catch (e: Exception) {
                     _state.value = _state.value.copy(error = "Error deleting trip")

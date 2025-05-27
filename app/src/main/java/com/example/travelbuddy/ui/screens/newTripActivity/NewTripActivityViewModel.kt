@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelbuddy.data.database.TripActivityType
 import com.example.travelbuddy.data.database.TripActivity
+import com.example.travelbuddy.data.repositories.GroupsRepository
+import com.example.travelbuddy.data.repositories.NotificationsRepository
 import com.example.travelbuddy.data.repositories.TripActivitiesTypesRepository
 import com.example.travelbuddy.data.repositories.TripActivitiesRepository
+import com.example.travelbuddy.data.repositories.UserSessionRepository
 import com.example.travelbuddy.utils.parseDate
 import com.example.travelbuddy.utils.parseDateTime
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,7 +56,10 @@ interface NewTripActivityActions {
 
 class NewTripActivityViewModel(
     private val tripActivitiesRepository: TripActivitiesRepository,
-    private val tripActivitiesTypesRepository: TripActivitiesTypesRepository
+    private val tripActivitiesTypesRepository: TripActivitiesTypesRepository,
+    private val userSessionRepository: UserSessionRepository,
+    private val notificationsRepository: NotificationsRepository,
+    private val groupsRepository: GroupsRepository
 ): ViewModel() {
     private val _state = MutableStateFlow(NewTripActivityState())
     val state = _state.asStateFlow()
@@ -139,6 +145,15 @@ class NewTripActivityViewModel(
                     _state.value = _state.value.copy(
                         newTripActivityId = tripActivityId
                     )
+
+                    userSessionRepository.userEmail.collect { currentUserEmail ->
+                        if (currentUserEmail.isNullOrBlank()) return@collect
+
+                        val groupEntries = groupsRepository.getGroupMembersByTripId(state.value.tripId ?: 0)
+                        groupEntries.toSet().forEach { group ->
+                            notificationsRepository.addInfoNotification(description = "$currentUserEmail created a new trip activity", title = "New Trip activity", userEmail = group.userEmail)
+                        }
+                    }
                 } catch (e: Exception) {
                     _state.value = _state.value.copy(
                         isLoading = false,

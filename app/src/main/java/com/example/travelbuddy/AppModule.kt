@@ -121,19 +121,19 @@ val appModule = module {
     viewModel { CodeViewModel(get(),get()) }
     viewModel { SignUpViewModel(get())}
     viewModel { NewTripViewModel(get(), get(), get()) }
-    viewModel { EditTripViewModel(get(), get(), get()) }
-    viewModel { TripDetailsViewModel(get(), get(), get(), get(),get(),get()) }
+    viewModel { EditTripViewModel(get(), get(), get(), get()) }
+    viewModel { TripDetailsViewModel(get(), get(), get(), get(),get(),get(), get()) }
     viewModel { ProfileViewModel(get(), get()) }
     viewModel { SettingViewModel(get(),get(),get()) }
-    viewModel { NewTripActivityViewModel(get(), get()) }
-    viewModel { NewExpenseViewModel(get(), get()) }
+    viewModel { NewTripActivityViewModel(get(), get(), get(), get(), get()) }
+    viewModel { NewExpenseViewModel(get(), get(), get(), get()) }
     viewModel { FriendViewModel(get(),get(),get(),get(),get()) }
     viewModel { ViewProfileViewModel(get(),get(),get(),get(),get()) }
     viewModel { NotificationsViewModel(get(),get(),get(),get()) }
-    viewModel { BudgetOverviewViewModel(get(),get()) }
+    viewModel { BudgetOverviewViewModel(get(),get(), get(), get(), get()) }
     viewModel { TripActivitiesViewModel(get(),get()) }
     viewModel { EditExpenseViewModel(get(),get()) }
     viewModel { EditTripActivityViewModel(get(),get()) }
-    viewModel { TripPhotosViewModel(get()) }
+    viewModel { TripPhotosViewModel(get(), get(), get(), get()) }
     viewModel { EventsViewModel(get(), get()) }
 }

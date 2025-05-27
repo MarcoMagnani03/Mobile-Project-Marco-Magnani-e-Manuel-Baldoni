@@ -3,7 +3,10 @@ package com.example.travelbuddy.ui.screens.tripPhotos
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelbuddy.data.database.Photo
+import com.example.travelbuddy.data.repositories.GroupsRepository
+import com.example.travelbuddy.data.repositories.NotificationsRepository
 import com.example.travelbuddy.data.repositories.PhotosRepository
+import com.example.travelbuddy.data.repositories.UserSessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -39,7 +42,10 @@ interface TripPhotosActions {
 }
 
 class TripPhotosViewModel(
-    private val photoRepository: PhotosRepository
+    private val photoRepository: PhotosRepository,
+    private val groupsRepository: GroupsRepository,
+    private val userSessionRepository: UserSessionRepository,
+    private val notificationsRepository: NotificationsRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(TripPhotosState())
     val state = _state.asStateFlow()
@@ -97,6 +103,16 @@ class TripPhotosViewModel(
                     )
 
                     photoRepository.upsert(photo)
+
+                    userSessionRepository.userEmail.collect { currentUserEmail ->
+                        if (currentUserEmail.isNullOrBlank()) return@collect
+
+                        val groupEntries = groupsRepository.getGroupMembersByTripId(state.value.tripId ?: 0)
+                        groupEntries.toSet().forEach { group ->
+                            notificationsRepository.addInfoNotification(description = "$currentUserEmail added a photo", title = "New Photo", userEmail = group.userEmail)
+                        }
+                    }
+
                     loadPhotos()
                 } catch (e: Exception) {
                     _state.value = _state.value.copy(
@@ -112,6 +128,16 @@ class TripPhotosViewModel(
                 try {
                     _state.value = _state.value.copy(isLoading = true)
                     photoRepository.delete(photo)
+
+                    userSessionRepository.userEmail.collect { currentUserEmail ->
+                        if (currentUserEmail.isNullOrBlank()) return@collect
+
+                        val groupEntries = groupsRepository.getGroupMembersByTripId(state.value.tripId)
+                        groupEntries.toSet().forEach { group ->
+                            notificationsRepository.addInfoNotification(description = "$currentUserEmail deleted a photo", title = "Deleted Photo", userEmail = group.userEmail)
+                        }
+                    }
+
                     loadPhotos()
                 } catch (e: Exception) {
                     _state.value = _state.value.copy(

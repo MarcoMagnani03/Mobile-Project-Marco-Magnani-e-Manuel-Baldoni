@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.travelbuddy.data.database.Trip
 import com.example.travelbuddy.data.database.Group
 import com.example.travelbuddy.data.repositories.GroupsRepository
+import com.example.travelbuddy.data.repositories.NotificationsRepository
 import com.example.travelbuddy.data.repositories.TripsRepository
 import com.example.travelbuddy.data.repositories.UserSessionRepository
 import com.example.travelbuddy.utils.parseDate
@@ -49,7 +50,8 @@ interface EditTripActions {
 class EditTripViewModel(
     private val tripsRepository: TripsRepository,
     private val groupsRepository: GroupsRepository,
-    private val userSessionRepository: UserSessionRepository
+    private val userSessionRepository: UserSessionRepository,
+    private val notificationsRepository: NotificationsRepository
 ): ViewModel() {
     private val _state = MutableStateFlow(EditTripState())
     val state = _state.asStateFlow()
@@ -137,6 +139,15 @@ class EditTripViewModel(
 
                     if (newTrip != null) {
                         tripsRepository.upsert(newTrip)
+
+                        userSessionRepository.userEmail.collect { currentUserEmail ->
+                            if (currentUserEmail.isNullOrBlank()) return@collect
+
+                            val groupEntries = groupsRepository.getGroupMembersByTripId(state.value.tripId ?: 0)
+                            groupEntries.toSet().forEach { group ->
+                                notificationsRepository.addInfoNotification(description = "$currentUserEmail edited the trip: ${state.value.tripName}", title = "Edited trip", userEmail = group.userEmail)
+                            }
+                        }
                     }
                 } catch (e: Exception) {
                     _state.value = _state.value.copy(

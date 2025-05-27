@@ -55,6 +55,8 @@ fun TripDetailsScreen(
     actions: TripDetailsActions,
     navController: NavController
 ){
+    val isPastTrip = parseDate(state.trip?.trip?.endDate ?: "").before(Date())
+
     val scrollState = rememberScrollState()
 
     val activityTypesMap = remember(state.tripActivityTypes) {
@@ -179,6 +181,7 @@ fun TripDetailsScreen(
             TripGroupMembers(
                 members = state.trip?.usersGroup ?: emptyList(),
                 groupInvitations = state.trip?.invitationGroup ?: emptyList(),
+                displayAddMemberButton = !isPastTrip,
                 onAddMemberClick = {
                     showAddToGroup = true
                 },
@@ -188,11 +191,11 @@ fun TripDetailsScreen(
             )
 
             Row(
-                modifier = Modifier.fillMaxWidth(), // constrain Row width
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Card(
                     modifier = Modifier
-                        .weight(1f) // evenly divide space
+                        .weight(1f)
                         .aspectRatio(1f)
                         .padding(16.dp),
                     colors = CardDefaults.cardColors(
@@ -222,36 +225,39 @@ fun TripDetailsScreen(
                         )
                     }
                 }
-                Card(
-                    modifier = Modifier
-                        .weight(1f) // evenly divide space
-                        .aspectRatio(1f)
-                        .padding(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
-                    ),
-                    shape = RoundedCornerShape(8.dp),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 2.dp
-                    ),
-                    onClick = {
-                        navController.navigate(TravelBuddyRoute.DiscoverEvents(tripId = state.trip?.trip?.id.toString()))
-                    }
-                ) {
-                    Column(
-                        modifier = Modifier.padding(8.dp).fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+
+                if(!isPastTrip){
+                    Card(
+                        modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(1f)
+                            .padding(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 2.dp
+                        ),
+                        onClick = {
+                            navController.navigate(TravelBuddyRoute.DiscoverEvents(tripId = state.trip?.trip?.id.toString()))
+                        }
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.LocationSearching,
-                            contentDescription = "Discover events",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        Text(
-                            "Discover Events",
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
+                        Column(
+                            modifier = Modifier.padding(8.dp).fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocationSearching,
+                                contentDescription = "Discover events",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                "Discover Events",
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                     }
                 }
             }
