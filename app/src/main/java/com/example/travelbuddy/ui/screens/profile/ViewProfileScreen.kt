@@ -21,7 +21,7 @@ import com.example.travelbuddy.utils.ImageUtils.toImageBitmapOrNull
 
 @Composable
 fun ViewProfileScreen(
-    email: String, // Pass email to fetch the specific user data
+    email: String,
     state: ViewProfileState,
     actions: ViewProfileActions,
     navController: NavController
@@ -78,7 +78,6 @@ fun ViewProfileScreen(
             onConfirm = {
                 showUnfriendDialog = false
                 actions.unfriend(email)
-                // Navigate back after unfriending
                 navController.popBackStack()
             },
             onDismiss = { showUnfriendDialog = false }
@@ -104,6 +103,37 @@ fun ViewProfileScreen(
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            if (!state.error.isNullOrEmpty()) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Error,
+                            contentDescription = "Error",
+                            tint = MaterialTheme.colorScheme.onErrorContainer,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = state.error,
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+            }
+
             ProfileImageSection(
                 profileImageBitmap = state.profileBitmap
                     ?.let { ImageUtils.byteArrayToOrientedBitmap(it).toImageBitmapOrNull() },

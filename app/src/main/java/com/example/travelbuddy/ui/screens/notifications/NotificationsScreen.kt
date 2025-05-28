@@ -9,6 +9,8 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,11 +24,25 @@ import com.example.travelbuddy.data.database.InvitationWithTripName
 import com.example.travelbuddy.ui.composables.NotificationItem
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
+import kotlinx.coroutines.delay
 
 enum class NotificationFilter {
     ALL,
     READ,
     UNREAD
+}
+
+// Classe per gestire il feedback delle azioni
+data class InviteActionFeedback(
+    val inviteId: String,
+    val action: InviteAction,
+    val tripName: String,
+    val isVisible: Boolean = true
+)
+
+enum class InviteAction {
+    ACCEPTED,
+    DECLINED
 }
 
 @Composable
@@ -36,6 +52,27 @@ fun NotificationsScreen(
     navController: NavController
 ) {
     var currentFilter by remember { mutableStateOf(NotificationFilter.ALL) }
+
+    // Stato per gestire il feedback delle azioni
+    var actionFeedbacks by remember { mutableStateOf<List<InviteActionFeedback>>(emptyList()) }
+
+    // Snackbar host state per messaggi di conferma
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // LaunchedEffect per mostrare snackbar quando ci sono nuovi feedback
+    LaunchedEffect(actionFeedbacks.size) {
+        if (actionFeedbacks.isNotEmpty()) {
+            val lastFeedback = actionFeedbacks.last()
+            val message = when (lastFeedback.action) {
+                InviteAction.ACCEPTED -> "You joined the group for \"${lastFeedback.tripName}\"!"
+                InviteAction.DECLINED -> "Invitation for \"${lastFeedback.tripName}\" declined"
+            }
+            snackbarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
 
     LaunchedEffect(Unit) {
         actions.loadNotifications()
@@ -51,7 +88,8 @@ fun NotificationsScreen(
                 canNavigateBack = true
             )
         },
-        bottomBar = { TravelBuddyBottomBar(navController = navController) }
+        bottomBar = { TravelBuddyBottomBar(navController = navController) },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -76,13 +114,49 @@ fun NotificationsScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(vertical = 16.dp)
                 ) {
+                    // Mostra i feedback delle azioni completate
+                    items(actionFeedbacks.filter { it.isVisible }) { feedback ->
+                        ActionFeedbackCard(
+                            feedback = feedback,
+                            onDismiss = {
+                                actionFeedbacks = actionFeedbacks.map {
+                                    if (it.inviteId == feedback.inviteId) it.copy(isVisible = false) else it
+                                }
+                            }
+                        )
+                    }
+
                     // Group Invites Section
                     if (state.groupInvites.isNotEmpty()) {
                         item {
                             GroupInvitesSection(
                                 invites = state.groupInvites,
-                                onAcceptInvite = actions::acceptGroupInvite,
-                                onDeclineInvite = actions::declineGroupInvite
+                                onAcceptInvite = { email, tripId ->
+                                    val invite = state.groupInvites.find { it.invitation.tripId == tripId }
+                                    invite?.let {
+                                        // Aggiungi feedback
+                                        val feedback = InviteActionFeedback(
+                                            inviteId = "${email}_${tripId}",
+                                            action = InviteAction.ACCEPTED,
+                                            tripName = it.tripName
+                                        )
+                                        actionFeedbacks = actionFeedbacks + feedback
+                                    }
+                                    actions.acceptGroupInvite(email, tripId)
+                                },
+                                onDeclineInvite = { email, tripId ->
+                                    val invite = state.groupInvites.find { it.invitation.tripId == tripId }
+                                    invite?.let {
+                                        // Aggiungi feedback
+                                        val feedback = InviteActionFeedback(
+                                            inviteId = "${email}_${tripId}",
+                                            action = InviteAction.DECLINED,
+                                            tripName = it.tripName
+                                        )
+                                        actionFeedbacks = actionFeedbacks + feedback
+                                    }
+                                    actions.declineGroupInvite(email, tripId)
+                                }
                             )
                         }
                     }
@@ -132,6 +206,80 @@ fun NotificationsScreen(
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun ActionFeedbackCard(
+    feedback: InviteActionFeedback,
+    onDismiss: () -> Unit
+) {
+    val backgroundColor = when (feedback.action) {
+        InviteAction.ACCEPTED -> MaterialTheme.colorScheme.primaryContainer
+        InviteAction.DECLINED -> MaterialTheme.colorScheme.errorContainer
+    }
+
+    val contentColor = when (feedback.action) {
+        InviteAction.ACCEPTED -> MaterialTheme.colorScheme.onPrimaryContainer
+        InviteAction.DECLINED -> MaterialTheme.colorScheme.onErrorContainer
+    }
+
+    val icon = when (feedback.action) {
+        InviteAction.ACCEPTED -> Icons.Filled.CheckCircle
+        InviteAction.DECLINED -> Icons.Filled.Cancel
+    }
+
+    val message = when (feedback.action) {
+        InviteAction.ACCEPTED -> "You successfully joined the group for \"${feedback.tripName}\""
+        InviteAction.DECLINED -> "You declined the invitation for \"${feedback.tripName}\""
+    }
+
+    // Auto-dismiss dopo 5 secondi
+    LaunchedEffect(feedback.inviteId) {
+        delay(5000)
+        onDismiss()
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = backgroundColor,
+            contentColor = contentColor
+        ),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.weight(1f)
+            )
+
+            IconButton(
+                onClick = onDismiss,
+                modifier = Modifier.size(24.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Cancel,
+                    contentDescription = "Dismiss",
+                    modifier = Modifier.size(16.dp)
+                )
             }
         }
     }
@@ -193,6 +341,9 @@ fun GroupInviteItem(
     onAccept: () -> Unit,
     onDecline: () -> Unit
 ) {
+    var isProcessing by remember { mutableStateOf(false) }
+    var actionCompleted by remember { mutableStateOf<InviteAction?>(null) }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -239,25 +390,92 @@ fun GroupInviteItem(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                TextButton(
-                    onClick = onDecline,
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error
+            if (actionCompleted != null) {
+                // Mostra il risultato dell'azione
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val (icon, text, color) = when (actionCompleted) {
+                        InviteAction.ACCEPTED -> Triple(
+                            Icons.Filled.CheckCircle,
+                            "Invitation accepted!",
+                            MaterialTheme.colorScheme.primary
+                        )
+                        InviteAction.DECLINED -> Triple(
+                            Icons.Filled.Cancel,
+                            "Invitation declined",
+                            MaterialTheme.colorScheme.error
+                        )
+                        null -> Triple(Icons.Filled.CheckCircle, "", MaterialTheme.colorScheme.primary)
+                    }
+
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = color,
+                        modifier = Modifier.size(20.dp)
                     )
-                ) {
-                    Text("Decline")
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(
+                        text = text,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = color,
+                        fontWeight = FontWeight.Medium
+                    )
                 }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Button(
-                    onClick = onAccept
+            } else {
+                // Mostra i pulsanti di azione
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
                 ) {
-                    Text("Accept")
+                    TextButton(
+                        onClick = {
+                            isProcessing = true
+                            onDecline()
+                            actionCompleted = InviteAction.DECLINED
+                            isProcessing = false
+                        },
+                        enabled = !isProcessing,
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        if (isProcessing && actionCompleted == InviteAction.DECLINED) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(16.dp),
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Text("Decline")
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Button(
+                        onClick = {
+                            isProcessing = true
+                            onAccept()
+                            actionCompleted = InviteAction.ACCEPTED
+                            isProcessing = false
+                        },
+                        enabled = !isProcessing
+                    ) {
+                        if (isProcessing && actionCompleted == InviteAction.ACCEPTED) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(16.dp),
+                                strokeWidth = 2.dp,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        } else {
+                            Text("Accept")
+                        }
+                    }
                 }
             }
         }
