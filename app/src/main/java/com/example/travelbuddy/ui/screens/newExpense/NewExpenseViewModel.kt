@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelbuddy.data.database.Expense
 import com.example.travelbuddy.data.repositories.ExpensesRepository
+import com.example.travelbuddy.data.repositories.GroupsRepository
+import com.example.travelbuddy.data.repositories.NotificationsRepository
 import com.example.travelbuddy.data.repositories.UserSessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,7 +41,9 @@ interface NewExpenseActions {
 
 class NewExpenseViewModel(
     private val expensesRepository: ExpensesRepository,
-    private val userSessionRepository: UserSessionRepository
+    private val userSessionRepository: UserSessionRepository,
+    private val notificationsRepository: NotificationsRepository,
+    private val groupsRepository: GroupsRepository
 ): ViewModel() {
     private val _state = MutableStateFlow(NewExpenseState())
     val state = _state.asStateFlow()
@@ -99,6 +103,11 @@ class NewExpenseViewModel(
                                     newExpenseId = expenseId,
                                     isLoading = false
                                 )
+
+                                val groupEntries = groupsRepository.getGroupMembersByTripId(state.value.tripId ?: 0)
+                                groupEntries.toSet().forEach { group ->
+                                    notificationsRepository.addInfoNotification(description = "$email added an expense of ${state.value.amount}", title = "New Expense", userEmail = group.userEmail)
+                                }
                             }
                         }
                     }

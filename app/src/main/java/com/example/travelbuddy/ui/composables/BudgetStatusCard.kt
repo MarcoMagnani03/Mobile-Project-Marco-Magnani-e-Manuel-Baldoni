@@ -57,17 +57,20 @@ fun BudgetStatusCard(state: BudgetOverviewState) {
                 .height(200.dp)
                 .padding(16.dp)
             ) {
-                var startAngle = 0f // Starting angle for the pie chart
+                var startAngle = 0f
                 val center = Offset(size.width / 2, size.height / 2)
                 val radius = size.minDimension / 2
-                val remainingAmount = state.totalBudget - state.spentSoFar
-                val remainingAngle = (remainingAmount / state.totalBudget) * 360f
 
+                // Usa il maggiore tra budget totale e spesa totale come base per i calcoli
+                val baseAmount = maxOf(state.totalBudget, state.spentSoFar)
+                val remainingAmount = state.totalBudget - state.spentSoFar
+
+                // Disegna i contributi degli utenti
                 state.userContributions.forEach { (user, amount) ->
-                    val sweepAngle = (amount / state.totalBudget) * 360f
+                    val sweepAngle = (amount / baseAmount) * 360f
 
                     drawArc(
-                        color = Color(user.hashCode()).copy(alpha = 0.8f), // Color based on user hash
+                        color = Color(user.hashCode()).copy(alpha = 0.8f),
                         startAngle = startAngle,
                         sweepAngle = sweepAngle.toFloat(),
                         useCenter = true,
@@ -76,18 +79,22 @@ fun BudgetStatusCard(state: BudgetOverviewState) {
                         style = Fill
                     )
 
-                    startAngle += sweepAngle.toFloat() // Update start angle for next segment
+                    startAngle += sweepAngle.toFloat()
                 }
 
-                drawArc(
-                    color = Color.LightGray,
-                    startAngle = startAngle,
-                    sweepAngle = remainingAngle.toFloat(),
-                    useCenter = true,
-                    topLeft = Offset(center.x - radius, center.y - radius),
-                    size = Size(radius * 2, radius * 2),
-                    style = Fill
-                )
+                // Disegna la parte rimanente solo se c'è budget non utilizzato
+                if (remainingAmount > 0) {
+                    val remainingAngle = (remainingAmount / baseAmount) * 360f
+                    drawArc(
+                        color = Color.LightGray,
+                        startAngle = startAngle,
+                        sweepAngle = remainingAngle.toFloat(),
+                        useCenter = true,
+                        topLeft = Offset(center.x - radius, center.y - radius),
+                        size = Size(radius * 2, radius * 2),
+                        style = Fill
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -159,23 +166,30 @@ fun BudgetStatusCard(state: BudgetOverviewState) {
                     text = "Spent so far",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = if (state.spentSoFar > state.totalBudget) Color.Red else MaterialTheme.colorScheme.onSurface
                 )
 
                 Text(
                     text = "€${state.spentSoFar}",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = if (state.spentSoFar > state.totalBudget) Color.Red else MaterialTheme.colorScheme.onSurface
                 )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            val percentage = calculatePercentage(state.spentSoFar, state.totalBudget)
+            val isOverBudget = state.spentSoFar > state.totalBudget
+
             Text(
-                text = "Budget used: ${calculatePercentage(state.spentSoFar, state.totalBudget)}%",
+                text = if (isOverBudget) {
+                    "Budget exceeded: ${percentage}% (€${(state.spentSoFar - state.totalBudget).toInt()} over)"
+                } else {
+                    "Budget used: ${percentage}%"
+                },
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = if (isOverBudget) Color.Red else MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -186,7 +200,7 @@ fun BudgetStatusCard(state: BudgetOverviewState) {
                     .fillMaxWidth()
                     .height(8.dp)
                     .clip(RoundedCornerShape(4.dp)),
-                color = MaterialTheme.colorScheme.primary,
+                color = if (isOverBudget) Color.Red else MaterialTheme.colorScheme.primary,
                 trackColor = Color.LightGray,
             )
         }

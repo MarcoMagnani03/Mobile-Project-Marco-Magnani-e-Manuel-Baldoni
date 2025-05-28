@@ -38,7 +38,8 @@ fun TripGroupMembers(
     members: List<User>,
     groupInvitations: List<InvitationWithTripName>,
     onAddMemberClick: () -> Unit,
-    onLeaveGroupClick: () -> Unit
+    onLeaveGroupClick: () -> Unit,
+    displayAddMemberButton: Boolean
 ) {
     Card(
         modifier = Modifier
@@ -83,18 +84,20 @@ fun TripGroupMembers(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            TravelBuddyButton(
-                onClick = onAddMemberClick,
-                label = "Add member",
-                style = ButtonStyle.PRIMARY_OUTLINED,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add member",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            )
+            if (displayAddMemberButton){
+                TravelBuddyButton(
+                    onClick = onAddMemberClick,
+                    label = "Add member",
+                    style = ButtonStyle.PRIMARY_OUTLINED,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add member",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                )
+            }
 
             TravelBuddyButton(
                 onClick = onLeaveGroupClick,

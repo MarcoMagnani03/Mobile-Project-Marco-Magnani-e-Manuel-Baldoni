@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelbuddy.data.database.Expense
 import com.example.travelbuddy.data.repositories.ExpensesRepository
+import com.example.travelbuddy.data.repositories.GroupsRepository
+import com.example.travelbuddy.data.repositories.NotificationsRepository
 import com.example.travelbuddy.data.repositories.TripsRepository
+import com.example.travelbuddy.data.repositories.UserSessionRepository
 import com.example.travelbuddy.utils.formatTimeRange
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,6 +33,9 @@ interface BudgetOverviewActions {
 class BudgetOverviewViewModel(
     private val tripsRepository: TripsRepository,
     private val expensesRepository: ExpensesRepository,
+    private val groupsRepository: GroupsRepository,
+    private val userSessionRepository: UserSessionRepository,
+    private val notificationsRepository: NotificationsRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(BudgetOverviewState())
@@ -93,6 +99,16 @@ class BudgetOverviewViewModel(
             viewModelScope.launch {
                 try {
                     expensesRepository.delete(expense)
+
+                    userSessionRepository.userEmail.collect { currentUserEmail ->
+                        if (currentUserEmail.isNullOrBlank()) return@collect
+
+                        val groupEntries = groupsRepository.getGroupMembersByTripId(state.value.tripId ?: 0)
+                        groupEntries.toSet().forEach { group ->
+                            notificationsRepository.addInfoNotification(description = "$currentUserEmail deleted and expense", title = "Deleted expense", userEmail = group.userEmail)
+                        }
+                    }
+
                     loadBudgetData(tripId)
                 } catch (e: Exception) {
                     _state.value = _state.value.copy(
