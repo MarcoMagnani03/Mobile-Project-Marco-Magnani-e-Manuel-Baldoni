@@ -38,7 +38,7 @@ fun NewExpenseScreen(
 
     LaunchedEffect(state.newExpenseId) {
         state.newExpenseId?.let {
-            navController.navigate(TravelBuddyRoute.TripDetails(tripId = state.tripId.toString()))
+            navController.navigate(TravelBuddyRoute.BudgetOverview(tripId = state.tripId.toString()))
         }
     }
 
