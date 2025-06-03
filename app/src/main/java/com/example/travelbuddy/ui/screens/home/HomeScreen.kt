@@ -70,8 +70,15 @@ fun HomeScreen(
             state.userWithTrips?.let {
                 ActiveTripsSection(
                     trips = it.trips.filter { trip ->
-                        LocalDate.parse(trip.trip.startDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")).isBefore(LocalDate.now()) &&
-                                LocalDate.parse(trip.trip.endDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")).isAfter(LocalDate.now())
+                        (
+                            LocalDate.parse(trip.trip.startDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")).isBefore(LocalDate.now()) ||
+                            LocalDate.parse(trip.trip.startDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")).isEqual(LocalDate.now())
+                        )
+                        &&
+                        (
+                            LocalDate.parse(trip.trip.endDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")).isAfter(LocalDate.now()) ||
+                            LocalDate.parse(trip.trip.endDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")).isEqual(LocalDate.now())
+                        )
                     },
                     navController = navController
                 )

@@ -161,16 +161,6 @@ fun NotificationsScreen(
                         }
                     }
 
-                    // Notifications Section
-                    item {
-                        Text(
-                            text = "Notifications",
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                    }
-
                     item {
                         NotificationFilterTabs(
                             currentFilter = currentFilter,
