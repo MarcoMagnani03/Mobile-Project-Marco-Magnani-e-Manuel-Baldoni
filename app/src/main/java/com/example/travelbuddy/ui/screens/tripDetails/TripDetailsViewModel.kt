@@ -129,6 +129,9 @@ class TripDetailsViewModel(
                     selectedFriends.forEach { friend ->
                         groupInvitesRepository.sendGroupInvite(receiverEmail = friend.email, senderEmail = userEmail.toString(), tripId = tripId) // o usa un repository dedicato se esiste
                     }
+
+                    loadTrip(tripId)
+
                 } catch (e: Exception) {
                     _state.value = _state.value.copy(error = "Error sending invitations")
                 }

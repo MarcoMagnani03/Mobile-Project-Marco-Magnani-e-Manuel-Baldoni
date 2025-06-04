@@ -128,7 +128,6 @@ fun TripDetailsScreen(
         groupEmails = state.trip?.usersGroup?.map { it.email } ?: emptyList(),
         invitedEmails = state.trip?.invitationGroup?.map { it.invitation.receiverEmail } ?: emptyList(),
         onInvite = { selectedFriends ->
-            // invia le richieste di invito qui
             actions.sendInvitations(selectedFriends)
         }
     )
@@ -272,7 +271,7 @@ fun TripDetailsScreen(
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Edit,
-                            contentDescription = "Add member",
+                            contentDescription = "Edit Trip",
                             tint = Color.White
                         )
                     },
@@ -287,7 +286,7 @@ fun TripDetailsScreen(
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = "Add member",
+                            contentDescription = "Delete trip",
                             tint = Color.White
                         )
                     },
