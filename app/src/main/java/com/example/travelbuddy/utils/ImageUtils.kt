@@ -55,14 +55,6 @@ object ImageUtils {
         } ?: false
     }
 
-    fun byteArrayToBitmap(byteArray: ByteArray): Bitmap? {
-        return if (byteArray.isNotEmpty()) {
-            BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-        } else {
-            null
-        }
-    }
-
     fun Bitmap?.toImageBitmapOrNull(): ImageBitmap? {
         return this?.asImageBitmap()
     }

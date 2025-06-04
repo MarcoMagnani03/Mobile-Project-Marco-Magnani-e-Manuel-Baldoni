@@ -292,7 +292,7 @@ fun FriendItem(
     ) {
         Box(modifier = Modifier.size(80.dp)) {
             ProfileImageSection(
-                profileImageBitmap = profileImage?.let { ImageUtils.byteArrayToBitmap(it).toImageBitmapOrNull() },
+                profileImageBitmap = profileImage?.let { ImageUtils.byteArrayToOrientedBitmap(it).toImageBitmapOrNull() },
                 isClickable = false,
             )
         }

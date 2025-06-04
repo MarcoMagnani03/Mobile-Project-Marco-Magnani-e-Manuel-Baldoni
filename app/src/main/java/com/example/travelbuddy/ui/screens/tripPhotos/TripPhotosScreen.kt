@@ -147,7 +147,7 @@ fun TripPhotosScreen(
                 Column {
                     selectedPhoto?.file?.let { photoBytes ->
                         Image(
-                            bitmap = ImageUtils.byteArrayToBitmap(photoBytes)!!.asImageBitmap(),
+                            bitmap = ImageUtils.byteArrayToOrientedBitmap(photoBytes).asImageBitmap(),
                             contentDescription = "Photo",
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -393,7 +393,7 @@ fun PhotoItem(
         ) {
             photo.file?.let { photoBytes ->
                 Image(
-                    bitmap = ImageUtils.byteArrayToBitmap(photoBytes)!!.asImageBitmap(),
+                    bitmap = ImageUtils.byteArrayToOrientedBitmap(photoBytes).asImageBitmap(),
                     contentDescription = "Photo",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
