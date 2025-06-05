@@ -42,7 +42,9 @@ fun NewTripScreen(
 
     LaunchedEffect(state.newTripId) {
         state.newTripId?.let { tripId ->
-            navController.navigate(TravelBuddyRoute.TripDetails(tripId = tripId.toString()))
+            navController.navigate(TravelBuddyRoute.TripDetails(tripId = tripId.toString())) {
+                popUpTo(TravelBuddyRoute.NewTrip) { inclusive = true }
+            }
         }
     }
 

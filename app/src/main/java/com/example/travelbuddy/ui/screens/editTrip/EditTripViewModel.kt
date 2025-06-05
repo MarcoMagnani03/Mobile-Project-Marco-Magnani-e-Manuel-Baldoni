@@ -147,6 +147,11 @@ class EditTripViewModel(
                             groupEntries.toSet().forEach { group ->
                                 notificationsRepository.addInfoNotification(description = "$currentUserEmail edited the trip: ${state.value.tripName}", title = "Edited trip", userEmail = group.userEmail)
                             }
+
+                            _state.value = _state.value.copy(
+                                isLoading = false,
+                                errorMessage = ""
+                            )
                         }
                     }
                 } catch (e: Exception) {

@@ -9,6 +9,7 @@ import com.example.travelbuddy.data.repositories.PhotosRepository
 import com.example.travelbuddy.data.repositories.UserSessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -104,12 +105,16 @@ class TripPhotosViewModel(
 
                     photoRepository.upsert(photo)
 
-                    userSessionRepository.userEmail.collect { currentUserEmail ->
-                        if (currentUserEmail.isNullOrBlank()) return@collect
-
-                        val groupEntries = groupsRepository.getGroupMembersByTripId(state.value.tripId ?: 0)
+                    // Fixed: Use first() instead of collect to get current value
+                    val currentUserEmail = userSessionRepository.userEmail.first()
+                    if (!currentUserEmail.isNullOrBlank()) {
+                        val groupEntries = groupsRepository.getGroupMembersByTripId(tripId)
                         groupEntries.toSet().forEach { group ->
-                            notificationsRepository.addInfoNotification(description = "$currentUserEmail added a photo", title = "New Photo", userEmail = group.userEmail)
+                            notificationsRepository.addInfoNotification(
+                                description = "$currentUserEmail added a photo",
+                                title = "New Photo",
+                                userEmail = group.userEmail
+                            )
                         }
                     }
 
@@ -129,12 +134,16 @@ class TripPhotosViewModel(
                     _state.value = _state.value.copy(isLoading = true)
                     photoRepository.delete(photo)
 
-                    userSessionRepository.userEmail.collect { currentUserEmail ->
-                        if (currentUserEmail.isNullOrBlank()) return@collect
-
-                        val groupEntries = groupsRepository.getGroupMembersByTripId(state.value.tripId)
+                    // Fixed: Use first() instead of collect to get current value
+                    val currentUserEmail = userSessionRepository.userEmail.first()
+                    if (!currentUserEmail.isNullOrBlank()) {
+                        val groupEntries = groupsRepository.getGroupMembersByTripId(_state.value.tripId)
                         groupEntries.toSet().forEach { group ->
-                            notificationsRepository.addInfoNotification(description = "$currentUserEmail deleted a photo", title = "Deleted Photo", userEmail = group.userEmail)
+                            notificationsRepository.addInfoNotification(
+                                description = "$currentUserEmail deleted a photo",
+                                title = "Deleted Photo",
+                                userEmail = group.userEmail
+                            )
                         }
                     }
 

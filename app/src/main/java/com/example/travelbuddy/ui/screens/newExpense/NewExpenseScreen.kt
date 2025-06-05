@@ -38,7 +38,9 @@ fun NewExpenseScreen(
 
     LaunchedEffect(state.newExpenseId) {
         state.newExpenseId?.let {
-            navController.navigate(TravelBuddyRoute.BudgetOverview(tripId = state.tripId.toString()))
+            navController.navigate(TravelBuddyRoute.BudgetOverview(tripId = state.tripId.toString())){
+                popUpTo(TravelBuddyRoute.NewExpense(tripId = state.tripId.toString())) { inclusive = true }
+            }
         }
     }
 

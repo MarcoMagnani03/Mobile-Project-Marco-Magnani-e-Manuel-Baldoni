@@ -121,7 +121,8 @@ class EditExpenseViewModel(
                             }
 
                             _state.value = _state.value.copy(
-                                isLoading = false
+                                isLoading = false,
+                                errorMessage = ""
                             )
                         }
                     }
