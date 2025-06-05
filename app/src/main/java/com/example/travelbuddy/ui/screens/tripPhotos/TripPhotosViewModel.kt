@@ -26,7 +26,10 @@ data class TripPhotosState(
     val showCameraScreen: Boolean = false,
     val showImagePreview: Boolean = false,
     val permissionRationaleVisible: Boolean = false,
-    val permissionCameraDeniedVisible: Boolean = false
+    val permissionCameraDeniedVisible: Boolean = false,
+    val selectedPhotos: Set<Long> = emptySet(), // Photo IDs
+    val isSelectionMode: Boolean = false,
+    val isSavingToGallery: Boolean = false
 )
 
 interface TripPhotosActions {
@@ -40,6 +43,12 @@ interface TripPhotosActions {
     fun setPreviewImageUri(uri: String)
     fun showPermissionRationale(show: Boolean)
     fun showCameraPermissionDeniedAlert(show: Boolean)
+    fun togglePhotoSelection(photoId: Long)
+    fun toggleSelectionMode()
+    fun clearSelection()
+    fun selectAllPhotos()
+    fun saveSelectedPhotosToGallery()
+    fun deleteSelectedPhotos()
 }
 
 class TripPhotosViewModel(
@@ -105,7 +114,6 @@ class TripPhotosViewModel(
 
                     photoRepository.upsert(photo)
 
-                    // Fixed: Use first() instead of collect to get current value
                     val currentUserEmail = userSessionRepository.userEmail.first()
                     if (!currentUserEmail.isNullOrBlank()) {
                         val groupEntries = groupsRepository.getGroupMembersByTripId(tripId)
@@ -134,7 +142,6 @@ class TripPhotosViewModel(
                     _state.value = _state.value.copy(isLoading = true)
                     photoRepository.delete(photo)
 
-                    // Fixed: Use first() instead of collect to get current value
                     val currentUserEmail = userSessionRepository.userEmail.first()
                     if (!currentUserEmail.isNullOrBlank()) {
                         val groupEntries = groupsRepository.getGroupMembersByTripId(_state.value.tripId)
@@ -179,6 +186,104 @@ class TripPhotosViewModel(
 
         override fun showCameraPermissionDeniedAlert(show: Boolean) {
             _state.value = _state.value.copy(permissionCameraDeniedVisible = show)
+        }
+
+        override fun togglePhotoSelection(photoId: Long) {
+            val currentSelection = _state.value.selectedPhotos
+            val newSelection = if (currentSelection.contains(photoId)) {
+                currentSelection - photoId
+            } else {
+                currentSelection + photoId
+            }
+            _state.value = _state.value.copy(selectedPhotos = newSelection)
+        }
+
+        override fun toggleSelectionMode() {
+            val newSelectionMode = !_state.value.isSelectionMode
+            _state.value = _state.value.copy(
+                isSelectionMode = newSelectionMode,
+                selectedPhotos = if (!newSelectionMode) emptySet() else _state.value.selectedPhotos
+            )
+        }
+
+        override fun clearSelection() {
+            _state.value = _state.value.copy(
+                selectedPhotos = emptySet(),
+                isSelectionMode = false
+            )
+        }
+
+        override fun selectAllPhotos() {
+            val allPhotoIds = _state.value.photos.mapNotNull { it.id }.toSet()
+            _state.value = _state.value.copy(selectedPhotos = allPhotoIds)
+        }
+
+        override fun saveSelectedPhotosToGallery() {
+            viewModelScope.launch {
+                try {
+                    _state.value = _state.value.copy(isSavingToGallery = true)
+                    val selectedPhotos = _state.value.photos.filter { photo ->
+                        photo.id?.let { _state.value.selectedPhotos.contains(it) } == true
+                    }
+
+                    val imageBytesList = selectedPhotos.mapNotNull { it.file }
+
+                    // You'll need to pass context here from the UI layer
+                    // For now, we'll emit a state that the UI can observe and handle the actual saving
+                    // Alternatively, you can inject a repository that handles file operations
+
+                    _state.value = _state.value.copy(
+                        isSavingToGallery = false,
+                        selectedPhotos = emptySet(),
+                        isSelectionMode = false
+                    )
+
+                    // Emit success state - the UI will handle showing the snackbar
+                } catch (e: Exception) {
+                    _state.value = _state.value.copy(
+                        error = "Error saving photos: ${e.message}",
+                        isSavingToGallery = false
+                    )
+                }
+            }
+        }
+
+        override fun deleteSelectedPhotos() {
+            viewModelScope.launch {
+                try {
+                    _state.value = _state.value.copy(isLoading = true)
+                    val selectedPhotos = _state.value.photos.filter { photo ->
+                        photo.id?.let { _state.value.selectedPhotos.contains(it) } == true
+                    }
+
+                    selectedPhotos.forEach { photo ->
+                        photoRepository.delete(photo)
+                    }
+
+                    val currentUserEmail = userSessionRepository.userEmail.first()
+                    if (!currentUserEmail.isNullOrBlank() && selectedPhotos.isNotEmpty()) {
+                        val groupEntries = groupsRepository.getGroupMembersByTripId(_state.value.tripId)
+                        groupEntries.toSet().forEach { group ->
+                            notificationsRepository.addInfoNotification(
+                                description = "$currentUserEmail deleted ${selectedPhotos.size} photos",
+                                title = "Deleted Photos",
+                                userEmail = group.userEmail
+                            )
+                        }
+                    }
+
+                    _state.value = _state.value.copy(
+                        selectedPhotos = emptySet(),
+                        isSelectionMode = false
+                    )
+                    loadPhotos()
+                } catch (e: Exception) {
+                    _state.value = _state.value.copy(
+                        error = "Error deleting photos: ${e.message}",
+                        isLoading = false
+                    )
+                }
+            }
         }
     }
 }

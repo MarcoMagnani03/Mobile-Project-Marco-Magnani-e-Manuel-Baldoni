@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,17 +22,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +52,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -62,15 +74,18 @@ import com.example.travelbuddy.data.database.Photo
 import com.example.travelbuddy.ui.TravelBuddyRoute
 import com.example.travelbuddy.ui.composables.ImageSourceDialog
 import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
+import com.example.travelbuddy.ui.composables.TravelBuddyButton
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
 import com.example.travelbuddy.ui.screens.camera.CameraCaptureScreen
 import com.example.travelbuddy.ui.screens.camera.ImagePreviewScreen
 import com.example.travelbuddy.utils.ImageUtils
 import com.example.travelbuddy.utils.PermissionStatus
 import com.example.travelbuddy.utils.rememberMultiplePermissions
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TripPhotosScreen(
     state: TripPhotosState,
@@ -82,6 +97,7 @@ fun TripPhotosScreen(
     var selectedPhoto by remember { mutableStateOf<Photo?>(null) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showPhotoDetailDialog by remember { mutableStateOf(false) }
+    var showBulkDeleteDialog by remember { mutableStateOf(false) }
 
     val cameraPermissionHandler = rememberMultiplePermissions(
         permissions = listOf(
@@ -132,6 +148,30 @@ fun TripPhotosScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+    // Bulk delete confirmation dialog
+    if (showBulkDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showBulkDeleteDialog = false },
+            title = { Text("Delete Photos") },
+            text = { Text("Are you sure you want to delete ${state.selectedPhotos.size} selected photos?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        actions.deleteSelectedPhotos()
+                        showBulkDeleteDialog = false
+                    }
+                ) {
+                    Text("Delete", color = Color.Red)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showBulkDeleteDialog = false }) {
                     Text("Cancel")
                 }
             }
@@ -199,29 +239,86 @@ fun TripPhotosScreen(
 
     Scaffold(
         topBar = {
-            TravelBuddyTopBar(
-                navController = navController,
-                title = "Trip Photos",
-                canNavigateBack = true
-            )
-        },
-        bottomBar = { TravelBuddyBottomBar(navController) },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    if (cameraPermissionHandler.statuses.all { it.value.isGranted }) {
-                        actions.showImagePicker(true)
-                    } else {
-                        cameraPermissionHandler.launchPermissionRequest()
-                    }
-                },
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add photo",
-                    tint = Color.White
+            if (state.isSelectionMode) {
+                // Selection mode top bar
+                TopAppBar(
+                    title = { Text("${state.selectedPhotos.size} selected", style = MaterialTheme.typography.headlineLarge) },
+                    navigationIcon = {
+                        IconButton(onClick = { actions.clearSelection() }) {
+                            Icon(Icons.Default.Close, contentDescription = "Clear selection")
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { actions.selectAllPhotos() }) {
+                            Icon(Icons.Default.SelectAll, contentDescription = "Select all")
+                        }
+                        if (state.selectedPhotos.isNotEmpty()) {
+                            IconButton(
+                                onClick = {
+                                    // Handle saving in UI layer
+                                    val selectedPhotos = state.photos.filter { photo ->
+                                        photo.id?.let { state.selectedPhotos.contains(it) } == true
+                                    }
+                                    val imageBytesList = selectedPhotos.mapNotNull { it.file }
+                                    val successCount = ImageUtils.saveImagesToGallery(context, imageBytesList)
+
+                                    // Clear selection after saving
+                                    actions.clearSelection()
+
+                                    // Show result
+                                    if (successCount > 0) {
+                                        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                                            snackbarHostState.showSnackbar(
+                                                message = "$successCount photos saved to gallery",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                        }
+                                    }
+                                },
+                                enabled = !state.isSavingToGallery
+                            ) {
+                                Icon(Icons.Default.Download, contentDescription = "Save to gallery")
+                            }
+                            IconButton(onClick = { showBulkDeleteDialog = true }) {
+                                Icon(Icons.Default.Delete, contentDescription = "Delete selected")
+                            }
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    )
                 )
+            } else {
+                TravelBuddyTopBar(
+                    navController = navController,
+                    title = "Trip Photos",
+                    canNavigateBack = true,
+                )
+            }
+        },
+        bottomBar = {
+            if (!state.isSelectionMode) {
+                TravelBuddyBottomBar(navController)
+            }
+        },
+        floatingActionButton = {
+            if (!state.isSelectionMode) {
+                FloatingActionButton(
+                    onClick = {
+                        if (cameraPermissionHandler.statuses.all { it.value.isGranted }) {
+                            actions.showImagePicker(true)
+                        } else {
+                            cameraPermissionHandler.launchPermissionRequest()
+                        }
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add photo",
+                        tint = Color.White
+                    )
+                }
             }
         }
     ) { paddingValues ->
@@ -259,16 +356,35 @@ fun TripPhotosScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    item(span = { GridItemSpan(currentLineSpan = 3) }) {
+                        TravelBuddyButton(
+                            label = "Select photos",
+                            onClick = { actions.toggleSelectionMode() }
+                        )
+                    }
+
                     items(state.photos) { photo ->
                         PhotoItem(
                             photo = photo,
+                            isSelected = photo.id?.let { state.selectedPhotos.contains(it) } ?: false,
+                            isSelectionMode = state.isSelectionMode,
                             onPhotoClick = {
-                                selectedPhoto = photo
-                                showPhotoDetailDialog = true
+                                if (state.isSelectionMode) {
+                                    photo.id?.let { actions.togglePhotoSelection(it) }
+                                } else {
+                                    selectedPhoto = photo
+                                    showPhotoDetailDialog = true
+                                }
                             },
                             onDeleteClick = {
                                 selectedPhoto = photo
                                 showDeleteDialog = true
+                            },
+                            onLongClick = {
+                                if (!state.isSelectionMode) {
+                                    actions.toggleSelectionMode()
+                                    photo.id?.let { actions.togglePhotoSelection(it) }
+                                }
                             }
                         )
                     }
@@ -284,6 +400,16 @@ fun TripPhotosScreen(
                         .padding(16.dp)
                 )
             }
+        }
+    }
+
+    // Handle save to gallery completion
+    LaunchedEffect(state.isSavingToGallery) {
+        if (!state.isSavingToGallery && state.selectedPhotos.isEmpty() && !state.isSelectionMode) {
+            snackbarHostState.showSnackbar(
+                message = "Photos saved to gallery",
+                duration = SnackbarDuration.Short
+            )
         }
     }
 
@@ -377,16 +503,27 @@ fun TripPhotosScreen(
 @Composable
 fun PhotoItem(
     photo: Photo,
+    isSelected: Boolean,
+    isSelectionMode: Boolean,
     onPhotoClick: () -> Unit,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit,
+    onLongClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f)
             .clickable { onPhotoClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(8.dp)
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (isSelected) 8.dp else 4.dp
+        ),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected)
+                MaterialTheme.colorScheme.primaryContainer
+            else
+                MaterialTheme.colorScheme.surface
+        )
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -407,19 +544,46 @@ fun PhotoItem(
                 Text("No image")
             }
 
-            // Delete button in the top-right corner
-            IconButton(
-                onClick = onDeleteClick,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .size(32.dp)
-                    .padding(4.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete photo",
-                    tint = Color.White
-                )
+            // Selection indicator
+            if (isSelectionMode) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(4.dp)
+                        .size(24.dp)
+                        .background(
+                            color = if (isSelected)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                Color.White.copy(alpha = 0.7f),
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (isSelected) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "Selected",
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            } else {
+                // Delete button in the top-right corner (only when not in selection mode)
+                IconButton(
+                    onClick = onDeleteClick,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .size(32.dp)
+                        .padding(4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete photo",
+                        tint = Color.White
+                    )
+                }
             }
 
             // Date indicator at the bottom
