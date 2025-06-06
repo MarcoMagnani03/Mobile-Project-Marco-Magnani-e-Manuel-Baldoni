@@ -87,7 +87,7 @@ fun MapWithColoredMarkers(
     }
 
     Card(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier.fillMaxSize(),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp

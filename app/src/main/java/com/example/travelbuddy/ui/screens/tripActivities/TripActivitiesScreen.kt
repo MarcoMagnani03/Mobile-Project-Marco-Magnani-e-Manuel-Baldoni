@@ -79,7 +79,6 @@ import com.example.travelbuddy.ui.composables.TravelBuddyBottomBar
 import com.example.travelbuddy.ui.composables.TravelBuddyButton
 import com.example.travelbuddy.ui.composables.TravelBuddyTopBar
 import com.example.travelbuddy.ui.composables.TripActivityListItem
-import com.example.travelbuddy.ui.theme.Green20
 import com.example.travelbuddy.utils.parseDateToMillis
 import kotlinx.coroutines.launch
 
@@ -98,10 +97,7 @@ fun TripActivitiesScreen(
     var isModalVisible by remember { mutableStateOf(false) }
     var selectedLocation by remember { mutableStateOf<MapLocation?>(null) }
 
-    val activityTypesMap = remember(state.tripActivityTypes) {
-        state.tripActivityTypes.associateBy { it.id }
-    }
-
+    var showMapDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     if (showDeleteDialog) {
@@ -126,6 +122,39 @@ fun TripActivitiesScreen(
                     }
                 ) {
                     Text("Delete", color = Color.Red)
+                }
+            }
+        )
+    }
+
+    if (showMapDialog) {
+        AlertDialog(
+            onDismissRequest = { showMapDialog = false },
+            text = {
+                MapWithColoredMarkers(
+                    locations = state.tripActivities.map { tripActivity ->
+                        MapLocation(
+                            address = tripActivity.position.toString(),
+                            title = tripActivity.name,
+                            id = tripActivity.id.toString()
+                        )
+                    },
+                    onMarkerClick = { location ->
+                        selectedActivity = state.tripActivities.first{ tripActivity ->
+                            tripActivity.id.toString() == location.id
+                        }
+                        isModalVisible = true
+                    },
+                    selectedLocation = selectedLocation
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showMapDialog = false
+                    }
+                ) {
+                    Text("Close")
                 }
             }
         )
@@ -242,26 +271,6 @@ fun TripActivitiesScreen(
                     // Aggiungi padding bottom quando i filtri sono visibili
                     .padding(bottom = if (state.showFilters) 280.dp else 0.dp)
             ) {
-                // Map
-                item {
-                    MapWithColoredMarkers(
-                        locations = state.tripActivities.map { tripActivity ->
-                            MapLocation(
-                                address = tripActivity.position.toString(),
-                                title = tripActivity.name,
-                                id = tripActivity.id.toString()
-                            )
-                        },
-                        onMarkerClick = { location ->
-                            selectedActivity = state.tripActivities.first{ tripActivity ->
-                                tripActivity.id.toString() == location.id
-                            }
-                            isModalVisible = true
-                        },
-                        selectedLocation = selectedLocation
-                    )
-                }
-
                 // Loading indicator
                 if (state.isLoading) {
                     item {
@@ -334,7 +343,7 @@ fun TripActivitiesScreen(
                                     title = tripActivity.name,
                                     id = tripActivity.id.toString()
                                 )
-                                listState.animateScrollToItem(0)
+                                showMapDialog = true
                             }
                         },
                         onAddToCalendar = {
