@@ -64,6 +64,40 @@ fun DiscoverEventsScreen(
     var selectedEvent by remember { mutableStateOf<Event?>(null) }
     var selectedLocation by remember { mutableStateOf<MapLocation?>(null) }
     var isModalVisible by remember { mutableStateOf(false) }
+    var showMapDialog by remember { mutableStateOf(false) }
+
+    if (showMapDialog) {
+        AlertDialog(
+            onDismissRequest = { showMapDialog = false },
+            text = {
+                MapWithColoredMarkers(
+                    locations = state.events.map { event ->
+                        MapLocation(
+                            address = event.address.toString(),
+                            title = event.title,
+                            id = event.id
+                        )
+                    },
+                    onMarkerClick = { location ->
+                        selectedEvent = state.events.first{ event ->
+                            event.id == location.id
+                        }
+                        isModalVisible = true
+                    },
+                    selectedLocation = selectedLocation
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showMapDialog = false
+                    }
+                ) {
+                    Text("Close")
+                }
+            }
+        )
+    }
 
     if (isModalVisible && selectedEvent != null) {
         AlertDialog(
@@ -255,25 +289,6 @@ fun DiscoverEventsScreen(
                         vertical = 8.dp
                     )
                 ) {
-                    item {
-                        MapWithColoredMarkers(
-                            locations = state.events.map { event ->
-                                MapLocation(
-                                    address = event.address.toString(),
-                                    title = event.title,
-                                    id = event.id
-                                )
-                            },
-                            onMarkerClick = { location ->
-                                selectedEvent = state.events.first{ event ->
-                                    event.id == location.id
-                                }
-                                isModalVisible = true
-                            },
-                            selectedLocation = selectedLocation
-                        )
-                    }
-
                     items(state.events) { event ->
                         EventCard(
                             event = event,
@@ -284,7 +299,7 @@ fun DiscoverEventsScreen(
                                         title = event.title,
                                         id = event.id
                                     )
-                                    listState.animateScrollToItem(0)
+                                    showMapDialog = true
                                 }
                             },
                             navController = navController,

@@ -90,7 +90,7 @@ val appModule = module {
                 })
             }
             defaultRequest {
-                header("Authorization", "Bearer Cl1x_upBnRI1Pr3V39FjaMqY9bbJpLOOdTw-H_Vh")
+                header("Authorization", "Bearer DxkGtMozrX_nZdlbAUVibCY_Oa_BxY4RrBd7SFF4")
                 contentType(ContentType.Application.Json)
             }
         }
@@ -112,7 +112,7 @@ val appModule = module {
     single { NotificationsTypeRepository(get())}
     single { PhotosRepository(get())}
     single { EventsRepository(get())}
-    single {GroupInvitesRepository(get(),get())}
+    single { GroupInvitesRepository(get(),get()) }
 
 
     viewModel { HomeViewModel(get(), get()) }
