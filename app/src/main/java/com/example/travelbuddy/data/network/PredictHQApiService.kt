@@ -1,6 +1,9 @@
 package com.example.travelbuddy.data.network
 
 import com.example.travelbuddy.data.models.EventsResponse
+import com.example.travelbuddy.utils.parseDate
+import com.example.travelbuddy.utils.transformDate
+import com.google.android.gms.maps.model.LatLng
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -8,26 +11,27 @@ import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class PredictHQApiService(private val client: HttpClient) {
     private val baseUrl = "https://api.predicthq.com/v1/events"
 
     suspend fun getEvents(
-        location: String = "",
+        location: LatLng,
         startDate: String? = "",
         endDate: String? = ""
     ): EventsResponse {
-        val encodedLocation = URLEncoder.encode(location, StandardCharsets.UTF_8.toString())
         try {
-            println("--------- SENDING REQUEST TO PREDICTHQ with location: $location")
-
+            println("--------- PARAMS: ${location.latitude}")
+            println("--------- PARAMS: ${location.longitude}")
+            println("--------- PARAMS: ${transformDate(startDate.toString())}")
             // First get the raw response to inspect
             val response = client.get(baseUrl) {
-                parameter("q", encodedLocation)
-                parameter("state", "active")
+                parameter("within", "100km@${location.latitude},${location.longitude}")
                 parameter("limit", 20)
-                parameter("end_around.origin", endDate)
-                parameter("start_around.origin", startDate)
+                parameter("start.gte", transformDate(startDate.toString()))
+                parameter("end.lte", transformDate(endDate.toString()))
             }
 
             // Log the raw response

@@ -289,6 +289,21 @@ fun DiscoverEventsScreen(
                         vertical = 8.dp
                     )
                 ) {
+                    if(state.events.count() <= 0){
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    "No events found",
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        }
+                    }
                     items(state.events) { event ->
                         EventCard(
                             event = event,

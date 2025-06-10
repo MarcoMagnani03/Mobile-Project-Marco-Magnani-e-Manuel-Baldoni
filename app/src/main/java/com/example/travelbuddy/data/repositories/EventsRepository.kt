@@ -1,19 +1,31 @@
 package com.example.travelbuddy.data.repositories
 
+import android.content.Context
+import android.location.Geocoder
 import com.example.travelbuddy.data.models.Event
 import com.example.travelbuddy.data.network.PredictHQApiService
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class EventsRepository(
-    private val apiService: PredictHQApiService
+    private val apiService: PredictHQApiService,
+    private val context: Context
 ) {
     suspend fun getEvents(location: String, startDate: String?, endDate: String?): List<Event> = withContext(Dispatchers.IO) {
         try {
+            val geocoder = Geocoder(context, Locale.getDefault())
+            val address = geocoder.getFromLocationName(location, 1)?.firstOrNull()
+
+            if (address == null){
+                throw Error("No address found")
+            }
+
             val response = apiService.getEvents(
-                location = location,
+                location = LatLng(address.latitude, address.longitude),
                 startDate = startDate,
                 endDate = endDate
             )
@@ -36,7 +48,7 @@ class EventsRepository(
                 )
             }
         } catch (e: Exception) {
-            throw Exception("Failed to fetch events: ${e.message}")
+            throw Exception("No events found")
         }
     }
 }

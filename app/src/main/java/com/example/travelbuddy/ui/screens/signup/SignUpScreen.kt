@@ -76,12 +76,14 @@ fun SignUpScreen(
 
     Scaffold(
         topBar = {
-        TravelBuddyTopBar(
-            navController = navController,
-            title = "Sign up",
-            canNavigateBack = true
-        )
-    }) { contentPadding ->
+            TravelBuddyTopBar(
+                navController = navController,
+                title = "Sign up",
+                canNavigateBack = true,
+                enableNotification = false
+            )
+        }
+    ) { contentPadding ->
         Column(
             modifier = Modifier
                 .padding(contentPadding)

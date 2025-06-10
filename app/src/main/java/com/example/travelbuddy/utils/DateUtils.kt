@@ -3,6 +3,16 @@ package com.example.travelbuddy.utils
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
+fun transformDate(dateString: String): String {
+    val inputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    val outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+    val date = LocalDate.parse(dateString, inputFormatter)
+    return date.format(outputFormatter)
+}
 
 fun parseDate(dateString: String): Date {
     val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())

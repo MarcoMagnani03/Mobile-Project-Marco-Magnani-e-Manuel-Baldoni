@@ -78,7 +78,7 @@ val appModule = module {
     single { get<TravelBuddyDatabase>().notificationsDAO() }
     single { get<TravelBuddyDatabase>().notificationsTypesDAO() }
     single { get<TravelBuddyDatabase>().photosDAO() }
-    single {get<TravelBuddyDatabase>().groupInvitationsDAO()}
+    single { get<TravelBuddyDatabase>().groupInvitationsDAO() }
     single {
         HttpClient {
             install(ContentNegotiation) {
@@ -111,7 +111,7 @@ val appModule = module {
     single { NotificationsRepository(get())}
     single { NotificationsTypeRepository(get())}
     single { PhotosRepository(get())}
-    single { EventsRepository(get())}
+    single { EventsRepository(get(), get())}
     single { GroupInvitesRepository(get(),get()) }
 
 

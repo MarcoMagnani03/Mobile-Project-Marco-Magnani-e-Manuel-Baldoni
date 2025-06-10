@@ -21,7 +21,8 @@ fun TravelBuddyTopBar(
     navController: NavController,
     title: String,
     subtitle: String? = null,
-    canNavigateBack: Boolean = false
+    canNavigateBack: Boolean = false,
+    enableNotification: Boolean = true
 ) {
     TopAppBar(
         modifier = Modifier.padding(12.dp, 0.dp),
@@ -62,7 +63,7 @@ fun TravelBuddyTopBar(
         },
         actions = {
             IconButton(onClick = {
-                if (navController.currentDestination?.route != TravelBuddyRoute.Notification::class.qualifiedName){
+                if (enableNotification && navController.currentDestination?.route != TravelBuddyRoute.Notification::class.qualifiedName){
                     navController.navigate(TravelBuddyRoute.Notification){
                         launchSingleTop = true
                     }
@@ -71,7 +72,11 @@ fun TravelBuddyTopBar(
                 Icon(
                     imageVector = Icons.Default.Notifications,
                     contentDescription = "Notifications",
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = if(enableNotification) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        Color.Transparent
+                    }
                 )
             }
         },
