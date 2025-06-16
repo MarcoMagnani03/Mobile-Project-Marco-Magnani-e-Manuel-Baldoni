@@ -29,19 +29,19 @@ VALUES
 -- ASSOCIAZIONE VIAGGI UTENTE
 INSERT INTO `Group` (userEmail, tripId)
 VALUES
-    ('test@test.it', 1),
+    ('manuel.baldoni@gmail.com', 1),
     ('marco.magnani@gmail.com', 1),
-    ('test@test.it', 2),
+    ('manuel.baldoni@gmail.com', 2),
     ('marco.magnani@gmail.com', 2),
-    ('test@test.it', 3),
+    ('manuel.baldoni@gmail.com', 3),
     ('marco.magnani@gmail.com', 4),
-    ('test@test.it', 5),
+    ('manuel.baldoni@gmail.com', 5),
     ('marco.magnani@gmail.com', 6),
-    ('test@test.it', 7),
+    ('manuel.baldoni@gmail.com', 7),
     ('marco.magnani@gmail.com', 8),
-    ('test@test.it', 9),
+    ('manuel.baldoni@gmail.com', 9),
     ('marco.magnani@gmail.com', 10),
-    ('test@test.it', 11),
+    ('manuel.baldoni@gmail.com', 11),
     ('marco.magnani@gmail.com', 11);
 
 ---------------------------------------------------------------
@@ -114,7 +114,7 @@ VALUES
 -- USER INSERTS (Password di account test è test)
 INSERT INTO User (email, password, passwordSalt, pin, pinSalt, firstname, lastname, phoneNumber, location, bio, profilePicture)
 VALUES
-    ('test@test.it', '347c384fdb50740f8ce788bc983af3d02d836eb2bf17b664d8cdd101012fe124', '4354a3cbd81ba1ce18362f5dbc8eb64e', NULL, NULL, 'Test', 'User', '0123456789', 'Test City, Italy', 'Bio di esempio per utente di test', NULL),
+    ('manuel.baldoni@gmail.com', '347c384fdb50740f8ce788bc983af3d02d836eb2bf17b664d8cdd101012fe124', '4354a3cbd81ba1ce18362f5dbc8eb64e', NULL, NULL, 'Test', 'User', '0123456789', 'Test City, Italy', 'Bio di esempio per utente di test', NULL),
     ('marco.magnani@gmail.com', 'd90e25dd8ee5bbf1e87628f73f44aee97c44e179079cb2622841c142044088d6', '9465b733f0c10775fb2b8eadfd796441', NULL, NULL, 'Mario', 'Rossi', '1234567890', 'Roma, Italia', 'Viaggiatore appassionato di cultura', NULL),
     ('user2@example.com', 'password123', 'salt123', '5678', 'pinSalt2', 'Luigi', 'Bianchi', '2345678901', 'Milano, Italia', 'Adoro le escursioni in montagna', NULL),
     ('user3@example.com', 'password123', 'salt123', '9101', 'pinSalt3', 'Giulia', 'Verdi', '3456789012', 'Firenze, Italia', 'Appassionata di arte e storia', NULL),
@@ -135,8 +135,8 @@ VALUES
 -- NOTIFICATIONS (utente: "ca")
 INSERT INTO Notification (id, title, description, notificationTypeId, userEmail, isRead, sentAt)
 VALUES
-    (1, 'Benvenuto in TravelBuddy', 'La tua avventura inizia qui!', 1, 'test@test.it', 1, '2024-06-01 10:30:00'),
-    (2, 'Nuova attività disponibile', 'È stata aggiunta una nuova escursione per il tuo viaggio.', 1, 'test@test.it', 0, '2024-06-03 15:45:22'),
+    (1, 'Benvenuto in TravelBuddy', 'La tua avventura inizia qui!', 1, 'manuel.baldoni@gmail.com', 1, '2024-06-01 10:30:00'),
+    (2, 'Nuova attività disponibile', 'È stata aggiunta una nuova escursione per il tuo viaggio.', 1, 'manuel.baldoni@gmail.com', 0, '2024-06-03 15:45:22'),
     (3, 'Errore di sincronizzazione', 'Impossibile aggiornare le notifiche. Riprova più tardi.', 2, 'marco.magnani@gmail.com', 0, '2024-06-05 09:12:37'),
     (4, 'Problema di connessione', 'Controlla la tua rete internet e riprova.', 2, 'marco.magnani@gmail.com', 0, '2024-06-05 11:05:18');
 
@@ -144,101 +144,101 @@ VALUES
 INSERT INTO Expense (title, amount, date, description, cretedByUserEmail, tripId)
 VALUES
     -- Trip 1: Roma
-    ('Biglietto Colosseo', 18.0, '10/04/2024', 'Ingresso al Colosseo', 'test@test.it', 1),
+    ('Biglietto Colosseo', 18.0, '10/04/2024', 'Ingresso al Colosseo', 'manuel.baldoni@gmail.com', 1),
     ('Cena Trastevere', 25.0, '10/04/2024', 'Cena tipica romana', 'marco.magnani@gmail.com', 1),
-    ('Musei Vaticani', 17.0, '11/04/2024', 'Biglietto musei e Cappella Sistina', 'test@test.it', 1),
+    ('Musei Vaticani', 17.0, '11/04/2024', 'Biglietto musei e Cappella Sistina', 'manuel.baldoni@gmail.com', 1),
     ('Gelato a Fontana di Trevi', 4.5, '11/04/2024', 'Gelateria storica', 'marco.magnani@gmail.com', 1),
-    ('Trasporto pubblico', 10.0, '10/04/2024', 'Metro e autobus', 'test@test.it', 1),
+    ('Trasporto pubblico', 10.0, '10/04/2024', 'Metro e autobus', 'manuel.baldoni@gmail.com', 1),
 
     -- Trip 2: Barcellona
-    ('Sagrada Familia', 26.0, '15/06/2024', 'Ingresso chiesa', 'test@test.it', 2),
-    ('Tapas cena', 20.0, '15/06/2024', 'Tapas e sangria', 'test@test.it', 2),
+    ('Sagrada Familia', 26.0, '15/06/2024', 'Ingresso chiesa', 'manuel.baldoni@gmail.com', 2),
+    ('Tapas cena', 20.0, '15/06/2024', 'Tapas e sangria', 'manuel.baldoni@gmail.com', 2),
     ('Museo Picasso', 12.0, '16/06/2024', 'Ingresso intero', 'marco.magnani@gmail.com', 2),
-    ('Biglietto metro', 8.0, '16/06/2024', 'Titolo viaggio T10', 'test@test.it', 2),
+    ('Biglietto metro', 8.0, '16/06/2024', 'Titolo viaggio T10', 'manuel.baldoni@gmail.com', 2),
     ('Souvenir Ramblas', 15.0, '17/06/2024', 'Cartoline e calamite', 'marco.magnani@gmail.com', 2),
 
     -- Trip 3: Islanda
-    ('Laguna Blu', 50.0, '02/07/2024', 'Spa termale', 'test@test.it', 3),
-    ('Cena Reykjavik', 40.0, '02/07/2024', 'Cena tipica islandese', 'test@test.it', 3),
-    ('Tour ghiacciaio', 80.0, '03/07/2024', 'Escursione con guida', 'test@test.it', 3),
-    ('Noleggio auto', 100.0, '01/07/2024', '4x4 per 3 giorni', 'test@test.it', 3),
-    ('Snack e market', 15.0, '03/07/2024', 'Acqua, barrette, frutta', 'test@test.it', 3),
+    ('Laguna Blu', 50.0, '02/07/2024', 'Spa termale', 'manuel.baldoni@gmail.com', 3),
+    ('Cena Reykjavik', 40.0, '02/07/2024', 'Cena tipica islandese', 'manuel.baldoni@gmail.com', 3),
+    ('Tour ghiacciaio', 80.0, '03/07/2024', 'Escursione con guida', 'manuel.baldoni@gmail.com', 3),
+    ('Noleggio auto', 100.0, '01/07/2024', '4x4 per 3 giorni', 'manuel.baldoni@gmail.com', 3),
+    ('Snack e market', 15.0, '03/07/2024', 'Acqua, barrette, frutta', 'manuel.baldoni@gmail.com', 3),
 
     -- Trip 4: Napoli
-    ('Pizza da Sorbillo', 10.0, '20/05/2024', 'Pranzo', 'test@test.it', 4),
-    ('Museo Archeologico', 12.0, '21/05/2024', 'Ingresso intero', 'test@test.it', 4),
-    ('Caffè + sfogliatella', 4.0, '20/05/2024', 'Pasticceria storica', 'test@test.it', 4),
-    ('Trasporto Circumvesuviana', 6.0, '22/05/2024', 'Verso Pompei', 'test@test.it', 4),
-    ('Ingresso Pompei', 16.0, '22/05/2024', 'Scavi archeologici', 'test@test.it', 4),
+    ('Pizza da Sorbillo', 10.0, '20/05/2024', 'Pranzo', 'manuel.baldoni@gmail.com', 4),
+    ('Museo Archeologico', 12.0, '21/05/2024', 'Ingresso intero', 'manuel.baldoni@gmail.com', 4),
+    ('Caffè + sfogliatella', 4.0, '20/05/2024', 'Pasticceria storica', 'manuel.baldoni@gmail.com', 4),
+    ('Trasporto Circumvesuviana', 6.0, '22/05/2024', 'Verso Pompei', 'manuel.baldoni@gmail.com', 4),
+    ('Ingresso Pompei', 16.0, '22/05/2024', 'Scavi archeologici', 'manuel.baldoni@gmail.com', 4),
 
     -- Trip 5: Dolomiti
-    ('Noleggio ciaspole', 20.0, '01/08/2024', 'Ciaspole per escursione', 'test@test.it', 5),
-    ('Alloggio rifugio', 35.0, '01/08/2024', 'Pernottamento + cena', 'test@test.it', 5),
-    ('Colazione rifugio', 7.0, '02/08/2024', 'Pane e marmellata', 'test@test.it', 5),
-    ('Impianto risalita', 10.0, '02/08/2024', 'Seggiovia Auronzo', 'test@test.it', 5),
-    ('Snack in baita', 12.0, '02/08/2024', 'Torta e tisana', 'test@test.it', 5),
+    ('Noleggio ciaspole', 20.0, '01/08/2024', 'Ciaspole per escursione', 'manuel.baldoni@gmail.com', 5),
+    ('Alloggio rifugio', 35.0, '01/08/2024', 'Pernottamento + cena', 'manuel.baldoni@gmail.com', 5),
+    ('Colazione rifugio', 7.0, '02/08/2024', 'Pane e marmellata', 'manuel.baldoni@gmail.com', 5),
+    ('Impianto risalita', 10.0, '02/08/2024', 'Seggiovia Auronzo', 'manuel.baldoni@gmail.com', 5),
+    ('Snack in baita', 12.0, '02/08/2024', 'Torta e tisana', 'manuel.baldoni@gmail.com', 5),
 
     -- Trip 6: Safari Kenya
-    ('Safari mezza giornata', 150.0, '16/08/2025', 'Tour riserva naturale', 'test@test.it', 6),
-    ('Guida locale', 25.0, '16/08/2025', 'Mancia', 'test@test.it', 6),
-    ('Cena tipica', 60.0, '19/08/2025', 'Buffet africano', 'test@test.it', 6),
-    ('Souvenir artigianato', 20.0, '18/08/2025', 'Braccialetti e sculture', 'test@test.it', 6),
-    ('Acqua e snack', 8.0, '17/08/2025', 'Bottiglie e frutta secca', 'test@test.it', 6),
+    ('Safari mezza giornata', 150.0, '16/08/2025', 'Tour riserva naturale', 'manuel.baldoni@gmail.com', 6),
+    ('Guida locale', 25.0, '16/08/2025', 'Mancia', 'manuel.baldoni@gmail.com', 6),
+    ('Cena tipica', 60.0, '19/08/2025', 'Buffet africano', 'manuel.baldoni@gmail.com', 6),
+    ('Souvenir artigianato', 20.0, '18/08/2025', 'Braccialetti e sculture', 'manuel.baldoni@gmail.com', 6),
+    ('Acqua e snack', 8.0, '17/08/2025', 'Bottiglie e frutta secca', 'manuel.baldoni@gmail.com', 6),
 
     -- Trip 7: Giappone
-    ('Cerimonia del tè', 25.0, '13/10/2025', 'Kyoto - esperienza culturale', 'test@test.it', 7),
-    ('Treno Shinkansen', 100.0, '11/10/2025', 'Tokyo-Kyoto andata', 'test@test.it', 7),
-    ('Cena ramen', 15.0, '12/10/2025', 'Ramen artigianale', 'test@test.it', 7),
-    ('Biglietto tempio', 10.0, '14/10/2025', 'Fushimi Inari', 'test@test.it', 7),
-    ('Tokyo Skytree', 18.0, '15/10/2025', 'Panorama notturno', 'test@test.it', 7),
+    ('Cerimonia del tè', 25.0, '13/10/2025', 'Kyoto - esperienza culturale', 'manuel.baldoni@gmail.com', 7),
+    ('Treno Shinkansen', 100.0, '11/10/2025', 'Tokyo-Kyoto andata', 'manuel.baldoni@gmail.com', 7),
+    ('Cena ramen', 15.0, '12/10/2025', 'Ramen artigianale', 'manuel.baldoni@gmail.com', 7),
+    ('Biglietto tempio', 10.0, '14/10/2025', 'Fushimi Inari', 'manuel.baldoni@gmail.com', 7),
+    ('Tokyo Skytree', 18.0, '15/10/2025', 'Panorama notturno', 'manuel.baldoni@gmail.com', 7),
 
     -- Trip 8: Patagonia
-    ('Escursione ghiacciaio', 120.0, '02/12/2025', 'Tour Perito Moreno', 'test@test.it', 8),
-    ('Noleggio attrezzatura', 30.0, '01/12/2025', 'Ramponi e zaino', 'test@test.it', 8),
-    ('Notte rifugio', 70.0, '04/12/2025', 'Pernottamento', 'test@test.it', 8),
-    ('Pasti trekking', 25.0, '03/12/2025', 'Pranzo al sacco', 'test@test.it', 8),
-    ('Trasporto bus', 15.0, '01/12/2025', 'Da El Calafate', 'test@test.it', 8),
+    ('Escursione ghiacciaio', 120.0, '02/12/2025', 'Tour Perito Moreno', 'manuel.baldoni@gmail.com', 8),
+    ('Noleggio attrezzatura', 30.0, '01/12/2025', 'Ramponi e zaino', 'manuel.baldoni@gmail.com', 8),
+    ('Notte rifugio', 70.0, '04/12/2025', 'Pernottamento', 'manuel.baldoni@gmail.com', 8),
+    ('Pasti trekking', 25.0, '03/12/2025', 'Pranzo al sacco', 'manuel.baldoni@gmail.com', 8),
+    ('Trasporto bus', 15.0, '01/12/2025', 'Da El Calafate', 'manuel.baldoni@gmail.com', 8),
 
     -- Trip 9: Natale a Vienna
-    ('Concerto di Natale', 40.0, '24/12/2025', 'Musica classica', 'test@test.it', 9),
-    ('Cena Vigilia', 55.0, '24/12/2025', 'Ristorante tradizionale', 'test@test.it', 9),
-    ('Visita Palazzo Schönbrunn', 20.0, '25/12/2025', 'Tour natalizio', 'test@test.it', 9),
-    ('Cappuccino + torta Sacher', 9.0, '25/12/2025', 'Café centrale', 'test@test.it', 9),
-    ('Mercatini di Natale', 18.0, '23/12/2025', 'Vin brulé e dolci', 'test@test.it', 9),
+    ('Concerto di Natale', 40.0, '24/12/2025', 'Musica classica', 'manuel.baldoni@gmail.com', 9),
+    ('Cena Vigilia', 55.0, '24/12/2025', 'Ristorante tradizionale', 'manuel.baldoni@gmail.com', 9),
+    ('Visita Palazzo Schönbrunn', 20.0, '25/12/2025', 'Tour natalizio', 'manuel.baldoni@gmail.com', 9),
+    ('Cappuccino + torta Sacher', 9.0, '25/12/2025', 'Café centrale', 'manuel.baldoni@gmail.com', 9),
+    ('Mercatini di Natale', 18.0, '23/12/2025', 'Vin brulé e dolci', 'manuel.baldoni@gmail.com', 9),
 
     -- Trip 10: Capodanno Sydney
-    ('Tour Opera House', 35.0, '30/12/2025', 'Visita guidata', 'test@test.it', 10),
-    ('Crociera Capodanno', 200.0, '31/12/2025', 'Fuochi d’artificio in baia', 'test@test.it', 10),
-    ('Zoo Taronga', 45.0, '02/01/2026', 'Biglietto intero', 'test@test.it', 10),
-    ('Pranzo Darling Harbour', 30.0, '01/01/2026', 'Ristorante sul mare', 'test@test.it', 10),
-    ('Biglietto metro', 8.0, '01/01/2026', 'Trasporti urbani', 'test@test.it', 10),
+    ('Tour Opera House', 35.0, '30/12/2025', 'Visita guidata', 'manuel.baldoni@gmail.com', 10),
+    ('Crociera Capodanno', 200.0, '31/12/2025', 'Fuochi d’artificio in baia', 'manuel.baldoni@gmail.com', 10),
+    ('Zoo Taronga', 45.0, '02/01/2026', 'Biglietto intero', 'manuel.baldoni@gmail.com', 10),
+    ('Pranzo Darling Harbour', 30.0, '01/01/2026', 'Ristorante sul mare', 'manuel.baldoni@gmail.com', 10),
+    ('Biglietto metro', 8.0, '01/01/2026', 'Trasporti urbani', 'manuel.baldoni@gmail.com', 10),
 
     -- Trip 11: Viaggio nel tempo
     ('Carrozza del 1800', 120.0, '15/03/1901', 'Noleggio carrozza a cavalli in Vienna imperiale', 'marco.magnani@gmail.com', 11),
     ('Panino futuristico', 45.5, '12/11/2099', 'Esperienza gastronomica nel 2100 con cibo sintetico', 'marco.magnani@gmail.com', 11),
-    ('Monete romane', 78.0, '01/08/2001', 'Acquisto di monete storiche in un museo archeologico', 'test@test.it', 11),
-    ('Biglietto dirigibile', 150.0, '03/05/1930', 'Viaggio in dirigibile Zeppelin', 'test@test.it', 11),
-    ('Visore VR temporale', 299.0, '10/07/2085', 'Simulazione immersiva di eventi storici', 'test@test.it', 11),
-    ('Tè con Einstein', 60.0, '14/03/1921', 'Esperienza interattiva con attore storico', 'test@test.it', 11);
+    ('Monete romane', 78.0, '01/08/2001', 'Acquisto di monete storiche in un museo archeologico', 'manuel.baldoni@gmail.com', 11),
+    ('Biglietto dirigibile', 150.0, '03/05/1930', 'Viaggio in dirigibile Zeppelin', 'manuel.baldoni@gmail.com', 11),
+    ('Visore VR temporale', 299.0, '10/07/2085', 'Simulazione immersiva di eventi storici', 'manuel.baldoni@gmail.com', 11),
+    ('Tè con Einstein', 60.0, '14/03/1921', 'Esperienza interattiva con attore storico', 'manuel.baldoni@gmail.com', 11);
 
 
 
 
 INSERT INTO GroupInvitation (senderEmail, receiverEmail, tripId) VALUES
-    ('test@test.it', 'marco.magnani@gmail.com', 3),
-    ('marco.magnani@gmail.com', 'test@test.it', 4),
-    ('test@test.it', 'marco.magnani@gmail.com', 5),
-    ('marco.magnani@gmail.com', 'test@test.it', 6),
-    ('test@test.it', 'marco.magnani@gmail.com', 7),
-    ('marco.magnani@gmail.com', 'test@test.it', 10);
+    ('manuel.baldoni@gmail.com', 'marco.magnani@gmail.com', 3),
+    ('marco.magnani@gmail.com', 'manuel.baldoni@gmail.com', 4),
+    ('manuel.baldoni@gmail.com', 'marco.magnani@gmail.com', 5),
+    ('marco.magnani@gmail.com', 'manuel.baldoni@gmail.com', 6),
+    ('manuel.baldoni@gmail.com', 'marco.magnani@gmail.com', 7),
+    ('marco.magnani@gmail.com', 'manuel.baldoni@gmail.com', 10);
 
 INSERT INTO Friendship (emailFirstUser, emailSecondUser) VALUES
-    ('test@test.it', 'user2@example.com'),
-    ('test@test.it', 'user3@example.com'),
-    ('test@test.it', 'user4@example.com'),
+    ('manuel.baldoni@gmail.com', 'user2@example.com'),
+    ('manuel.baldoni@gmail.com', 'user3@example.com'),
+    ('manuel.baldoni@gmail.com', 'user4@example.com'),
     ('marco.magnani@gmail.com', 'user5@example.com'),
     ('marco.magnani@gmail.com', 'user6@example.com'),
     ('marco.magnani@gmail.com', 'user7@example.com'),
-    ('user8@example.com', 'test@test.it'),
+    ('user8@example.com', 'manuel.baldoni@gmail.com'),
     ('user9@example.com', 'marco.magnani@gmail.com'),
-    ('user10@example.com', 'test@test.it');
+    ('user10@example.com', 'manuel.baldoni@gmail.com');
