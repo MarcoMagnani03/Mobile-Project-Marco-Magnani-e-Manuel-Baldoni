@@ -53,7 +53,7 @@ fun GoogleSignInButton(onResult: (GoogleSignInAccount?) -> Unit) {
     }
 
     TravelBuddyButton(
-        label = "Sign up with Google",
+        label = "Sign in with Google",
         style = ButtonStyle.PRIMARY_OUTLINED,
         onClick = {
             val client = GoogleSignIn.getClient(context, GoogleSignInOptions.DEFAULT_SIGN_IN)
