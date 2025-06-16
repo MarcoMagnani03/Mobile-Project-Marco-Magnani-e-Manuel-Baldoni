@@ -21,7 +21,7 @@ class EventsRepository(
             val address = geocoder.getFromLocationName(location, 1)?.firstOrNull()
 
             if (address == null){
-                throw Error("No address found")
+                throw Exception("No address found")
             }
 
             val response = apiService.getEvents(
